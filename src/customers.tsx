@@ -4,7 +4,6 @@ import {
   List,
   SearchInput,
   TextField,
-  TextInput,
 } from "react-admin";
 
 const filters = [
