@@ -48,7 +48,7 @@ export const App = () => (
         show={ShowGuesser}
       />
       <Resource
-        name="subscription"
+        name="profils"
         list={ListGuesser}
         edit={EditGuesser}
         create={CreateGuesser}
@@ -64,4 +64,5 @@ export const App = () => (
     </Admin>
   </BrowserRouter>
 );
+
 export default App;
