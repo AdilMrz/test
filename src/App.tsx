@@ -1,31 +1,10 @@
-import {
-  Admin,
-  Resource,
-  ListGuesser,
-  EditGuesser,
-  ShowGuesser,
-} from "react-admin";
-import { Layout } from "./Layout";
-import { dataProvider } from "./dataProvider";
-import { authProvider } from "./authProvider";
+import { AdminGuesser } from "ra-supabase";
 
-export const App = () => (
-  <Admin
-    layout={Layout}
-    dataProvider={dataProvider}
-    authProvider={authProvider}
-  >
-    <Resource
-      name="post"
-      list={ListGuesser}
-      edit={EditGuesser}
-      show={ShowGuesser}
-    />
-    <Resource
-      name="user"
-      list={ListGuesser}
-      edit={EditGuesser}
-      show={ShowGuesser}
-    />
-  </Admin>
+const App = () => (
+  <AdminGuesser
+    instanceUrl="https://huipyswcdlflijelqekd.supabase.co"
+    apiKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1aXB5c3djZGxmbGlqZWxxZWtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE4Njc4NjYsImV4cCI6MjA0NzQ0Mzg2Nn0.KiMLeTf_zeG4-FaUliHhfw8FotuG0KolZXvI93g-t8s"
+  />
 );
+
+export default App;
