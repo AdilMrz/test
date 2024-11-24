@@ -1,9 +1,20 @@
-import { Datagrid, EmailField, List, TextField, TextInput } from "react-admin";
+import {
+  Datagrid,
+  EmailField,
+  List,
+  SearchInput,
+  TextField,
+  TextInput,
+} from "react-admin";
 
 const filters = [
-  <TextInput key="fullname" source="fullname" />,
-  <TextInput key="email" source="email" />,
-  <TextInput key="address" source="address" />,
+  <SearchInput
+    key="fullname"
+    source="fullname@ilike"
+    placeholder="Search"
+    resettable
+    alwaysOn
+  />,
 ];
 
 export const CustomerList = () => (
