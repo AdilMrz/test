@@ -59,7 +59,6 @@ export const Dashboard = () => {
   if (isLoadingProducts || isLoadingPurchases) return <Loading />;
   if (!products || !purchases) return null;
 
-  // Calculate product purchase counts
   const productPurchases: ProductPurchase[] = products.reduce(
     (acc: ProductPurchase[], product) => {
       const count = purchases.filter((p) => p.product_id === product.id).length;
@@ -73,7 +72,6 @@ export const Dashboard = () => {
     [],
   );
 
-  // Calculate product revenue
   const productRevenue: ProductRevenue[] = products.reduce(
     (acc: ProductRevenue[], product) => {
       const revenue = purchases
@@ -104,6 +102,9 @@ export const Dashboard = () => {
                 outerRadius="90%"
                 fill="#8884d8"
                 dataKey="value"
+                isAnimationActive={false}
+                activeIndex={[]}
+                className="cursor-default"
               >
                 {productPurchases.map((entry: ProductPurchase) => (
                   <Cell
@@ -114,8 +115,22 @@ export const Dashboard = () => {
                   />
                 ))}
               </Pie>
-              <Tooltip />
-              <Legend />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#fff",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                  padding: "10px",
+                }}
+              />
+              <Legend
+                verticalAlign="middle"
+                align="right"
+                layout="vertical"
+                wrapperStyle={{
+                  paddingLeft: "10px",
+                }}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
