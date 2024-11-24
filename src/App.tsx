@@ -5,7 +5,6 @@ import {
   CreateGuesser,
   EditGuesser,
   ForgotPasswordPage,
-  ListGuesser,
   LoginPage,
   SetPasswordPage,
   ShowGuesser,
@@ -13,7 +12,9 @@ import {
   supabaseDataProvider,
   supabaseAuthProvider,
 } from "ra-supabase";
-
+import { CustomerList } from "./customers";
+import { ProductList } from "./products";
+import { ProfilList } from "./profiles";
 const instanceUrl = "https://huipyswcdlflijelqekd.supabase.co";
 const apiKey =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1aXB5c3djZGxmbGlqZWxxZWtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE4Njc4NjYsImV4cCI6MjA0NzQ0Mzg2Nn0.KiMLeTf_zeG4-FaUliHhfw8FotuG0KolZXvI93g-t8s";
@@ -35,21 +36,21 @@ export const App = () => (
     >
       <Resource
         name="customers"
-        list={ListGuesser}
+        list={CustomerList}
         edit={EditGuesser}
         create={CreateGuesser}
         show={ShowGuesser}
       />
       <Resource
         name="products"
-        list={ListGuesser}
+        list={ProductList}
         edit={EditGuesser}
         create={CreateGuesser}
         show={ShowGuesser}
       />
       <Resource
         name="profils"
-        list={ListGuesser}
+        list={ProfilList}
         edit={EditGuesser}
         create={CreateGuesser}
         show={ShowGuesser}
