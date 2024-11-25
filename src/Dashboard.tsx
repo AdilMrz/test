@@ -144,29 +144,22 @@ export const Dashboard = () => {
     : [];
 
   return (
-    <div className="grid grid-cols-1 gap-4 p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-4 shadow-lg rounded-lg bg-gray-800">
-          <Title title="Dashboard" />
-          <div
-            className="h-[400px] relative"
-            style={{
-              touchAction: "none",
-              userSelect: "none",
-              WebkitTapHighlightColor: "transparent",
-            }}
-          >
+    <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
+      <Title title="Dashboard" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="p-2 sm:p-4 shadow-lg rounded-lg bg-gray-800">
+          <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={productPurchases}
-                  cx="50%"
+                  cx="40%"
                   cy="50%"
                   labelLine={false}
                   label={({ name, value, percent }) =>
                     percent > 0.03 ? `${name}: ${value}` : ""
                   }
-                  outerRadius="70%"
+                  outerRadius="45%"
                   fill="#8884d8"
                   dataKey="value"
                   isAnimationActive={false}
@@ -182,10 +175,9 @@ export const Dashboard = () => {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#374151",
-                    border: "1px solid #4B5563",
-                    borderRadius: "6px",
-                    padding: "8px 12px",
+                    backgroundColor: "#1F2937",
+                    border: "none",
+                    borderRadius: "0.375rem",
                     color: "#F3F4F6",
                   }}
                 />
@@ -197,6 +189,9 @@ export const Dashboard = () => {
                     paddingLeft: "20px",
                     fontSize: "12px",
                     color: "#E5E7EB",
+                    maxHeight: "100%",
+                    overflowY: "auto",
+                    right: 20,
                   }}
                 />
               </PieChart>
@@ -204,8 +199,8 @@ export const Dashboard = () => {
           </div>
         </Card>
 
-        <Card className="p-4 shadow-lg rounded-lg bg-gray-800">
-          <div className="h-[400px]">
+        <Card className="p-2 sm:p-4 shadow-lg rounded-lg bg-gray-800">
+          <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={productRevenue}
@@ -213,7 +208,7 @@ export const Dashboard = () => {
                   top: 20,
                   right: 30,
                   left: 20,
-                  bottom: 5,
+                  bottom: 65,
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -222,6 +217,9 @@ export const Dashboard = () => {
                   tick={{ fill: "#E5E7EB", fontSize: 12 }}
                   tickLine={{ stroke: "#4B5563" }}
                   axisLine={{ stroke: "#4B5563" }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
                 />
                 <YAxis
                   tick={{ fill: "#E5E7EB", fontSize: 12 }}
@@ -232,10 +230,9 @@ export const Dashboard = () => {
                 <Tooltip
                   cursor={{ fill: "rgba(55, 65, 81, 0.3)" }}
                   contentStyle={{
-                    backgroundColor: "#374151",
-                    border: "1px solid #4B5563",
-                    borderRadius: "6px",
-                    padding: "8px 12px",
+                    backgroundColor: "#1F2937",
+                    border: "none",
+                    borderRadius: "0.375rem",
                     color: "#F3F4F6",
                   }}
                   formatter={(value) => [`$${value}`, "Revenue"]}
@@ -260,21 +257,21 @@ export const Dashboard = () => {
         </Card>
       </div>
 
-      <Card className="p-4 shadow-lg rounded-lg bg-gray-800">
+      <Card className="mt-4 p-2 sm:p-4 shadow-lg rounded-lg bg-gray-800">
         <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-700">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
                   Product
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-gray-100 uppercase tracking-wider">
                   Price
                 </th>
               </tr>
@@ -285,7 +282,7 @@ export const Dashboard = () => {
                   key={purchase.id}
                   className="hover:bg-gray-700 transition-colors duration-200"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300">
                     {new Date(purchase.purchase_date).toLocaleDateString(
                       undefined,
                       {
@@ -295,13 +292,13 @@ export const Dashboard = () => {
                       },
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-300">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-300">
                     {purchase.customer_name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300">
                     {purchase.product_name}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-right font-medium">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300 text-right font-medium">
                     ${purchase.price.toFixed(2)}
                   </td>
                 </tr>
@@ -310,7 +307,7 @@ export const Dashboard = () => {
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-6 py-4 text-center text-sm text-gray-400"
+                    className="px-4 sm:px-6 py-3 sm:py-4 text-center text-sm text-gray-400"
                   >
                     No recent purchases found
                   </td>
