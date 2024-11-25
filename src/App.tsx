@@ -18,10 +18,8 @@ import { PurchaseList } from "./purchases";
 import { Dashboard } from "./Dashboard";
 import { PurchaseShow } from "./purchaseShow";
 
-// biome-ignore lint/style/noNonNullAssertion: <explanation>
-const instanceUrl = process.env.SUPABASE_INSTANCE_URL!;
-// biome-ignore lint/style/noNonNullAssertion: <explanation>
-const apiKey = process.env.SUPABASE_API_KEY!;
+const instanceUrl = import.meta.env.VITE_SUPABASE_URL;
+const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = createClient(instanceUrl, apiKey);
 const dataProvider = supabaseDataProvider({
   instanceUrl,
