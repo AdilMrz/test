@@ -175,10 +175,12 @@ export const Dashboard = () => {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#1F2937",
+                    backgroundColor: "rgb(31 41 55)",
                     border: "none",
                     borderRadius: "0.375rem",
-                    color: "#F3F4F6",
+                    color: "rgb(243 244 246)",
+                    padding: "0.5rem",
+                    boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)",
                   }}
                 />
                 <Legend
@@ -186,12 +188,12 @@ export const Dashboard = () => {
                   align="right"
                   layout="vertical"
                   wrapperStyle={{
-                    paddingLeft: "20px",
-                    fontSize: "12px",
-                    color: "#E5E7EB",
+                    paddingLeft: "1.25rem",
+                    fontSize: "0.875rem",
+                    color: "rgb(229 231 235)",
                     maxHeight: "100%",
                     overflowY: "auto",
-                    right: 20,
+                    right: "1.25rem",
                   }}
                 />
               </PieChart>
@@ -228,19 +230,22 @@ export const Dashboard = () => {
                   tickFormatter={(value) => `$${value}`}
                 />
                 <Tooltip
-                  cursor={{ fill: "rgba(55, 65, 81, 0.3)" }}
+                  cursor={{ fill: "rgb(55 65 81 / 0.3)" }}
                   contentStyle={{
-                    backgroundColor: "#1F2937",
+                    backgroundColor: "rgb(31 41 55)",
                     border: "none",
                     borderRadius: "0.375rem",
-                    color: "#F3F4F6",
+                    color: "rgb(243 244 246)",
+                    padding: "0.5rem",
+                    boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)",
                   }}
                   formatter={(value) => [`$${value}`, "Revenue"]}
                 />
                 <Legend
                   wrapperStyle={{
-                    paddingTop: "10px",
-                    color: "#E5E7EB",
+                    paddingTop: "0.625rem",
+                    color: "rgb(229 231 235)",
+                    fontSize: "0.875rem",
                   }}
                 />
                 <Bar dataKey="revenue" radius={[4, 4, 0, 0]} maxBarSize={60}>
