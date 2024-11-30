@@ -14,7 +14,7 @@ const filters = [
     placeholder="Search"
     resettable
     alwaysOn
-    className="bg-gray-700 text-gray-100"
+    className="bg-custom-bg text-gray-100"
   />,
 ];
 

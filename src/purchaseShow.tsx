@@ -10,7 +10,7 @@ export const PurchaseShow = () => (
   <Show>
     <SimpleShowLayout>
       <TextField source="id" />
-      <ReferenceField source="customer_id" reference="customers" link={false}>
+      <ReferenceField source="customer_id" reference="customers">
         <TextField source="fullname" />
       </ReferenceField>
       <ReferenceField source="product_id" reference="products" />

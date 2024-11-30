@@ -7,9 +7,19 @@ import {
   ReferenceInput,
   TextField,
   TextInput,
-  SearchInput,
+  AutocompleteInput,
 } from "react-admin";
 import { Card } from "@mui/material";
+
+interface Customer {
+  id: number;
+  fullname: string;
+}
+
+interface Product {
+  id: number;
+  name: string;
+}
 
 const filters = [
   <ReferenceInput
@@ -17,12 +27,24 @@ const filters = [
     source="customer_id"
     reference="customers"
     className="bg-gray-700 text-gray-100"
-  />,
+    label="Customer"
+  >
+    <AutocompleteInput
+      optionText={(record: Customer) => record.fullname}
+      optionValue="id"
+      filterToQuery={(searchText: string) => ({
+        fullname: `ilike.%${searchText}%`,
+      })}
+      className="bg-gray-700 text-gray-100"
+    />
+  </ReferenceInput>,
   <ReferenceInput
     key="product_id"
     source="product_id"
     reference="products"
     className="bg-gray-700 text-gray-100"
+    optionText={(record: Product) => record.name}
+    optionValue="id"
   />,
   <NumberInput
     key="price"
@@ -32,12 +54,6 @@ const filters = [
   <TextInput
     key="purchase_date"
     source="purchase_date"
-    className="bg-gray-700 text-gray-100"
-  />,
-  <SearchInput
-    key="fullname"
-    source="fullname@ilike"
-    placeholder="Search"
     className="bg-gray-700 text-gray-100"
   />,
 ];
