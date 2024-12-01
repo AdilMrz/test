@@ -1,5 +1,5 @@
 import { Title, Loading } from "react-admin";
-import { Card } from "@mui/material";
+import { Card, useTheme, Divider } from "@mui/material";
 import {
   PieChart,
   Pie,
@@ -63,6 +63,11 @@ interface RecentPurchase {
 }
 
 export const Dashboard = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+  const bgColor = isDarkMode ? "#151221" : "#eef2ea";
+  const borderColor = isDarkMode ? "#2a2a2a" : "#e5e7eb";
+
   const { data: products, isLoading: isLoadingProducts } = useGetList<Product>(
     "products",
     {
@@ -147,10 +152,26 @@ export const Dashboard = () => {
     <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
       <Title title="Dashboard" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="p-2 sm:p-4 shadow-lg rounded-lg bg-gray-800">
+        <Card
+          sx={{
+            backgroundColor: bgColor,
+            border: `1px solid ${borderColor}`,
+          }}
+          elevation={0}
+        >
+          <div className="p-4">
+            <h2 className="text-lg font-semibold mb-4">
+              Product Purchase Distribution
+            </h2>
+            <Divider sx={{ borderColor }} />
+          </div>
           <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              style={{ userSelect: "none" }}
+            >
+              <PieChart style={{ backgroundColor: bgColor }}>
                 <Pie
                   data={productPurchases}
                   cx="40%"
@@ -173,16 +194,7 @@ export const Dashboard = () => {
                     />
                   ))}
                 </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "rgb(31 41 55)",
-                    border: "none",
-                    borderRadius: "0.375rem",
-                    color: "rgb(243 244 246)",
-                    padding: "0.5rem",
-                    boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)",
-                  }}
-                />
+                <Tooltip />
                 <Legend
                   verticalAlign="middle"
                   align="right"
@@ -190,7 +202,6 @@ export const Dashboard = () => {
                   wrapperStyle={{
                     paddingLeft: "1.25rem",
                     fontSize: "0.875rem",
-                    color: "rgb(229 231 235)",
                     maxHeight: "100%",
                     overflowY: "auto",
                     right: "1.25rem",
@@ -201,54 +212,48 @@ export const Dashboard = () => {
           </div>
         </Card>
 
-        <Card className="p-2 sm:p-4 shadow-lg rounded-lg bg-gray-800">
+        <Card
+          sx={{
+            backgroundColor: bgColor,
+            border: `1px solid ${borderColor}`,
+          }}
+          elevation={0}
+        >
+          <div className="p-4">
+            <h2 className="text-lg font-semibold mb-4">Product Revenue</h2>
+            <Divider sx={{ borderColor }} />
+          </div>
           <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={productRevenue}
+                style={{ backgroundColor: bgColor, padding: "20px" }}
                 margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 65,
+                  top: 30,
+                  right: 40,
+                  left: 40,
+                  bottom: 80,
                 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                   dataKey="name"
-                  tick={{ fill: "#E5E7EB", fontSize: 12 }}
-                  tickLine={{ stroke: "#4B5563" }}
-                  axisLine={{ stroke: "#4B5563" }}
                   angle={-45}
                   textAnchor="end"
                   height={60}
                 />
-                <YAxis
-                  tick={{ fill: "#E5E7EB", fontSize: 12 }}
-                  tickLine={{ stroke: "#4B5563" }}
-                  axisLine={{ stroke: "#4B5563" }}
-                  tickFormatter={(value) => `$${value}`}
-                />
+                <YAxis tickFormatter={(value) => `$${value}`} />
                 <Tooltip
-                  cursor={{ fill: "rgb(55 65 81 / 0.3)" }}
-                  contentStyle={{
-                    backgroundColor: "rgb(31 41 55)",
-                    border: "none",
-                    borderRadius: "0.375rem",
-                    color: "rgb(243 244 246)",
-                    padding: "0.5rem",
-                    boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.1)",
-                  }}
+                  cursor={{ fill: "transparent" }}
                   formatter={(value) => [`$${value}`, "Revenue"]}
                 />
-                <Legend
-                  wrapperStyle={{
-                    paddingTop: "0.625rem",
-                    color: "rgb(229 231 235)",
-                    fontSize: "0.875rem",
-                  }}
-                />
-                <Bar dataKey="revenue" radius={[4, 4, 0, 0]} maxBarSize={60}>
+                <Legend />
+                <Bar
+                  dataKey="revenue"
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={60}
+                  isAnimationActive={false}
+                >
                   {productRevenue.map((entry, index) => (
                     <Cell
                       key={`cell-${entry.name}`}
@@ -262,32 +267,63 @@ export const Dashboard = () => {
         </Card>
       </div>
 
-      <Card className="mt-4 p-2 sm:p-4 shadow-lg rounded-lg bg-gray-800">
-        <div className="overflow-x-auto shadow-sm rounded-lg border border-gray-700">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-700">
-              <tr>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
+      <Card
+        className="mt-4"
+        sx={{
+          backgroundColor: bgColor,
+          border: `1px solid ${borderColor}`,
+        }}
+        elevation={0}
+      >
+        <div className="p-4">
+          <h2 className="text-lg font-semibold mb-4">Recent Purchases</h2>
+          <Divider sx={{ borderColor }} />
+        </div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full">
+            <thead>
+              <tr
+                className="border-b border-solid"
+                style={{ borderColor: borderColor }}
+              >
+                <th
+                  className="px-4 sm:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-r border-solid"
+                  style={{ borderColor: borderColor }}
+                >
                   Date
                 </th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
+                <th
+                  className="px-4 sm:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-r border-solid"
+                  style={{ borderColor: borderColor }}
+                >
                   Customer
                 </th>
-                <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-100 uppercase tracking-wider">
+                <th
+                  className="px-4 sm:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-r border-solid"
+                  style={{ borderColor: borderColor }}
+                >
                   Product
                 </th>
-                <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-gray-100 uppercase tracking-wider">
+                <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider">
                   Price
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-gray-800 divide-y divide-gray-700">
-              {recentPurchases.map((purchase) => (
+            <tbody>
+              {recentPurchases.map((purchase, index) => (
                 <tr
                   key={purchase.id}
-                  className="hover:bg-gray-700 transition-colors duration-200"
+                  className={
+                    index !== recentPurchases.length - 1
+                      ? "border-b border-solid"
+                      : ""
+                  }
+                  style={{ borderColor: borderColor }}
                 >
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300">
+                  <td
+                    className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm border-r border-solid"
+                    style={{ borderColor: borderColor }}
+                  >
                     {new Date(purchase.purchase_date).toLocaleDateString(
                       undefined,
                       {
@@ -297,13 +333,19 @@ export const Dashboard = () => {
                       },
                     )}
                   </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-300">
+                  <td
+                    className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium border-r border-solid"
+                    style={{ borderColor: borderColor }}
+                  >
                     {purchase.customer_name}
                   </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300">
+                  <td
+                    className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm border-r border-solid"
+                    style={{ borderColor: borderColor }}
+                  >
                     {purchase.product_name}
                   </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-300 text-right font-medium">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-right font-medium">
                     ${purchase.price.toFixed(2)}
                   </td>
                 </tr>
@@ -312,7 +354,7 @@ export const Dashboard = () => {
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-4 sm:px-6 py-3 sm:py-4 text-center text-sm text-gray-400"
+                    className="px-4 sm:px-6 py-3 sm:py-4 text-center text-sm"
                   >
                     No recent purchases found
                   </td>

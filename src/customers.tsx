@@ -1,11 +1,19 @@
 import {
-  Datagrid,
+  DatagridConfigurable,
   EmailField,
   List,
   SearchInput,
   TextField,
+  TopToolbar,
+  SelectColumnsButton,
 } from "react-admin";
 import { Card } from "@mui/material";
+
+const ListActions = () => (
+  <TopToolbar>
+    <SelectColumnsButton />
+  </TopToolbar>
+);
 
 const filters = [
   <SearchInput
@@ -14,38 +22,22 @@ const filters = [
     placeholder="Search"
     resettable
     alwaysOn
-    className="bg-custom-bg text-gray-100"
   />,
 ];
 
 const CustomerList = () => (
-  <Card className="bg-gray-800 shadow-lg rounded-lg">
+  <Card>
     <List
+      actions={<ListActions />}
       filters={filters}
       className="p-0"
-      sx={{
-        "& .RaList-main": { padding: 0 },
-        "& .RaDatagrid-table": {
-          backgroundColor: "rgb(31, 41, 55)",
-        },
-        "& .RaDatagrid-headerCell": {
-          backgroundColor: "rgb(55, 65, 81)",
-          color: "rgb(243, 244, 246)",
-        },
-        "& .RaDatagrid-row": {
-          "&:hover": {
-            backgroundColor: "rgb(55, 65, 81)",
-          },
-          backgroundColor: "rgb(31, 41, 55)",
-          color: "rgb(243, 244, 246)",
-        },
-      }}
+      sx={{ "& .RaList-main": { padding: 0 } }}
     >
-      <Datagrid>
+      <DatagridConfigurable>
         <TextField source="fullname" />
         <EmailField source="email" />
         <TextField source="address" />
-      </Datagrid>
+      </DatagridConfigurable>
     </List>
   </Card>
 );

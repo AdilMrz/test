@@ -1,103 +1,53 @@
 import {
-  Datagrid,
+  DatagridConfigurable,
+  DateField,
   List,
   NumberField,
-  NumberInput,
   ReferenceField,
-  ReferenceInput,
+  SearchInput,
   TextField,
-  TextInput,
-  AutocompleteInput,
+  TopToolbar,
+  SelectColumnsButton,
 } from "react-admin";
 import { Card } from "@mui/material";
 
-interface Customer {
-  id: number;
-  fullname: string;
-}
-
-interface Product {
-  id: number;
-  name: string;
-}
+const ListActions = () => (
+  <TopToolbar>
+    <SelectColumnsButton />
+  </TopToolbar>
+);
 
 const filters = [
-  <ReferenceInput
-    key="customer_id"
-    source="customer_id"
-    reference="customers"
-    className="bg-gray-700 text-gray-100"
-    label="Customer"
-  >
-    <AutocompleteInput
-      optionText={(record: Customer) => record.fullname}
-      optionValue="id"
-      filterToQuery={(searchText: string) => ({
-        fullname: `ilike.%${searchText}%`,
-      })}
-      className="bg-gray-700 text-gray-100"
-    />
-  </ReferenceInput>,
-  <ReferenceInput
-    key="product_id"
+  <SearchInput
+    key="product"
     source="product_id"
-    reference="products"
-    className="bg-gray-700 text-gray-100"
-    optionText={(record: Product) => record.name}
-    optionValue="id"
-  />,
-  <NumberInput
-    key="price"
-    source="price"
-    className="bg-gray-700 text-gray-100"
-  />,
-  <TextInput
-    key="purchase_date"
-    source="purchase_date"
-    className="bg-gray-700 text-gray-100"
+    placeholder="Search"
+    resettable
+    alwaysOn
   />,
 ];
 
 const PurchaseList = () => (
-  <Card className="bg-gray-800 shadow-lg rounded-lg">
+  <Card>
     <List
+      actions={<ListActions />}
       filters={filters}
       className="p-0"
-      sx={{
-        "& .RaList-main": { padding: 0 },
-        "& .RaDatagrid-table": {
-          backgroundColor: "rgb(31, 41, 55)",
-        },
-        "& .RaDatagrid-headerCell": {
-          backgroundColor: "rgb(55, 65, 81)",
-          color: "rgb(243, 244, 246)",
-        },
-        "& .RaDatagrid-row": {
-          "&:hover": {
-            backgroundColor: "rgb(55, 65, 81)",
-          },
-          backgroundColor: "rgb(31, 41, 55)",
-          color: "rgb(243, 244, 246)",
-        },
-      }}
+      sx={{ "& .RaList-main": { padding: 0 } }}
     >
-      <Datagrid>
-        <ReferenceField source="customer_id" reference="customers" link={false}>
+      <DatagridConfigurable>
+        <DateField source="purchase_date" />
+        <ReferenceField source="customer_id" reference="customers">
           <TextField source="fullname" />
         </ReferenceField>
-        <ReferenceField source="product_id" reference="products" link={false}>
+        <ReferenceField source="product_id" reference="products">
           <TextField source="name" />
         </ReferenceField>
         <NumberField
           source="price"
-          options={{
-            style: "currency",
-            currency: "USD",
-            currencyDisplay: "narrowSymbol",
-          }}
+          options={{ style: "currency", currency: "USD" }}
         />
-        <TextField source="purchase_date" />
-      </Datagrid>
+      </DatagridConfigurable>
     </List>
   </Card>
 );

@@ -17,8 +17,10 @@ import { ProductList } from "./products";
 import { PurchaseList } from "./purchases";
 import { Dashboard } from "./Dashboard";
 import { PurchaseShow } from "./purchaseShow";
-import queryClient from "./queryClient";
+import { queryClient } from "./queryClient";
 import themes from "./themes";
+
+// Supabase client setup
 const instanceUrl = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = createClient(instanceUrl, apiKey);
@@ -28,7 +30,7 @@ const dataProvider = supabaseDataProvider({
   supabaseClient,
 });
 const authProvider = supabaseAuthProvider(supabaseClient, {});
-
+// App setup
 export const App = () => (
   <BrowserRouter>
     <Admin

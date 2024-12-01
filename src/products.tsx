@@ -1,48 +1,41 @@
-import { Datagrid, List, TextField, TextInput } from "react-admin";
+import {
+  DatagridConfigurable,
+  List,
+  SearchInput,
+  TextField,
+  TopToolbar,
+  SelectColumnsButton,
+} from "react-admin";
 import { Card } from "@mui/material";
 
+const ListActions = () => (
+  <TopToolbar>
+    <SelectColumnsButton />
+  </TopToolbar>
+);
+
 const filters = [
-  <TextInput
+  <SearchInput
     key="name"
-    source="name"
-    className="bg-gray-700 text-gray-100"
-    label="Name"
-  />,
-  <TextInput
-    key="description"
-    source="description"
-    className="bg-gray-700 text-gray-100"
-    label="Description"
+    source="name@ilike"
+    placeholder="Search"
+    resettable
+    alwaysOn
   />,
 ];
 
 const ProductList = () => (
-  <Card className="bg-gray-800 shadow-lg rounded-lg">
+  <Card>
     <List
+      actions={<ListActions />}
       filters={filters}
       className="p-0"
-      sx={{
-        "& .RaList-main": { padding: 0 },
-        "& .RaDatagrid-table": {
-          backgroundColor: "rgb(31, 41, 55)",
-        },
-        "& .RaDatagrid-headerCell": {
-          backgroundColor: "rgb(55, 65, 81)",
-          color: "rgb(243, 244, 246)",
-        },
-        "& .RaDatagrid-row": {
-          "&:hover": {
-            backgroundColor: "rgb(55, 65, 81)",
-          },
-          backgroundColor: "rgb(31, 41, 55)",
-          color: "rgb(243, 244, 246)",
-        },
-      }}
+      sx={{ "& .RaList-main": { padding: 0 } }}
     >
-      <Datagrid>
+      <DatagridConfigurable>
         <TextField source="name" />
         <TextField source="description" />
-      </Datagrid>
+      </DatagridConfigurable>
     </List>
   </Card>
 );
