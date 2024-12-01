@@ -17,7 +17,8 @@ import { ProductList } from "./products";
 import { PurchaseList } from "./purchases";
 import { Dashboard } from "./Dashboard";
 import { PurchaseShow } from "./purchaseShow";
-
+import queryClient from "./queryClient";
+import themes from "./themes";
 const instanceUrl = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = createClient(instanceUrl, apiKey);
@@ -33,9 +34,11 @@ export const App = () => (
     <Admin
       dashboard={Dashboard}
       dataProvider={dataProvider}
+      queryClient={queryClient}
       authProvider={authProvider}
       i18nProvider={defaultI18nProvider}
       loginPage={LoginPage}
+      {...themes}
     >
       <Resource
         name="customers"
