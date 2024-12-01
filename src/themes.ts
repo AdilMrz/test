@@ -1,5 +1,5 @@
 import { defaultTheme } from "react-admin";
-import { alpha, Theme } from "@mui/material";
+import { alpha } from "@mui/material";
 
 const alert = {
   error: { main: "#DB488B" },
@@ -70,7 +70,7 @@ export default {
         primary: "#14532d",
         secondary: "#14532d",
       },
-      mode: "light",
+      mode: "light" as const,
       ...alert,
     },
     components: {
@@ -97,7 +97,7 @@ export default {
         primary: "#eef2ea",
         secondary: "#89868D",
       },
-      mode: "dark",
+      mode: "dark" as const,
       ...alert,
     },
     components: {

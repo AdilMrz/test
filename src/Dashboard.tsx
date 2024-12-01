@@ -1,28 +1,11 @@
 import { Title, Loading } from "react-admin";
-import { Card, useTheme, Divider } from "@mui/material";
-import {
-  PieChart,
-  Pie,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  Cell,
-  ResponsiveContainer,
-} from "recharts";
+import { useTheme, alpha } from "@mui/material";
 import { useGetList } from "react-admin";
-
-const COLORS = [
-  "#0088FE",
-  "#00C49F",
-  "#FFBB28",
-  "#FF8042",
-  "#8884d8",
-  "#4B0082",
-];
+import {
+  PurchaseDistributionCard,
+  ProductRevenueCard,
+  RecentPurchasesCard,
+} from "./DashboardCards";
 
 interface Product {
   id: number;
@@ -66,7 +49,17 @@ export const Dashboard = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
   const bgColor = isDarkMode ? "#151221" : "#eef2ea";
-  const borderColor = isDarkMode ? "#2a2a2a" : "#e5e7eb";
+  const dividerColor = isDarkMode ? "#2a2a2a" : "#e5e7eb";
+  const shadows = [
+    alpha("#14532d", 0.2),
+    alpha("#14532d", 0.1),
+    alpha("#14532d", 0.05),
+  ];
+  const cardStyle = {
+    backgroundColor: bgColor,
+    boxShadow: `${shadows[0]} -2px 2px, ${shadows[1]} -4px 4px, ${shadows[2]} -6px 6px`,
+    backgroundClip: "padding-box",
+  };
 
   const { data: products, isLoading: isLoadingProducts } = useGetList<Product>(
     "products",
@@ -100,270 +93,61 @@ export const Dashboard = () => {
     return <Loading />;
   if (!products || !purchases || !customers) return null;
 
-  const productPurchases: ProductPurchase[] = products.reduce(
-    (acc: ProductPurchase[], product) => {
-      const count = purchases.filter((p) => p.product_id === product.id).length;
+  const productPurchases = products.reduce((acc, product) => {
+    const count = purchases.filter((p) => p.product_id === product.id).length;
+    if (count > 0) {
       acc.push({
         id: product.id,
-        name: product.name || "Unnamed Product",
+        name: product.name,
         value: count,
       });
-      return acc;
-    },
-    [],
-  );
+    }
+    return acc;
+  }, [] as ProductPurchase[]);
 
-  const productRevenue: ProductRevenue[] = products.reduce(
-    (acc: ProductRevenue[], product) => {
-      const revenue = purchases
+  const productRevenue = products
+    .map((product) => ({
+      name: product.name,
+      revenue: purchases
         .filter((p) => p.product_id === product.id)
-        .reduce((sum, purchase) => sum + (Number(purchase.price) || 0), 0);
-      acc.push({
-        name: product.name || "Unnamed Product",
-        revenue: Number(revenue.toFixed(2)),
-      });
-      return acc;
-    },
-    [],
-  );
+        .reduce((sum, p) => sum + p.price, 0),
+    }))
+    .filter((item) => item.revenue > 0);
 
-  const recentPurchases: RecentPurchase[] = purchases
-    ? purchases
-        .sort(
-          (a, b) =>
-            new Date(b.purchase_date).getTime() -
-            new Date(a.purchase_date).getTime(),
-        )
-        .slice(0, 5)
-        .map((purchase) => ({
-          id: purchase.id,
-          customer_name:
-            customers?.find((c) => c.id === purchase.customer_id)?.fullname ||
-            "Unknown",
-          product_name:
-            products?.find((p) => p.id === purchase.product_id)?.name ||
-            "Unknown",
-          price: purchase.price,
-          purchase_date: purchase.purchase_date,
-        }))
+  const recentPurchases = purchases
+    ? purchases.slice(0, 10).map((purchase) => ({
+        id: purchase.id,
+        customer_name:
+          customers?.find((c) => c.id === purchase.customer_id)?.fullname ||
+          "Unknown",
+        product_name:
+          products?.find((p) => p.id === purchase.product_id)?.name ||
+          "Unknown",
+        price: purchase.price,
+        purchase_date: purchase.purchase_date,
+      }))
     : [];
 
   return (
     <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
       <Title title="Dashboard" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card
-          sx={{
-            backgroundColor: bgColor,
-            border: `1px solid ${borderColor}`,
-          }}
-          elevation={0}
-        >
-          <div className="p-4">
-            <h2 className="text-lg font-semibold mb-4">
-              Product Purchase Distribution
-            </h2>
-            <Divider sx={{ borderColor }} />
-          </div>
-          <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] flex items-center justify-center">
-            <ResponsiveContainer
-              width="100%"
-              height="100%"
-              style={{ userSelect: "none" }}
-            >
-              <PieChart style={{ backgroundColor: bgColor }}>
-                <Pie
-                  data={productPurchases}
-                  cx="40%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, value, percent }) =>
-                    percent > 0.03 ? `${name}: ${value}` : ""
-                  }
-                  outerRadius="45%"
-                  fill="#8884d8"
-                  dataKey="value"
-                  isAnimationActive={false}
-                >
-                  {productPurchases.map((entry: ProductPurchase) => (
-                    <Cell
-                      key={`cell-${entry.id}`}
-                      fill={
-                        COLORS[productPurchases.indexOf(entry) % COLORS.length]
-                      }
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend
-                  verticalAlign="middle"
-                  align="right"
-                  layout="vertical"
-                  wrapperStyle={{
-                    paddingLeft: "1.25rem",
-                    fontSize: "0.875rem",
-                    maxHeight: "100%",
-                    overflowY: "auto",
-                    right: "1.25rem",
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        <Card
-          sx={{
-            backgroundColor: bgColor,
-            border: `1px solid ${borderColor}`,
-          }}
-          elevation={0}
-        >
-          <div className="p-4">
-            <h2 className="text-lg font-semibold mb-4">Product Revenue</h2>
-            <Divider sx={{ borderColor }} />
-          </div>
-          <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={productRevenue}
-                style={{ backgroundColor: bgColor, padding: "20px" }}
-                margin={{
-                  top: 30,
-                  right: 40,
-                  left: 40,
-                  bottom: 80,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="name"
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis tickFormatter={(value) => `$${value}`} />
-                <Tooltip
-                  cursor={{ fill: "transparent" }}
-                  formatter={(value) => [`$${value}`, "Revenue"]}
-                />
-                <Legend />
-                <Bar
-                  dataKey="revenue"
-                  radius={[4, 4, 0, 0]}
-                  maxBarSize={60}
-                  isAnimationActive={false}
-                >
-                  {productRevenue.map((entry, index) => (
-                    <Cell
-                      key={`cell-${entry.name}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
+        <PurchaseDistributionCard
+          data={productPurchases}
+          cardStyle={cardStyle}
+          dividerColor={dividerColor}
+        />
+        <ProductRevenueCard
+          data={productRevenue}
+          cardStyle={cardStyle}
+          dividerColor={dividerColor}
+        />
       </div>
-
-      <Card
-        className="mt-4"
-        sx={{
-          backgroundColor: bgColor,
-          border: `1px solid ${borderColor}`,
-        }}
-        elevation={0}
-      >
-        <div className="p-4">
-          <h2 className="text-lg font-semibold mb-4">Recent Purchases</h2>
-          <Divider sx={{ borderColor }} />
-        </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead>
-              <tr
-                className="border-b border-solid"
-                style={{ borderColor: borderColor }}
-              >
-                <th
-                  className="px-4 sm:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-r border-solid"
-                  style={{ borderColor: borderColor }}
-                >
-                  Date
-                </th>
-                <th
-                  className="px-4 sm:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-r border-solid"
-                  style={{ borderColor: borderColor }}
-                >
-                  Customer
-                </th>
-                <th
-                  className="px-4 sm:px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider border-r border-solid"
-                  style={{ borderColor: borderColor }}
-                >
-                  Product
-                </th>
-                <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider">
-                  Price
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentPurchases.map((purchase, index) => (
-                <tr
-                  key={purchase.id}
-                  className={
-                    index !== recentPurchases.length - 1
-                      ? "border-b border-solid"
-                      : ""
-                  }
-                  style={{ borderColor: borderColor }}
-                >
-                  <td
-                    className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm border-r border-solid"
-                    style={{ borderColor: borderColor }}
-                  >
-                    {new Date(purchase.purchase_date).toLocaleDateString(
-                      undefined,
-                      {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      },
-                    )}
-                  </td>
-                  <td
-                    className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium border-r border-solid"
-                    style={{ borderColor: borderColor }}
-                  >
-                    {purchase.customer_name}
-                  </td>
-                  <td
-                    className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm border-r border-solid"
-                    style={{ borderColor: borderColor }}
-                  >
-                    {purchase.product_name}
-                  </td>
-                  <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-right font-medium">
-                    ${purchase.price.toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-              {recentPurchases.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="px-4 sm:px-6 py-3 sm:py-4 text-center text-sm"
-                  >
-                    No recent purchases found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+      <RecentPurchasesCard
+        data={recentPurchases}
+        cardStyle={cardStyle}
+        dividerColor={dividerColor}
+      />
     </div>
   );
 };
