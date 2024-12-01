@@ -66,30 +66,25 @@ export const PurchaseDistributionCard = ({
 }: PurchaseDistributionProps) => (
   <Card sx={cardStyle}>
     <div className="p-4">
-      <h2 className="text-lg font-semibold mb-4">
-        Product Purchase Distribution
-      </h2>
+      <h2 className="text-lg font-semibold mb-4">Purchase Distribution</h2>
       <Divider sx={{ borderColor: dividerColor }} />
     </div>
     <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] flex items-center justify-center">
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-        style={{ userSelect: "none" }}
-      >
+      <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
-            cx="35%"
-            cy="45%"
+            cx="50%"
+            cy="50%"
             labelLine={false}
-            label={({ name, value, percent }) =>
-              percent > 0.03 ? `${name}: ${value}` : ""
-            }
-            outerRadius="45%"
+            outerRadius={120}
             fill="#8884d8"
             dataKey="value"
             isAnimationActive={false}
+            activeShape={false}
+            onClick={(e) => e.preventDefault()}
+            onMouseDown={(e) => e.preventDefault()}
+            onMouseUp={(e) => e.preventDefault()}
           >
             {data.map((entry, index) => (
               <Cell
@@ -98,19 +93,14 @@ export const PurchaseDistributionCard = ({
               />
             ))}
           </Pie>
-          <Tooltip />
-          <Legend
-            verticalAlign="middle"
-            align="right"
-            layout="vertical"
-            wrapperStyle={{
-              paddingLeft: "1.25rem",
-              fontSize: "0.875rem",
-              maxHeight: "100%",
-              overflowY: "auto",
-              right: "1.25rem",
-            }}
+          <Tooltip
+            formatter={(value: number, name: string) => [
+              `${value} purchases`,
+              name,
+            ]}
+            cursor={false}
           />
+          <Legend />
         </PieChart>
       </ResponsiveContainer>
     </div>

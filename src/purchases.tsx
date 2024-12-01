@@ -11,7 +11,6 @@ import {
   CreateButton,
   Create,
   SimpleForm,
-  TextInput,
   NumberInput,
   ReferenceInput,
   DateInput,
