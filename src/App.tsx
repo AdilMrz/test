@@ -54,6 +54,7 @@ export const App = () => (
         authProvider={authProvider}
         i18nProvider={defaultI18nProvider}
         loginPage={LoginPage}
+        defaultTheme="light"
         {...themes}
       >
         <Resource
