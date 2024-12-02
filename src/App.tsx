@@ -57,10 +57,17 @@ const authProvider = supabaseAuthProvider(supabaseClient, {
   getPermissions: async () => {
     const {
       data: { user },
+      error,
     } = await supabaseClient.auth.getUser();
-    return AUTHORIZED_EMAILS.includes(user?.email || "") ? "admin" : null;
+    if (error || !user) return null;
+    return AUTHORIZED_EMAILS.includes(user.email || "") ? "admin" : "user";
   },
 });
+
+interface AuthError {
+  status?: number;
+  message?: string;
+}
 
 // Add authorization check to the authProvider
 const authProviderWithCheck = {
@@ -69,7 +76,29 @@ const authProviderWithCheck = {
     if (!AUTHORIZED_EMAILS.includes(params.email)) {
       return Promise.reject("Email non autorisé");
     }
-    return authProvider.login(params);
+    const result = await authProvider.login(params);
+    return result;
+  },
+  checkAuth: async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabaseClient.auth.getUser();
+    if (error || !user) {
+      return Promise.reject();
+    }
+    if (!AUTHORIZED_EMAILS.includes(user.email || "")) {
+      return Promise.reject("Email non autorisé");
+    }
+    return Promise.resolve();
+  },
+  checkError: async (error: AuthError) => {
+    const status = error?.status;
+    if (status === 401 || status === 403) {
+      await supabaseClient.auth.signOut();
+      return Promise.reject();
+    }
+    return Promise.resolve();
   },
 };
 
