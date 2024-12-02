@@ -35,9 +35,9 @@ const ListActions = () => (
 
 const filters = [
   <SearchInput
-    key="product"
-    source="product_id"
-    placeholder="Search"
+    key="search"
+    source="customer_fullname"
+    placeholder="Search by customer name"
     resettable
     alwaysOn
     sx={{ m: 1 }}
@@ -53,13 +53,11 @@ const PurchaseList = () => (
       sx={{ "& .RaList-main": { padding: 0 } }}
     >
       <DatagridConfigurable>
-        <DateField source="purchase_date" />
-        <ReferenceField source="customer_id" reference="customers">
-          <TextField source="fullname" />
-        </ReferenceField>
+        <TextField source="customer_fullname" label="Customer" />
         <ReferenceField source="product_id" reference="products">
           <TextField source="name" />
         </ReferenceField>
+        <DateField source="purchase_date" />
         <NumberField
           source="price"
           options={{ style: "currency", currency: "USD" }}
@@ -121,7 +119,14 @@ export const PurchaseCreate = () => (
       <ReferenceInput source="product_id" reference="products">
         <SelectInput optionText="name" />
       </ReferenceInput>
-      <NumberInput source="price" />
+      <NumberInput
+        source="price"
+        min={0}
+        validate={(value) => {
+          if (value < 0) return "Price cannot be negative";
+          return undefined;
+        }}
+      />
       <DateInput source="purchase_date" />
     </SimpleForm>
   </Create>
@@ -154,7 +159,14 @@ export const PurchaseEdit = () => (
       <ReferenceInput source="product_id" reference="products">
         <SelectInput optionText="name" />
       </ReferenceInput>
-      <NumberInput source="price" />
+      <NumberInput
+        source="price"
+        min={0}
+        validate={(value) => {
+          if (value < 0) return "Price cannot be negative";
+          return undefined;
+        }}
+      />
       <DateInput source="purchase_date" />
     </SimpleForm>
   </Edit>
