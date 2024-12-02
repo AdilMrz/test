@@ -115,17 +115,24 @@ export const Dashboard = () => {
     .filter((item) => item.revenue > 0) as ProductRevenue[];
 
   const recentPurchases = purchases
-    ? purchases.slice(0, 10).map((purchase) => ({
-        id: purchase.id,
-        customer_name:
-          customers?.find((c) => c.id === purchase.customer_id)?.fullname ||
-          "Unknown",
-        product_name:
-          products?.find((p) => p.id === purchase.product_id)?.name ||
-          "Unknown",
-        price: purchase.price,
-        purchase_date: purchase.purchase_date,
-      }))
+    ? purchases
+        .sort(
+          (a, b) =>
+            new Date(b.purchase_date).getTime() -
+            new Date(a.purchase_date).getTime(),
+        )
+        .slice(0, 10)
+        .map((purchase) => ({
+          id: purchase.id,
+          customer_name:
+            customers?.find((c) => c.id === purchase.customer_id)?.fullname ||
+            "Unknown",
+          product_name:
+            products?.find((p) => p.id === purchase.product_id)?.name ||
+            "Unknown",
+          price: purchase.price,
+          purchase_date: purchase.purchase_date,
+        }))
     : ([] as RecentPurchaseData[]);
 
   return (
