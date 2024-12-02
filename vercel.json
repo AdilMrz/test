@@ -1,7 +1,21 @@
 {
   "routes": [
     {
-      "src": "/manifest\\.json",
+      "src": "^/assets/.*\\.css$",
+      "headers": {
+        "Content-Type": "text/css"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/assets/.*\\.(js|mjs)$",
+      "headers": {
+        "Content-Type": "application/javascript"
+      },
+      "continue": true
+    },
+    {
+      "src": "^/manifest\\.json$",
       "headers": {
         "Content-Type": "application/manifest+json",
         "Cache-Control": "public, max-age=0, must-revalidate"
@@ -9,18 +23,7 @@
       "dest": "/manifest.json"
     },
     {
-      "src": "/assets/(.*)\\.js",
-      "headers": {
-        "Content-Type": "application/javascript; charset=utf-8"
-      },
-      "continue": true
-    },
-    {
-      "src": "/assets/(.*)\\.mjs",
-      "headers": {
-        "Content-Type": "application/javascript; charset=utf-8"
-      },
-      "continue": true
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
@@ -31,5 +34,6 @@
       },
       "dest": "/index.html"
     }
-  ]
+  ],
+  "cleanUrls": true
 }
