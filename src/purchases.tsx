@@ -35,8 +35,8 @@ const ListActions = () => (
 
 const filters = [
   <SearchInput
-    key="search"
-    source="customer_fullname"
+    key="customer_search"
+    source="customer_fullname@ilike"
     placeholder="Search by customer name"
     resettable
     alwaysOn
