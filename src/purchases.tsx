@@ -20,6 +20,7 @@ import {
   EditButton,
   SelectInput,
   Button,
+  WrapperField,
 } from "react-admin";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@mui/material";
@@ -82,7 +83,9 @@ const PurchaseList = () => (
           label="Price"
         />
         <DateField source="purchase_date" label="Purchase Date" />
-        <EditButton />
+        <WrapperField label="Actions">
+          <EditButton />
+        </WrapperField>
       </DatagridConfigurable>
     </List>
   </Card>

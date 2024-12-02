@@ -16,6 +16,7 @@ import {
   EditButton,
   Button,
   useRecordContext,
+  WrapperField,
 } from "react-admin";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@mui/material";
@@ -66,7 +67,9 @@ const CustomerList = () => (
         <TextField source="fullname" label="Full Name" />
         <EmailField source="email" label="Email" />
         <TextField source="address" label="Address" />
-        <EditButton />
+        <WrapperField label="Actions">
+          <EditButton />
+        </WrapperField>
       </DatagridConfigurable>
     </List>
   </Card>

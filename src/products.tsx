@@ -15,6 +15,7 @@ import {
   EditButton,
   useRecordContext,
   Button,
+  WrapperField,
 } from "react-admin";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@mui/material";
@@ -29,7 +30,6 @@ const ListActions = () => (
   <TopToolbar>
     <SelectColumnsButton />
     <CreateButton />
-    <EditButton />
   </TopToolbar>
 );
 
@@ -70,7 +70,9 @@ const ProductList = () => (
       >
         <TextField source="name" label="Name" />
         <TextField source="description" label="Description" />
-        <EditButton />
+        <WrapperField label="Actions">
+          <EditButton />
+        </WrapperField>
       </DatagridConfigurable>
     </List>
   </Card>
