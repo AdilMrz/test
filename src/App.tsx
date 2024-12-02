@@ -44,7 +44,6 @@ const supabaseClient = createClient(instanceUrl, apiKey);
 const AUTHORIZED_EMAILS = [
   "marzouki.adil1987@gmail.com",
   "jules.dupk@gmail.com",
-  "johndoe@example.com",
 ];
 
 const dataProvider = supabaseDataProvider({
