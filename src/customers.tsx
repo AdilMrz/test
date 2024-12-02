@@ -47,7 +47,20 @@ const CustomerList = () => (
       className="p-0"
       sx={{ "& .RaList-main": { padding: 0 } }}
     >
-      <DatagridConfigurable>
+      <DatagridConfigurable
+        sx={{
+          "& .RaDatagrid-headerCell": {
+            borderBottom: "1px solid #e0e0e0",
+            borderRight: "1px solid #e0e0e0",
+          },
+          "& .RaDatagrid-row": {
+            borderBottom: "1px solid #e0e0e0",
+          },
+          "& .RaDatagrid-rowCell": {
+            borderRight: "1px solid #e0e0e0",
+          },
+        }}
+      >
         <TextField source="fullname" />
         <EmailField source="email" />
         <TextField source="address" />

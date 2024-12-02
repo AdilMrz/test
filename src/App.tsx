@@ -11,6 +11,11 @@ import {
   supabaseAuthProvider,
 } from "ra-supabase";
 import {
+  People as PeopleIcon,
+  ShoppingCart as ShoppingCartIcon,
+  Inventory as InventoryIcon,
+} from "@mui/icons-material";
+import {
   CustomerList,
   CustomerCreate,
   CustomerShow,
@@ -63,6 +68,7 @@ export const App = () => (
           edit={CustomerEdit}
           create={CustomerCreate}
           show={CustomerShow}
+          icon={PeopleIcon}
         />
         <Resource
           name="products"
@@ -70,6 +76,7 @@ export const App = () => (
           edit={ProductEdit}
           create={ProductCreate}
           show={ProductShow}
+          icon={InventoryIcon}
         />
         <Resource
           name="purchases"
@@ -77,6 +84,7 @@ export const App = () => (
           edit={PurchaseEdit}
           create={PurchaseCreate}
           show={PurchaseShow}
+          icon={ShoppingCartIcon}
         />
         <CustomRoutes noLayout>
           <Route path={SetPasswordPage.path} element={<SetPasswordPage />} />

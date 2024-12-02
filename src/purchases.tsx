@@ -37,7 +37,7 @@ const filters = [
   <SearchInput
     key="customer_search"
     source="customer_fullname@ilike"
-    placeholder="Search by customer name"
+    placeholder="Search"
     resettable
     alwaysOn
     sx={{ m: 1 }}
@@ -52,15 +52,33 @@ const PurchaseList = () => (
       className="p-0"
       sx={{ "& .RaList-main": { padding: 0 } }}
     >
-      <DatagridConfigurable>
+      <DatagridConfigurable
+        sx={{
+          "& .RaDatagrid-headerCell": {
+            borderBottom: "1px solid #e0e0e0",
+            borderRight: "1px solid #e0e0e0",
+          },
+          "& .RaDatagrid-row": {
+            borderBottom: "1px solid #e0e0e0",
+          },
+          "& .RaDatagrid-rowCell": {
+            borderRight: "1px solid #e0e0e0",
+          },
+        }}
+      >
+        <DateField source="purchase_date" label="Date" />
         <TextField source="customer_fullname" label="Customer" />
-        <ReferenceField source="product_id" reference="products">
+        <ReferenceField
+          source="product_id"
+          reference="products"
+          label="Product"
+        >
           <TextField source="name" />
         </ReferenceField>
-        <DateField source="purchase_date" />
         <NumberField
           source="price"
           options={{ style: "currency", currency: "USD" }}
+          label="Price"
         />
         <EditButton label="Edit Purchase" />
       </DatagridConfigurable>
