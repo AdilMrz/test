@@ -41,10 +41,7 @@ const instanceUrl = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = createClient(instanceUrl, apiKey);
 
-const AUTHORIZED_EMAILS = [
-  "marzouki.adil1987@gmail.com",
-  "jules.dupk@gmail.com",
-];
+const AUTHORIZED_EMAILS = ["adil.mrz.1987@gmail.com", "jules.dupk@gmail.com"];
 
 const dataProvider = supabaseDataProvider({
   instanceUrl,
