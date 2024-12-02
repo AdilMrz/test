@@ -40,12 +40,37 @@ import themes from "./themes";
 const instanceUrl = import.meta.env.VITE_SUPABASE_URL;
 const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseClient = createClient(instanceUrl, apiKey);
+
+const AUTHORIZED_EMAILS = [
+  "marzouki.adil1987@gmail.com",
+  "jules.dupk@gmail.com",
+];
+
 const dataProvider = supabaseDataProvider({
   instanceUrl,
   apiKey,
   supabaseClient,
 });
-const authProvider = supabaseAuthProvider(supabaseClient, {});
+
+const authProvider = supabaseAuthProvider(supabaseClient, {
+  getPermissions: async () => {
+    const {
+      data: { user },
+    } = await supabaseClient.auth.getUser();
+    return AUTHORIZED_EMAILS.includes(user?.email || "") ? "admin" : null;
+  },
+});
+
+// Add authorization check to the authProvider
+const authProviderWithCheck = {
+  ...authProvider,
+  login: async (params: { email: string; password: string }) => {
+    if (!AUTHORIZED_EMAILS.includes(params.email)) {
+      return Promise.reject("Email non autorisé");
+    }
+    return authProvider.login(params);
+  },
+};
 
 const queryClient = new QueryClient();
 
@@ -56,7 +81,7 @@ export const App = () => (
       <Admin
         dashboard={Dashboard}
         dataProvider={dataProvider}
-        authProvider={authProvider}
+        authProvider={authProviderWithCheck}
         i18nProvider={defaultI18nProvider}
         loginPage={LoginPage}
         defaultTheme="light"

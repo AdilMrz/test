@@ -37,7 +37,7 @@ interface Customer {
   fullname: string;
 }
 
-interface RecentPurchase {
+interface RecentPurchaseData {
   id: number;
   customer_name: string;
   product_name: string;
@@ -112,7 +112,7 @@ export const Dashboard = () => {
         .filter((p) => p.product_id === product.id)
         .reduce((sum, p) => sum + p.price, 0),
     }))
-    .filter((item) => item.revenue > 0);
+    .filter((item) => item.revenue > 0) as ProductRevenue[];
 
   const recentPurchases = purchases
     ? purchases.slice(0, 10).map((purchase) => ({
@@ -126,7 +126,7 @@ export const Dashboard = () => {
         price: purchase.price,
         purchase_date: purchase.purchase_date,
       }))
-    : [];
+    : ([] as RecentPurchaseData[]);
 
   return (
     <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
