@@ -48,6 +48,8 @@ const CustomerList = () => (
       sx={{ "& .RaList-main": { padding: 0 } }}
     >
       <DatagridConfigurable
+        omit={[]}
+        preferenceKey="customers.datagrid"
         sx={{
           "& .RaDatagrid-headerCell": {
             borderBottom: "1px solid #e0e0e0",
@@ -61,10 +63,10 @@ const CustomerList = () => (
           },
         }}
       >
-        <TextField source="fullname" />
-        <EmailField source="email" />
-        <TextField source="address" />
-        <EditButton label="Edit Customer" />
+        <TextField source="fullname" label="Full Name" />
+        <EmailField source="email" label="Email" />
+        <TextField source="address" label="Address" />
+        <EditButton />
       </DatagridConfigurable>
     </List>
   </Card>

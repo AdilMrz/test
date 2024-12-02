@@ -53,6 +53,8 @@ const ProductList = () => (
       sx={{ "& .RaList-main": { padding: 0 } }}
     >
       <DatagridConfigurable
+        omit={[]}
+        preferenceKey="products.datagrid"
         sx={{
           "& .RaDatagrid-headerCell": {
             borderBottom: "1px solid #e0e0e0",
@@ -66,9 +68,9 @@ const ProductList = () => (
           },
         }}
       >
-        <TextField source="name" />
-        <TextField source="description" />
-        <EditButton label="Edit Product" />
+        <TextField source="name" label="Name" />
+        <TextField source="description" label="Description" />
+        <EditButton />
       </DatagridConfigurable>
     </List>
   </Card>

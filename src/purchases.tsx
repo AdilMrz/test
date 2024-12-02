@@ -53,6 +53,8 @@ const PurchaseList = () => (
       sx={{ "& .RaList-main": { padding: 0 } }}
     >
       <DatagridConfigurable
+        omit={[]}
+        preferenceKey="purchases.datagrid"
         sx={{
           "& .RaDatagrid-headerCell": {
             borderBottom: "1px solid #e0e0e0",
@@ -66,8 +68,7 @@ const PurchaseList = () => (
           },
         }}
       >
-        <DateField source="purchase_date" label="Date" />
-        <TextField source="customer_fullname" label="Customer" />
+        <TextField source="customer_fullname" label="Customer Name" />
         <ReferenceField
           source="product_id"
           reference="products"
@@ -80,7 +81,8 @@ const PurchaseList = () => (
           options={{ style: "currency", currency: "USD" }}
           label="Price"
         />
-        <EditButton label="Edit Purchase" />
+        <DateField source="purchase_date" label="Purchase Date" />
+        <EditButton />
       </DatagridConfigurable>
     </List>
   </Card>
