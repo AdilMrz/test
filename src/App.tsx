@@ -73,7 +73,18 @@ const authProviderWithCheck = {
   },
 };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 30000,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 // App setup
 export const App = () => (
