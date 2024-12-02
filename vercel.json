@@ -1,31 +1,19 @@
 {
-  "version": 2,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "/manifest.json"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html",
-      "headers": {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Content-Security-Policy": "default-src 'self' https://*.vercel.app https://*.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://vercel.live; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://vercel.live wss://*.vercel.app"
-      }
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
-  "build": {
-    "env": {
-      "VITE_SUPABASE_URL": "@vite_supabase_url",
-      "VITE_SUPABASE_ANON_KEY": "@vite_supabase_anon_key"
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
-  }
+  ]
 }
