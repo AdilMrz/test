@@ -8,7 +8,6 @@ import {
   TextField,
   TopToolbar,
   SelectColumnsButton,
-  CreateButton,
   Create,
   SimpleForm,
   NumberInput,
@@ -145,18 +144,7 @@ const PageTitle = () => {
   );
 };
 
-const ShowActions = () => {
-  const navigate = useNavigate();
-  return (
-    <TopToolbar>
-      <Button label="Back" onClick={() => navigate("/purchases")}>
-        <ArrowBack />
-      </Button>
-    </TopToolbar>
-  );
-};
-
-const EditActions = () => {
+const BackActions = () => {
   const navigate = useNavigate();
   return (
     <TopToolbar>
@@ -201,7 +189,7 @@ const CreateCustomerDialog = ({ open, onClose }: CreateCustomerDialogProps) => {
             refresh();
             onClose();
           },
-          onError: (error) => {
+          onError: () => {
             notify("Error creating customer", { type: "error" });
           },
         },
@@ -378,7 +366,7 @@ export const PurchaseCreate = () => {
 };
 
 export const PurchaseShow = () => (
-  <Show title={<PageTitle />} actions={<ShowActions />}>
+  <Show title={<PageTitle />} actions={<BackActions />}>
     <SimpleShowLayout>
       <DateField source="purchase_date" />
       <ReferenceField source="customer_id" reference="customers">
@@ -396,7 +384,7 @@ export const PurchaseShow = () => (
 );
 
 export const PurchaseEdit = () => (
-  <Edit title={<PageTitle />} actions={<EditActions />}>
+  <Edit title={<PageTitle />} actions={<BackActions />}>
     <SimpleForm>
       <ReferenceInput source="customer_id" reference="customers">
         <SelectInput optionText="fullname" />
