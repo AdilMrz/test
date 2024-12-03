@@ -10,7 +10,7 @@ import {
 
 import { Dashboard } from "./Dashboard";
 import themes from "./themes";
-import { resources } from "./Appresources";
+import { resources } from "./AppResources";
 import { queryClientConfig } from "./auth";
 import { dataProvider, authProvider } from "./supabase";
 
