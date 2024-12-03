@@ -3,7 +3,6 @@ import {
   List,
   SearchInput,
   TextField,
-  NumberField,
   WrapperField,
   EditButton,
 } from "react-admin";
@@ -37,12 +36,6 @@ export const ProductList = () => (
       >
         <TextField source="name" label="Name" />
         <TextField source="description" label="Description" />
-        <NumberField
-          source="price"
-          label="Price"
-          options={{ style: "currency", currency: "USD" }}
-        />
-        <NumberField source="stock" label="Stock" />
         <WrapperField label="Actions">
           <EditButton />
         </WrapperField>
