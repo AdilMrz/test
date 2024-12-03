@@ -52,4 +52,18 @@ export const authProvider = {
     }
     return Promise.resolve();
   },
+  getIdentity: async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabaseClient.auth.getUser();
+    if (error || !user) {
+      return Promise.reject(error);
+    }
+    return Promise.resolve({
+      id: user.id,
+      fullName: user.email,
+      email: user.email,
+    });
+  },
 };

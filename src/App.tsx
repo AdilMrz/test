@@ -7,12 +7,12 @@ import {
   SetPasswordPage,
   defaultI18nProvider,
 } from "ra-supabase";
-
 import { Dashboard } from "./Dashboard";
 import themes from "./themes";
 import { resources } from "./AppResources";
 import { queryClientConfig } from "./auth";
 import { dataProvider, authProvider } from "./supabase";
+import CustomLayout from "./CustomLayout";
 
 const queryClient = new QueryClient(queryClientConfig);
 
@@ -26,6 +26,7 @@ export const App = () => (
         i18nProvider={defaultI18nProvider}
         loginPage={LoginPage}
         defaultTheme="light"
+        layout={CustomLayout}
         {...themes}
       >
         {resources.map((resource) => (
