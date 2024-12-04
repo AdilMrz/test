@@ -11,7 +11,7 @@ import { useState } from "react";
 interface CreateCustomerDialogProps {
   open: boolean;
   onClose: () => void;
-  onCustomerCreated: (customer: { id: number; fullname: string }) => void;
+  onCustomerCreated: () => void;
 }
 
 export const CreateCustomerDialog = ({
@@ -28,12 +28,10 @@ export const CreateCustomerDialog = ({
     address: "",
   });
 
-  const handleSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      notify("Please enter a valid email address", { type: "error" });
+      notify("Invalid email format", { type: "error" });
       return;
     }
 
@@ -43,27 +41,18 @@ export const CreateCustomerDialog = ({
         { data: formData },
         {
           onSuccess: (response) => {
-            notify("Customer created successfully");
+            notify("ra.notification.created", { type: "success" });
             refresh();
-            onCustomerCreated({
-              id: response.data.id,
-              fullname: response.data.fullname,
-            });
+            onCustomerCreated();
             onClose();
-            // Reset form data
-            setFormData({
-              fullname: "",
-              email: "",
-              address: "",
-            });
           },
           onError: () => {
-            notify("Error creating customer", { type: "error" });
+            notify("ra.notification.http_error", { type: "error" });
           },
         },
       );
     } catch (error) {
-      notify("Error creating customer", { type: "error" });
+      notify("ra.notification.http_error", { type: "error" });
     }
   };
 

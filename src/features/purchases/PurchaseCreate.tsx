@@ -22,6 +22,7 @@ export const PurchaseCreate = () => {
 
   const handleCustomerCreated = () => {
     refresh();
+    setIsCreateCustomerOpen(false);
   };
 
   return (
@@ -51,7 +52,10 @@ export const PurchaseCreate = () => {
           <div style={{ position: "absolute", right: "32px", top: "0" }}>
             <MuiButton
               startIcon={<AddIcon />}
-              onClick={() => setIsCreateCustomerOpen(true)}
+              onClick={(e: React.MouseEvent) => {
+                e.preventDefault();
+                setIsCreateCustomerOpen(true);
+              }}
               variant="outlined"
               size="medium"
               sx={{
