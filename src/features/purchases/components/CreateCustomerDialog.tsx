@@ -28,7 +28,9 @@ export const CreateCustomerDialog = ({
     address: "",
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       notify("Please enter a valid email address", { type: "error" });
@@ -48,6 +50,12 @@ export const CreateCustomerDialog = ({
               fullname: response.data.fullname,
             });
             onClose();
+            // Reset form data
+            setFormData({
+              fullname: "",
+              email: "",
+              address: "",
+            });
           },
           onError: () => {
             notify("Error creating customer", { type: "error" });
@@ -81,7 +89,10 @@ export const CreateCustomerDialog = ({
         Create New Customer
       </DialogTitle>
       <DialogContent sx={{ padding: "24px" }}>
-        <div className="flex flex-col gap-4 min-w-[400px] mt-2">
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="flex flex-col gap-4 min-w-[400px] mt-2"
+        >
           <input
             type="text"
             placeholder="Full Name"
@@ -99,8 +110,6 @@ export const CreateCustomerDialog = ({
               setFormData({ ...formData, email: e.target.value })
             }
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
-            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-            required
           />
           <input
             type="text"
@@ -111,7 +120,7 @@ export const CreateCustomerDialog = ({
             }
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
           />
-        </div>
+        </form>
       </DialogContent>
       <DialogActions
         sx={{
