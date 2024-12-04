@@ -6,6 +6,9 @@ import {
   ProductRevenueCard,
   RecentPurchasesCard,
 } from "./DashboardCards";
+import { DateRangeFilter } from "./DateRangefilter";
+import { exportDashboardToPDF } from "./utils/dashboardExport";
+import { useState } from "react";
 
 interface Product {
   id: number;
@@ -46,6 +49,9 @@ interface RecentPurchaseData {
 }
 
 export const Dashboard = () => {
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
   const bgColor = isDarkMode ? "#151221" : "#eef2ea";
@@ -77,9 +83,9 @@ export const Dashboard = () => {
         sort: { field: "purchase_date", order: "DESC" },
       },
       {
-        refetchInterval: 60000, // Refetch every minute
-        refetchOnWindowFocus: true, // Refetch when window regains focus
-        refetchOnMount: true, // Refetch when component mounts
+        refetchInterval: 60000,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true,
       },
     );
 
@@ -93,8 +99,18 @@ export const Dashboard = () => {
     return <Loading />;
   if (!products || !purchases || !customers) return null;
 
+  const filteredPurchases = purchases.filter((purchase) => {
+    if (!startDate && !endDate) return true;
+    const purchaseDate = new Date(purchase.purchase_date);
+    if (startDate && purchaseDate < startDate) return false;
+    if (endDate && purchaseDate > endDate) return false;
+    return true;
+  });
+
   const productPurchases = products.reduce((acc, product) => {
-    const count = purchases.filter((p) => p.product_id === product.id).length;
+    const count = filteredPurchases.filter(
+      (p) => p.product_id === product.id,
+    ).length;
     if (count > 0) {
       acc.push({
         id: product.id,
@@ -108,36 +124,44 @@ export const Dashboard = () => {
   const productRevenue = products
     .map((product) => ({
       name: product.name,
-      revenue: purchases
+      revenue: filteredPurchases
         .filter((p) => p.product_id === product.id)
         .reduce((sum, p) => sum + p.price, 0),
     }))
     .filter((item) => item.revenue > 0) as ProductRevenue[];
 
-  const recentPurchases = purchases
-    ? purchases
-        .sort(
-          (a, b) =>
-            new Date(b.purchase_date).getTime() -
-            new Date(a.purchase_date).getTime(),
-        )
-        .slice(0, 10)
-        .map((purchase) => ({
-          id: purchase.id,
-          customer_name:
-            customers?.find((c) => c.id === purchase.customer_id)?.fullname ||
-            "Unknown",
-          product_name:
-            products?.find((p) => p.id === purchase.product_id)?.name ||
-            "Unknown",
-          price: purchase.price,
-          purchase_date: purchase.purchase_date,
-        }))
-    : ([] as RecentPurchaseData[]);
+  const recentPurchases = filteredPurchases.slice(0, 10).map((purchase) => ({
+    id: purchase.id,
+    customer_name:
+      customers?.find((c) => c.id === purchase.customer_id)?.fullname ||
+      "Unknown",
+    product_name:
+      products?.find((p) => p.id === purchase.product_id)?.name || "Unknown",
+    price: purchase.price,
+    purchase_date: purchase.purchase_date,
+  }));
+
+  const handleExport = () => {
+    exportDashboardToPDF({
+      startDate,
+      endDate,
+      productPurchases,
+      productRevenue,
+      recentPurchases,
+    });
+  };
 
   return (
     <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
       <Title title="Dashboard" />
+      <DateRangeFilter
+        startDate={startDate}
+        endDate={endDate}
+        onStartDateChange={setStartDate}
+        onEndDateChange={setEndDate}
+        cardStyle={cardStyle}
+        onExport={handleExport}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <PurchaseDistributionCard
           data={productPurchases}

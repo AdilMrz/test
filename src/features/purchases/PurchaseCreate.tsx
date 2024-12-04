@@ -8,21 +8,43 @@ import {
   Button,
   useRefresh,
   TopToolbar,
+  useGetIdentity,
 } from "react-admin";
 import { Button as MuiButton } from "@mui/material";
 import { Add as AddIcon, ArrowBack } from "@mui/icons-material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateCustomerDialog } from "./components/CreateCustomerDialog";
+import { logAction } from "../../utils/logger";
+import { LOG_ACTIONS } from "../../utils/logActions";
+
+interface PurchaseData {
+  customer_id: string;
+  product_id: string;
+  price: number;
+  purchase_date: string;
+}
 
 export const PurchaseCreate = () => {
   const [isCreateCustomerOpen, setIsCreateCustomerOpen] = useState(false);
   const refresh = useRefresh();
   const navigate = useNavigate();
+  const { identity } = useGetIdentity();
 
   const handleCustomerCreated = () => {
     refresh();
     setIsCreateCustomerOpen(false);
+  };
+
+  const transform = async (data: PurchaseData) => {
+    if (identity?.email) {
+      await logAction(
+        identity.email,
+        LOG_ACTIONS.CREATE_PURCHASE,
+        `Created purchase for customer ${data.customer_id}`,
+      );
+    }
+    return data;
   };
 
   return (
@@ -34,6 +56,7 @@ export const PurchaseCreate = () => {
           </Button>
         </TopToolbar>
       }
+      transform={transform}
     >
       <SimpleForm>
         <div

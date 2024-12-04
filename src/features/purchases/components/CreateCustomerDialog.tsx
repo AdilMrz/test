@@ -40,7 +40,7 @@ export const CreateCustomerDialog = ({
         "customers",
         { data: formData },
         {
-          onSuccess: (response) => {
+          onSuccess: () => {
             notify("ra.notification.created", { type: "success" });
             refresh();
             onCustomerCreated();

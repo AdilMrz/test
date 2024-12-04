@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { supabaseDataProvider, supabaseAuthProvider } from "ra-supabase";
 import { AUTHORIZED_EMAILS } from "./auth";
 
-const supabaseClient = createClient(
+export const supabaseClient = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );

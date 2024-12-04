@@ -7,50 +7,52 @@ import {
   DialogActions,
   Button as MuiButton,
 } from "@mui/material";
-import type { CreateCustomerDialogProps } from "../types";
-import { THEME_COLORS } from "../constants";
-import { logAction } from "../../../utils/logger";
-import { LOG_ACTIONS } from "../../../utils/logActions";
 
-export const CreateCustomerDialog = ({
+interface CreateContractDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export const CreateContractDialog = ({
   open,
   onClose,
-}: CreateCustomerDialogProps) => {
+}: CreateContractDialogProps) => {
   const [create] = useCreate();
   const notify = useNotify();
   const refresh = useRefresh();
   const { identity } = useGetIdentity();
   const [formData, setFormData] = useState({
-    fullname: "",
-    email: "",
-    address: "",
+    contract_details: "",
   });
 
   const handleSubmit = async () => {
+    if (!identity?.id) {
+      notify("Not authorized", { type: "error" });
+      return;
+    }
+
     try {
       await create(
-        "customers",
-        { data: formData },
+        "contracts",
+        {
+          data: {
+            ...formData,
+            creator_id: identity.id,
+          },
+        },
         {
           onSuccess: () => {
-            notify("Customer created successfully");
-            if (identity?.email) {
-              logAction(
-                identity.email,
-                LOG_ACTIONS.CREATE_CUSTOMER,
-                `Created customer: ${formData.fullname}`,
-              );
-            }
+            notify("Contract created successfully");
             refresh();
             onClose();
           },
           onError: () => {
-            notify("Error creating customer", { type: "error" });
+            notify("Error creating contract", { type: "error" });
           },
         },
       );
     } catch (error) {
-      notify("Error creating customer", { type: "error" });
+      notify("Error creating contract", { type: "error" });
     }
   };
 
@@ -68,40 +70,22 @@ export const CreateCustomerDialog = ({
       <DialogTitle
         sx={{
           borderBottom: "1px solid #e0e0e0",
-          backgroundColor: THEME_COLORS.primary,
+          backgroundColor: "#14532d",
           color: "#ffffff",
           fontSize: "1.2rem",
         }}
       >
-        Create New Customer
+        Create New Contract
       </DialogTitle>
       <DialogContent sx={{ padding: "24px" }}>
         <div className="flex flex-col gap-4 min-w-[400px] mt-2">
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={formData.fullname}
+          <textarea
+            placeholder="Contract Details"
+            value={formData.contract_details}
             onChange={(e) =>
-              setFormData({ ...formData, fullname: e.target.value })
+              setFormData({ ...formData, contract_details: e.target.value })
             }
-            className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
-          />
-          <input
-            type="text"
-            placeholder="Address"
-            value={formData.address}
-            onChange={(e) =>
-              setFormData({ ...formData, address: e.target.value })
-            }
+            rows={4}
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
           />
         </div>
@@ -126,11 +110,11 @@ export const CreateCustomerDialog = ({
           onClick={handleSubmit}
           variant="contained"
           sx={{
-            backgroundColor: THEME_COLORS.primary,
-            "&:hover": { backgroundColor: THEME_COLORS.primaryDark },
+            backgroundColor: "#14532d",
+            "&:hover": { backgroundColor: "#0f4024" },
           }}
         >
-          Create Customer
+          Create Contract
         </MuiButton>
       </DialogActions>
     </Dialog>
