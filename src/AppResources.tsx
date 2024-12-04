@@ -29,7 +29,7 @@ import {
   ContractEdit,
   ContractShow,
 } from "./features/contracts";
-import { LogList } from "./features/logs/LogList";
+import { LogList } from "./utils";
 
 export const resources = [
   {
