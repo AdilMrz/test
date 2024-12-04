@@ -9,6 +9,7 @@ import {
   useRefresh,
   TopToolbar,
   useGetIdentity,
+  useDataProvider,
 } from "react-admin";
 import { Button as MuiButton } from "@mui/material";
 import { Add as AddIcon, ArrowBack } from "@mui/icons-material";
@@ -30,6 +31,7 @@ export const PurchaseCreate = () => {
   const refresh = useRefresh();
   const navigate = useNavigate();
   const { identity } = useGetIdentity();
+  const dataProvider = useDataProvider();
 
   const handleCustomerCreated = () => {
     refresh();
@@ -38,10 +40,13 @@ export const PurchaseCreate = () => {
 
   const transform = async (data: PurchaseData) => {
     if (identity?.email) {
+      const { data: customer } = await dataProvider.getOne("customers", {
+        id: data.customer_id,
+      });
       await logAction(
         identity.email,
         LOG_ACTIONS.CREATE_PURCHASE,
-        `Created purchase for customer ${data.customer_id}`,
+        `Created purchase for customer ${customer.fullname}`,
       );
     }
     return data;
