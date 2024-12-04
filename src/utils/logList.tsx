@@ -6,7 +6,7 @@ export const LogList = () => (
       <TextField source="user_email" label="User Email" />
       <TextField source="action" label="Action" />
       <TextField source="details" label="Details" />
-      <DateField source="created_at" label="Date" />
+      <DateField source="created_at" label="Date" showTime={true} />
     </Datagrid>
   </List>
 );
