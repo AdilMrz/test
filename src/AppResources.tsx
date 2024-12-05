@@ -2,6 +2,7 @@ import {
   People as PeopleIcon,
   ShoppingCart as ShoppingCartIcon,
   Inventory as InventoryIcon,
+  History as HistoryIcon,
 } from "@mui/icons-material";
 import {
   CustomerList,
@@ -21,6 +22,7 @@ import {
   PurchaseShow,
   PurchaseEdit,
 } from "./purchases";
+import { ActivityLogList } from "./features/audit-logs";
 
 export const resources = [
   {
@@ -46,5 +48,11 @@ export const resources = [
     edit: PurchaseEdit,
     show: PurchaseShow,
     icon: ShoppingCartIcon,
+  },
+  {
+    name: "audit_logs",
+    list: ActivityLogList,
+    icon: HistoryIcon,
+    options: { label: "Activity Logs" },
   },
 ];

@@ -11,17 +11,19 @@ import { Dashboard } from "./Dashboard";
 import themes from "./themes";
 import { resources } from "./AppResources";
 import { queryClientConfig } from "./auth";
-import { authProvider, dataProvider } from "./supabase";
+import { authProvider, supabaseClient } from "./supabase";
+import { createTrackingSupabaseProvider } from "./providers/trackingSupabaseProvider";
 import CustomLayout from "./CustomLayout";
 
 const queryClient = new QueryClient(queryClientConfig);
+const trackingDataProvider = createTrackingSupabaseProvider(supabaseClient);
 
 export const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <Admin
         dashboard={Dashboard}
-        dataProvider={dataProvider}
+        dataProvider={trackingDataProvider}
         authProvider={authProvider}
         i18nProvider={defaultI18nProvider}
         loginPage={LoginPage}

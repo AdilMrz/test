@@ -6,6 +6,9 @@ import {
   TextField,
   WrapperField,
   EditButton,
+  DeleteButton,
+  BulkDeleteButton,
+  useRecordContext,
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
@@ -22,6 +25,18 @@ const filters = [
   />,
 ];
 
+const DeleteWithConfirmButton = () => {
+  const record = useRecordContext();
+  if (!record) return null;
+  return (
+    <DeleteButton
+      confirmTitle="Delete Customer"
+      confirmContent={`Are you sure you want to delete the customer "${record.fullname}"? This action will fail if the customer has any associated purchases.`}
+      mutationMode="pessimistic"
+    />
+  );
+};
+
 export const CustomerList = () => (
   <Card>
     <List
@@ -34,12 +49,20 @@ export const CustomerList = () => (
         omit={[]}
         preferenceKey="customers.datagrid"
         sx={DATAGRID_STYLES}
+        bulkActionButtons={
+          <BulkDeleteButton
+            confirmTitle="Delete Customers"
+            confirmContent="Are you sure you want to delete these customers? This action will fail for any customers who have associated purchases."
+            mutationMode="pessimistic"
+          />
+        }
       >
         <TextField source="fullname" label="Full Name" />
         <EmailField source="email" label="Email" />
         <TextField source="address" label="Address" />
         <WrapperField label="Actions">
           <EditButton />
+          <DeleteWithConfirmButton />
         </WrapperField>
       </DatagridConfigurable>
     </List>

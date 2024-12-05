@@ -8,6 +8,9 @@ import {
   DateField,
   WrapperField,
   EditButton,
+  DeleteButton,
+  BulkDeleteButton,
+  useRecordContext,
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
@@ -22,6 +25,18 @@ const filters = [
     sx={{ m: 1 }}
   />,
 ];
+
+const DeleteWithConfirmButton = () => {
+  const record = useRecordContext();
+  if (!record) return null;
+  return (
+    <DeleteButton
+      confirmTitle="Delete Purchase"
+      confirmContent="Are you sure you want to delete this purchase?"
+      mutationMode="pessimistic"
+    />
+  );
+};
 
 export const PurchaseList = () => (
   <Card>
@@ -47,6 +62,13 @@ export const PurchaseList = () => (
             borderRight: "1px solid #e0e0e0",
           },
         }}
+        bulkActionButtons={
+          <BulkDeleteButton
+            confirmTitle="Delete Purchases"
+            confirmContent="Are you sure you want to delete these purchases?"
+            mutationMode="pessimistic"
+          />
+        }
       >
         <TextField source="customer_fullname" label="Customer Name" />
         <ReferenceField
@@ -64,6 +86,7 @@ export const PurchaseList = () => (
         <DateField source="purchase_date" label="Purchase Date" />
         <WrapperField label="Actions">
           <EditButton />
+          <DeleteWithConfirmButton />
         </WrapperField>
       </DatagridConfigurable>
     </List>
