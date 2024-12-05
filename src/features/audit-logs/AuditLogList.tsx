@@ -21,7 +21,7 @@ import { useState } from "react";
 import { Close as CloseIcon } from "@mui/icons-material";
 
 const filters = [
-  <SearchInput key="user_email" source="user_email" alwaysOn />,
+  <SearchInput key="user_email" source="user_email" alwaysOn sx={{ m: 1 }} />,
   <SelectInput
     key="operation"
     source="operation"
