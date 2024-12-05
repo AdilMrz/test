@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCreate, useNotify, useRefresh, useGetIdentity } from "react-admin";
+import { useCreate, useNotify, useRefresh } from "react-admin";
 import {
   Dialog,
   DialogTitle,
@@ -9,8 +9,6 @@ import {
 } from "@mui/material";
 import type { CreateCustomerDialogProps } from "../types";
 import { THEME_COLORS } from "../constants";
-import { logAction } from "../../../utils/logger";
-import { LOG_ACTIONS } from "../../../utils/logActions";
 
 export const CreateCustomerDialog = ({
   open,
@@ -19,7 +17,6 @@ export const CreateCustomerDialog = ({
   const [create] = useCreate();
   const notify = useNotify();
   const refresh = useRefresh();
-  const { identity } = useGetIdentity();
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -34,13 +31,6 @@ export const CreateCustomerDialog = ({
         {
           onSuccess: () => {
             notify("Customer created successfully");
-            if (identity?.email) {
-              logAction(
-                identity.email,
-                LOG_ACTIONS.CREATE_CUSTOMER,
-                `Created customer: ${formData.fullname}`,
-              );
-            }
             refresh();
             onClose();
           },
