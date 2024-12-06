@@ -21,7 +21,12 @@ import { useState } from "react";
 import { Close as CloseIcon } from "@mui/icons-material";
 
 const filters = [
-  <SearchInput key="user_email" source="user_email" alwaysOn sx={{ m: 1 }} />,
+  <SearchInput
+    key="user_email"
+    source="user_email@ilike"
+    alwaysOn
+    sx={{ m: 1 }}
+  />,
   <SelectInput
     key="operation"
     source="operation"
@@ -54,11 +59,15 @@ interface ActivityRecord extends RaRecord {
   details?: string;
 }
 
-const StatusChip = () => {
+interface StatusChipProps {
+  source: string;
+}
+
+const StatusChip = ({ source }: StatusChipProps) => {
   const record = useRecordContext<ActivityRecord>();
   return (
     <ChipField
-      source="status"
+      source={source}
       sx={{
         "&.RaChipField-chip": {
           backgroundColor: record?.status === "success" ? "#4caf50" : "#f44336",
@@ -179,7 +188,7 @@ export const ActivityLogList = () => {
           <TextField source="user_email" />
           <ChipField source="operation" />
           <TextField source="resource" />
-          <StatusChip />
+          <StatusChip source="status" />
           <TextField source="details" />
         </Datagrid>
       </List>

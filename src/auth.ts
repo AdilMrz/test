@@ -1,6 +1,7 @@
 export const AUTHORIZED_EMAILS = [
   "adil.mrz.1987@gmail.com",
   "jules.dupk@gmail.com",
+  "johndoe@example.com",
 ];
 
 export const queryClientConfig = {
