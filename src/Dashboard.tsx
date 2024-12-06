@@ -9,7 +9,7 @@ import {
 import { DateRangeFilter } from "./DateRangefilter";
 import { exportDashboardToPDF } from "./utils/dashboardExport";
 import { useState } from "react";
-
+import { Protected } from "./components/Protected";
 interface Product {
   id: number;
   name: string;
@@ -152,33 +152,35 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
-      <Title title="Dashboard" />
-      <DateRangeFilter
-        startDate={startDate}
-        endDate={endDate}
-        onStartDateChange={setStartDate}
-        onEndDateChange={setEndDate}
-        cardStyle={cardStyle}
-        onExport={handleExport}
-      />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <PurchaseDistributionCard
-          data={productPurchases}
+    <Protected action="read" resource="dashboard">
+      <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
+        <Title title="Dashboard" />
+        <DateRangeFilter
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
           cardStyle={cardStyle}
-          dividerColor={dividerColor}
+          onExport={handleExport}
         />
-        <ProductRevenueCard
-          data={productRevenue}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <PurchaseDistributionCard
+            data={productPurchases}
+            cardStyle={cardStyle}
+            dividerColor={dividerColor}
+          />
+          <ProductRevenueCard
+            data={productRevenue}
+            cardStyle={cardStyle}
+            dividerColor={dividerColor}
+          />
+        </div>
+        <RecentPurchasesCard
+          data={recentPurchases}
           cardStyle={cardStyle}
           dividerColor={dividerColor}
         />
       </div>
-      <RecentPurchasesCard
-        data={recentPurchases}
-        cardStyle={cardStyle}
-        dividerColor={dividerColor}
-      />
-    </div>
+    </Protected>
   );
 };

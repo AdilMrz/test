@@ -14,6 +14,7 @@ import {
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
+import { Protected } from "../../components/Protected";
 
 const filters = [
   <SearchInput
@@ -30,11 +31,13 @@ const DeleteWithConfirmButton = () => {
   const record = useRecordContext();
   if (!record) return null;
   return (
-    <DeleteButton
-      confirmTitle="Delete Purchase"
-      confirmContent="Are you sure you want to delete this purchase?"
-      mutationMode="pessimistic"
-    />
+    <Protected action="delete" resource="purchases">
+      <DeleteButton
+        confirmTitle="Delete Purchase"
+        confirmContent="Are you sure you want to delete this purchase?"
+        mutationMode="pessimistic"
+      />
+    </Protected>
   );
 };
 
@@ -63,11 +66,13 @@ export const PurchaseList = () => (
           },
         }}
         bulkActionButtons={
-          <BulkDeleteButton
-            confirmTitle="Delete Purchases"
-            confirmContent="Are you sure you want to delete these purchases?"
-            mutationMode="pessimistic"
-          />
+          <Protected action="delete" resource="purchases">
+            <BulkDeleteButton
+              confirmTitle="Delete Purchases"
+              confirmContent="Are you sure you want to delete these purchases?"
+              mutationMode="pessimistic"
+            />
+          </Protected>
         }
       >
         <TextField source="customer_fullname" label="Customer Name" />
@@ -85,7 +90,9 @@ export const PurchaseList = () => (
         />
         <DateField source="purchase_date" label="Purchase Date" />
         <WrapperField label="Actions">
-          <EditButton />
+          <Protected action="update" resource="purchases">
+            <EditButton />
+          </Protected>
           <DeleteWithConfirmButton />
         </WrapperField>
       </DatagridConfigurable>

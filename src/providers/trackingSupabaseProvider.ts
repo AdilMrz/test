@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseDataProvider } from "ra-supabase";
 import type { CreateParams, UpdateParams, DeleteParams } from "react-admin";
+import type { Permission } from "../types/rbac";
 
 // Interfaces for the different types of resources in the system
 interface Purchase {
@@ -42,7 +43,10 @@ interface LogEntry {
   details?: string;
 }
 
-export const createTrackingSupabaseProvider = (supabase: SupabaseClient) => {
+export const createTrackingSupabaseProvider = (
+  supabase: SupabaseClient,
+  checkPermission: (action: Permission["action"], resource: string) => boolean,
+) => {
   // Initialize the base data provider
   const dataProvider = supabaseDataProvider({
     instanceUrl: import.meta.env.VITE_SUPABASE_URL,
@@ -137,6 +141,12 @@ export const createTrackingSupabaseProvider = (supabase: SupabaseClient) => {
     ...dataProvider,
     // Override create operation to add audit logging
     create: async (resource: string, params: CreateParams) => {
+      if (!checkPermission("create", resource)) {
+        throw new Error(
+          `Unauthorized: You don't have permission to create ${resource}`,
+        );
+      }
+
       console.log("Create operation called for resource:", resource);
       const user = await getCurrentUser();
       const entry: LogEntry = {
@@ -176,6 +186,12 @@ export const createTrackingSupabaseProvider = (supabase: SupabaseClient) => {
 
     // Override update operation to add audit logging
     update: async (resource: string, params: UpdateParams) => {
+      if (!checkPermission("update", resource)) {
+        throw new Error(
+          `Unauthorized: You don't have permission to update ${resource}`,
+        );
+      }
+
       console.log("Update operation called for resource:", resource);
       const user = await getCurrentUser();
       const entry: LogEntry = {
@@ -203,6 +219,12 @@ export const createTrackingSupabaseProvider = (supabase: SupabaseClient) => {
 
     // Override delete operation to add audit logging
     delete: async (resource: string, params: DeleteParams) => {
+      if (!checkPermission("delete", resource)) {
+        throw new Error(
+          `Unauthorized: You don't have permission to delete ${resource}`,
+        );
+      }
+
       console.log("Delete operation called for resource:", resource);
       const user = await getCurrentUser();
       const entry: LogEntry = {

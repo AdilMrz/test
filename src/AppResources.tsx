@@ -23,6 +23,13 @@ import {
   PurchaseEdit,
 } from "./purchases";
 import { ActivityLogList } from "./features/audit-logs";
+import { Protected } from "./components/Protected";
+
+const AuditLogList = () => (
+  <Protected action="read" resource="audit_logs">
+    <ActivityLogList />
+  </Protected>
+);
 
 export const resources = [
   {
@@ -51,7 +58,7 @@ export const resources = [
   },
   {
     name: "audit_logs",
-    list: ActivityLogList,
+    list: AuditLogList,
     icon: HistoryIcon,
     options: { label: "Activity Logs" },
   },
