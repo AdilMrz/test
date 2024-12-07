@@ -1,10 +1,11 @@
 export type Role = "admin" | "manager" | "user";
 
-export interface Permission {
+export type Permission = {
   action: "create" | "read" | "update" | "delete" | "list";
   resource: string;
-}
+  ownership?: "own" | "any";
+};
 
-export interface RolePermissions {
-  [key: string]: Permission[];
-}
+export type RolePermissions = {
+  [key in Role]: Permission[];
+};

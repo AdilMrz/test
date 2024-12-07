@@ -7,9 +7,9 @@ import {
   RecentPurchasesCard,
 } from "./DashboardCards";
 import { DateRangeFilter } from "./DateRangefilter";
-import { exportDashboardToPDF } from "./utils/dashboardExport";
+import { exportDashboardToPDF } from "../../utils/dashboardExport";
 import { useState } from "react";
-import { Protected } from "./components/Protected";
+import { Protected } from "../../components/Protected";
 interface Product {
   id: number;
   name: string;
@@ -40,7 +40,7 @@ interface Customer {
   fullname: string;
 }
 
-interface RecentPurchaseData {
+export interface RecentPurchaseData {
   id: number;
   customer_name: string;
   product_name: string;

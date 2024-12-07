@@ -57,6 +57,7 @@ const COLORS = [
   "#FF8042",
   "#8884d8",
   "#4B0082",
+  "#0000FF",
 ];
 
 export const PurchaseDistributionCard = ({

@@ -4,34 +4,42 @@ export const rolePermissions: RolePermissions = {
   admin: [
     { action: "create", resource: "*" },
     { action: "read", resource: "*" },
-    { action: "update", resource: "*" },
-    { action: "delete", resource: "*" },
+    { action: "update", resource: "*", ownership: "any" },
+    { action: "delete", resource: "*", ownership: "any" },
     { action: "list", resource: "*" },
   ],
   manager: [
-    // Products permissions
+    { action: "read", resource: "dashboard" },
     { action: "create", resource: "products" },
+    { action: "update", resource: "products", ownership: "any" },
+    { action: "delete", resource: "products", ownership: "own" },
     { action: "read", resource: "products" },
-    { action: "update", resource: "products" },
     { action: "list", resource: "products" },
-
-    // Customers permissions
+    { action: "create", resource: "customers" },
+    { action: "update", resource: "customers", ownership: "any" },
+    { action: "delete", resource: "customers", ownership: "own" },
     { action: "read", resource: "customers" },
     { action: "list", resource: "customers" },
-
-    // Purchases permissions
     { action: "create", resource: "purchases" },
+    { action: "update", resource: "purchases", ownership: "any" },
+    { action: "delete", resource: "purchases", ownership: "own" },
     { action: "read", resource: "purchases" },
     { action: "list", resource: "purchases" },
   ],
   user: [
-    // Can only read and list products
+    { action: "create", resource: "products" },
+    { action: "update", resource: "products", ownership: "own" },
+    { action: "delete", resource: "products", ownership: "own" },
     { action: "read", resource: "products" },
     { action: "list", resource: "products" },
-
-    // No access to customers
-
-    // Limited purchases access
+    { action: "create", resource: "customers" },
+    { action: "update", resource: "customers", ownership: "own" },
+    { action: "delete", resource: "customers", ownership: "own" },
+    { action: "read", resource: "customers" },
+    { action: "list", resource: "customers" },
+    { action: "create", resource: "purchases" },
+    { action: "update", resource: "purchases", ownership: "own" },
+    { action: "delete", resource: "purchases", ownership: "own" },
     { action: "read", resource: "purchases" },
     { action: "list", resource: "purchases" },
   ],

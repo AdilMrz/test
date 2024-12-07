@@ -8,7 +8,7 @@ import {
   SetPasswordPage,
   defaultI18nProvider,
 } from "ra-supabase";
-import { Dashboard } from "./Dashboard";
+import { Dashboard } from "./features/dashboard/Dashboard";
 import themes from "./themes";
 import { resources } from "./AppResources";
 import { queryClientConfig } from "./auth";
@@ -22,7 +22,7 @@ import { useRBAC } from "./contexts/RBACContext";
 const queryClient = new QueryClient(queryClientConfig);
 const authProvider = baseAuthProvider;
 
-const AdminApp = () => {
+const AdminApp = ({ role }: { role: Role | null }) => {
   const { checkPermission } = useRBAC();
   const trackingDataProvider = useMemo(
     () => createTrackingSupabaseProvider(supabaseClient, checkPermission),
@@ -31,6 +31,7 @@ const AdminApp = () => {
 
   return (
     <Admin
+      key={role || "no-role"}
       dashboard={Dashboard}
       dataProvider={trackingDataProvider}
       authProvider={authProvider}
@@ -69,13 +70,24 @@ export const App = () => {
       }
     };
     fetchUserRole();
+
+    // Subscribe to auth state changes
+    const {
+      data: { subscription },
+    } = supabaseClient.auth.onAuthStateChange(async () => {
+      fetchUserRole();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <RBACProvider role={userRole}>
-          <AdminApp />
+          <AdminApp role={userRole} />
         </RBACProvider>
       </BrowserRouter>
     </QueryClientProvider>

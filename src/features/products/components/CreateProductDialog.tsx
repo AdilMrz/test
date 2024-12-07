@@ -20,8 +20,6 @@ export const CreateProductDialog = ({
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    price: "",
-    stock: "",
   });
 
   const handleSubmit = async () => {
@@ -29,11 +27,7 @@ export const CreateProductDialog = ({
       await create(
         "products",
         {
-          data: {
-            ...formData,
-            price: Number.parseFloat(formData.price),
-            stock: Number.parseInt(formData.stock, 10),
-          },
+          data: formData,
         },
         {
           onSuccess: () => {
