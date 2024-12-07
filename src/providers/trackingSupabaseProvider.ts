@@ -7,6 +7,8 @@ import type {
   UpdateParams,
   DeleteParams,
   DeleteManyParams,
+  GetListParams,
+  GetOneParams,
 } from "react-admin";
 
 // Interface for audit log entries
@@ -322,6 +324,81 @@ export const createTrackingSupabaseProvider = (
         });
         throw new Error("ra.notification.http_error");
       }
+    },
+    getList: async (resource: string, params: GetListParams) => {
+      const {
+        data: { user },
+      } = await supabaseClient.auth.getUser();
+
+      // Get user role first
+      const { data: userRole } = await supabaseClient
+        .from("user_role")
+        .select("role")
+        .eq("user_id", user?.id)
+        .single();
+
+      // Check permissions without ownership for admin and manager
+      const hasPermission = await checkPermission(
+        "list",
+        resource,
+        ["admin", "manager"].includes(userRole?.role || "")
+          ? undefined
+          : user?.id,
+      );
+
+      if (!hasPermission) {
+        throw new Error("ra.notification.unauthorized");
+      }
+
+      // If admin, manager, or unrestricted resources, return unfiltered list
+      if (
+        userRole?.role === "admin" ||
+        userRole?.role === "manager" ||
+        resource === "products" ||
+        resource === "customers"
+      ) {
+        return baseDataProvider.getList(resource, params);
+      }
+
+      // For other roles and resources, apply ownership filter
+      const newParams = {
+        ...params,
+        filter: {
+          ...params.filter,
+          created_by: user?.id,
+        },
+      };
+      return baseDataProvider.getList(resource, newParams);
+    },
+
+    getOne: async (resource: string, params: GetOneParams) => {
+      const {
+        data: { user },
+      } = await supabaseClient.auth.getUser();
+
+      // Get user role
+      const { data: userRole } = await supabaseClient
+        .from("user_role")
+        .select("role")
+        .eq("user_id", user?.id)
+        .single();
+
+      const response = await baseDataProvider.getOne(resource, params);
+
+      // Check permissions without ownership for admin and manager
+      const hasPermission = await checkPermission(
+        "read",
+        resource,
+        ["admin", "manager"].includes(userRole?.role || "")
+          ? undefined
+          : user?.id,
+      );
+
+      if (!hasPermission) {
+        throw new Error("ra.notification.unauthorized");
+      }
+
+      return response;
     },
   };
 };
