@@ -1,16 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { Admin, Resource, CustomRoutes } from "react-admin";
+import type { ResourceProps } from "react-admin";
 import { BrowserRouter, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  ForgotPasswordPage,
-  LoginPage,
-  SetPasswordPage,
-  defaultI18nProvider,
-} from "ra-supabase";
+import { ForgotPasswordPage, LoginPage, SetPasswordPage } from "ra-supabase";
+import polyglotI18nProvider from "ra-i18n-polyglot";
+import englishMessages from "./i18n/en";
 import { Dashboard } from "./features/dashboard/Dashboard";
 import themes from "./themes";
-import { resources } from "./AppResources";
+import { useResources } from "./AppResources";
 import { queryClientConfig } from "./auth";
 import { authProvider as baseAuthProvider, supabaseClient } from "./supabase";
 import { createTrackingSupabaseProvider } from "./providers/trackingSupabaseProvider";
@@ -21,9 +19,23 @@ import { useRBAC } from "./contexts/RBACContext";
 
 const queryClient = new QueryClient(queryClientConfig);
 const authProvider = baseAuthProvider;
+const i18nProvider = polyglotI18nProvider(() => englishMessages, "en");
 
-const AdminApp = ({ role }: { role: Role | null }) => {
+const CustomLoginPage = (props = {}) => <LoginPage {...props} />;
+
+const AdminApp = ({ role = null }: { role?: Role | null }) => {
   const { checkPermission } = useRBAC();
+  const resources = useResources();
+  const [showDashboard, setShowDashboard] = useState(false);
+
+  useEffect(() => {
+    const checkDashboardPermission = async () => {
+      const hasPermission = await checkPermission("read", "dashboard");
+      setShowDashboard(hasPermission);
+    };
+    checkDashboardPermission();
+  }, [checkPermission]);
+
   const trackingDataProvider = useMemo(
     () => createTrackingSupabaseProvider(supabaseClient, checkPermission),
     [checkPermission],
@@ -32,16 +44,16 @@ const AdminApp = ({ role }: { role: Role | null }) => {
   return (
     <Admin
       key={role || "no-role"}
-      dashboard={Dashboard}
+      dashboard={showDashboard ? Dashboard : undefined}
       dataProvider={trackingDataProvider}
       authProvider={authProvider}
-      i18nProvider={defaultI18nProvider}
-      loginPage={LoginPage}
+      i18nProvider={i18nProvider}
+      loginPage={CustomLoginPage}
       defaultTheme="light"
       layout={CustomLayout}
       {...themes}
     >
-      {resources.map((resource) => (
+      {resources.map((resource: ResourceProps) => (
         <Resource key={resource.name} {...resource} />
       ))}
       <CustomRoutes noLayout>

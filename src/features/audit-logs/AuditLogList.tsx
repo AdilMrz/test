@@ -109,7 +109,7 @@ const DetailsDialog = ({
         alignItems: "center",
       }}
     >
-      <Typography variant="h6">Activity Log Details</Typography>
+      <div>Activity Log Details</div>
       <IconButton onClick={onClose} sx={{ color: "#ffffff" }}>
         <CloseIcon />
       </IconButton>
@@ -176,6 +176,7 @@ export const ActivityLogList = () => {
         sort={{ field: "timestamp", order: "DESC" }}
         className="p-0"
         sx={{ "& .RaList-main": { padding: 0 } }}
+        actions={false}
       >
         <Datagrid
           bulkActionButtons={false}

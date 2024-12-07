@@ -65,8 +65,25 @@ export const createTrackingSupabaseProvider = (
 
       try {
         const response = await baseDataProvider.create(resource, finalParams);
-        const recordName =
+        let recordName =
           params.data.fullname || params.data.name || response.data.id;
+
+        if (resource === "purchases") {
+          const { data: customer } = await supabaseClient
+            .from("customers")
+            .select("fullname")
+            .eq("id", params.data.customer_id)
+            .single();
+
+          const { data: product } = await supabaseClient
+            .from("products")
+            .select("name")
+            .eq("id", params.data.product_id)
+            .single();
+
+          recordName = `${product?.name || "Unknown Product"} for ${customer?.fullname || "Unknown Customer"}`;
+        }
+
         await logOperation({
           timestamp: new Date(),
           operation: "CREATE",
@@ -117,6 +134,20 @@ export const createTrackingSupabaseProvider = (
             .eq("id", params.id)
             .single();
           recordName = data?.fullname || params.id;
+        } else if (resource === "purchases") {
+          const { data: customer } = await supabaseClient
+            .from("customers")
+            .select("fullname")
+            .eq("id", params.data.customer_id)
+            .single();
+
+          const { data: product } = await supabaseClient
+            .from("products")
+            .select("name")
+            .eq("id", params.data.product_id)
+            .single();
+
+          recordName = `${product?.name || "Unknown Product"} for ${customer?.fullname || "Unknown Customer"}`;
         }
 
         const response = await baseDataProvider.update(resource, params);

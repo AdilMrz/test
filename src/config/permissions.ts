@@ -7,9 +7,11 @@ export const rolePermissions: RolePermissions = {
     { action: "update", resource: "*", ownership: "any" },
     { action: "delete", resource: "*", ownership: "any" },
     { action: "list", resource: "*" },
+    { action: "read", resource: "dashboard" },
   ],
   manager: [
     { action: "read", resource: "dashboard" },
+    { action: "read", resource: "audit_logs" },
     { action: "create", resource: "products" },
     { action: "update", resource: "products", ownership: "any" },
     { action: "delete", resource: "products", ownership: "own" },
