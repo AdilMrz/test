@@ -113,7 +113,22 @@ export const createTrackingSupabaseProvider = (
       const {
         data: { user },
       } = await supabaseClient.auth.getUser();
-      const hasPermission = await checkPermission("update", resource);
+
+      // Get user role
+      const { data: userRole } = await supabaseClient
+        .from("user_role")
+        .select("role")
+        .eq("user_id", user?.id)
+        .single();
+
+      // For admin and manager, skip ownership check
+      const hasPermission = await checkPermission(
+        "update",
+        resource,
+        ["admin", "manager"].includes(userRole?.role || "")
+          ? undefined
+          : user?.id,
+      );
 
       if (!hasPermission) {
         throw new Error("ra.notification.unauthorized");
@@ -182,6 +197,13 @@ export const createTrackingSupabaseProvider = (
         data: { user },
       } = await supabaseClient.auth.getUser();
 
+      // Get user role
+      const { data: userRole } = await supabaseClient
+        .from("user_role")
+        .select("role")
+        .eq("user_id", user?.id)
+        .single();
+
       // First get the record to check ownership
       const { data: record } = await supabaseClient
         .from(resource)
@@ -189,10 +211,13 @@ export const createTrackingSupabaseProvider = (
         .eq("id", params.id)
         .single();
 
+      // For admin and manager, skip ownership check
       const hasPermission = await checkPermission(
         "delete",
         resource,
-        record?.created_by,
+        ["admin", "manager"].includes(userRole?.role || "")
+          ? undefined
+          : record?.created_by,
       );
 
       if (!hasPermission) {
