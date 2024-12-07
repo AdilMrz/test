@@ -355,20 +355,26 @@ export const createTrackingSupabaseProvider = (
         data: { user },
       } = await supabaseClient.auth.getUser();
 
+      if (!user) {
+        throw new Error("ra.notification.unauthorized");
+      }
+
       // Get user role first
-      const { data: userRole } = await supabaseClient
+      const { data: userRole, error: roleError } = await supabaseClient
         .from("user_role")
         .select("role")
-        .eq("user_id", user?.id)
+        .eq("user_id", user.id)
         .single();
+
+      if (roleError || !userRole) {
+        throw new Error("ra.notification.unauthorized");
+      }
 
       // Check permissions without ownership for admin and manager
       const hasPermission = await checkPermission(
         "list",
         resource,
-        ["admin", "manager"].includes(userRole?.role || "")
-          ? undefined
-          : user?.id,
+        ["admin", "manager"].includes(userRole.role) ? undefined : user.id,
       );
 
       if (!hasPermission) {
@@ -377,8 +383,8 @@ export const createTrackingSupabaseProvider = (
 
       // If admin, manager, or unrestricted resources, return unfiltered list
       if (
-        userRole?.role === "admin" ||
-        userRole?.role === "manager" ||
+        userRole.role === "admin" ||
+        userRole.role === "manager" ||
         resource === "products" ||
         resource === "customers"
       ) {
@@ -390,7 +396,7 @@ export const createTrackingSupabaseProvider = (
         ...params,
         filter: {
           ...params.filter,
-          created_by: user?.id,
+          created_by: user.id,
         },
       };
       return baseDataProvider.getList(resource, newParams);
