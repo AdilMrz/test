@@ -17,6 +17,7 @@ export interface Purchase {
   id: string;
   customer_id: string;
   product_id: string;
+  price: number;
   purchase_date: string;
   created_by?: string;
   customers?: Customer;

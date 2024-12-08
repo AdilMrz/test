@@ -3,8 +3,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Card, Button } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
-import { Protected } from "../../components/Protected";
-
 interface DateRangeFilterProps {
   startDate: Date | null;
   endDate: Date | null;
@@ -70,20 +68,19 @@ export const DateRangeFilter = ({
             Clear Filter
           </Button>
         </div>
-        <Protected action="read" resource="dashboard">
-          <Button
-            onClick={onExport}
-            variant="contained"
-            sx={{
-              backgroundColor: "#14532d",
-              "&:hover": {
-                backgroundColor: "#0f4024",
-              },
-            }}
-          >
-            Export to PDF
-          </Button>
-        </Protected>
+
+        <Button
+          onClick={onExport}
+          variant="contained"
+          sx={{
+            backgroundColor: "#14532d",
+            "&:hover": {
+              backgroundColor: "#0f4024",
+            },
+          }}
+        >
+          Export to PDF
+        </Button>
       </div>
     </Card>
   );

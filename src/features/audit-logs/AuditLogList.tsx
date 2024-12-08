@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { useState } from "react";
+import { DateRangeFilter } from "./components/DateRangeFilter";
 
 interface ActivityRecord extends RaRecord {
   status: "success" | "error";
@@ -86,36 +87,60 @@ const DetailsDialog = ({
     <DialogContent sx={{ mt: 2 }}>
       {record && (
         <>
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography
+            variant="subtitle2"
+            color="textSecondary"
+            fontWeight="bold"
+          >
             Timestamp
           </Typography>
           <Typography paragraph>
             {new Date(record.timestamp).toLocaleString()}
           </Typography>
 
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography
+            variant="subtitle2"
+            color="textSecondary"
+            fontWeight="bold"
+          >
             Operation
           </Typography>
           <Typography paragraph>{record.operation}</Typography>
 
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography
+            variant="subtitle2"
+            color="textSecondary"
+            fontWeight="bold"
+          >
             Resource
           </Typography>
           <Typography paragraph>{record.resource}</Typography>
 
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography
+            variant="subtitle2"
+            color="textSecondary"
+            fontWeight="bold"
+          >
             User
           </Typography>
           <Typography paragraph>{record.user_fullname}</Typography>
 
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography
+            variant="subtitle2"
+            color="textSecondary"
+            fontWeight="bold"
+          >
             Details
           </Typography>
           <Typography paragraph>
             {record.details || "No details available"}
           </Typography>
 
-          <Typography variant="subtitle2" color="textSecondary">
+          <Typography
+            variant="subtitle2"
+            color="textSecondary"
+            fontWeight="bold"
+          >
             Status
           </Typography>
           <Typography
@@ -148,36 +173,57 @@ export const ActivityLogList = () => {
   const [selectedRecord, setSelectedRecord] = useState<ActivityRecord | null>(
     null,
   );
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  const filterList = {
+    ...(startDate && { "timestamp@gte": startDate.toISOString() }),
+    ...(endDate && { "timestamp@lte": endDate.toISOString() }),
+  };
 
   return (
-    <Card>
-      <List
-        filters={filters}
-        sort={{ field: "timestamp", order: "DESC" }}
-        className="p-0"
-        sx={{ "& .RaList-main": { padding: 0 } }}
-        actions={false}
-      >
-        <Datagrid
-          bulkActionButtons={false}
-          rowClick={(_, __, record) => {
-            setSelectedRecord(record as unknown as ActivityRecord);
-            return false;
-          }}
-        >
-          <DateField source="timestamp" showTime />
-          <TextField source="operation" />
-          <TextField source="resource" />
-          <TextField source="user_fullname" label="User" />
-          <StatusChip source="status" />
-          <TextField source="details" />
-        </Datagrid>
-      </List>
-      <DetailsDialog
-        open={!!selectedRecord}
-        onClose={() => setSelectedRecord(null)}
-        record={selectedRecord}
+    <div className="flex flex-col gap-4">
+      <DateRangeFilter
+        startDate={startDate}
+        endDate={endDate}
+        onStartDateChange={setStartDate}
+        onEndDateChange={setEndDate}
+        cardStyle={{
+          backgroundColor: "#eef2ea",
+          boxShadow:
+            "rgba(20, 83, 45, 0.2) -2px 2px, rgba(20, 83, 45, 0.1) -4px 4px, rgba(20, 83, 45, 0.05) -6px 6px",
+        }}
       />
-    </Card>
+      <Card>
+        <List
+          filters={filters}
+          filter={filterList}
+          sort={{ field: "timestamp", order: "DESC" }}
+          className="p-0"
+          sx={{ "& .RaList-main": { padding: 0 } }}
+          actions={false}
+        >
+          <Datagrid
+            bulkActionButtons={false}
+            rowClick={(_, __, record) => {
+              setSelectedRecord(record as unknown as ActivityRecord);
+              return false;
+            }}
+          >
+            <DateField source="timestamp" showTime />
+            <TextField source="operation" />
+            <TextField source="resource" />
+            <TextField source="user_fullname" label="User" />
+            <StatusChip source="status" />
+            <TextField source="details" />
+          </Datagrid>
+        </List>
+        <DetailsDialog
+          open={!!selectedRecord}
+          onClose={() => setSelectedRecord(null)}
+          record={selectedRecord}
+        />
+      </Card>
+    </div>
   );
 };
