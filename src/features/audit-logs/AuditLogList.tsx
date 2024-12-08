@@ -5,7 +5,6 @@ import {
   DateField,
   ChipField,
   SearchInput,
-  SelectInput,
   useRecordContext,
   type RaRecord,
 } from "react-admin";
@@ -17,45 +16,15 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import { useState } from "react";
 import { Close as CloseIcon } from "@mui/icons-material";
-
-const filters = [
-  <SearchInput
-    key="user_email"
-    source="user_email@ilike"
-    alwaysOn
-    sx={{ m: 1 }}
-  />,
-  <SelectInput
-    key="operation"
-    source="operation"
-    choices={[
-      { id: "CREATE", name: "Create" },
-      { id: "EDIT", name: "Edit" },
-      { id: "DELETE", name: "Delete" },
-      { id: "BULK_DELETE", name: "Bulk Delete" },
-    ]}
-    alwaysOn
-  />,
-  <SelectInput
-    key="resource"
-    source="resource"
-    choices={[
-      { id: "customers", name: "Customers" },
-      { id: "products", name: "Products" },
-      { id: "purchases", name: "Purchases" },
-    ]}
-    alwaysOn
-  />,
-];
+import { useState } from "react";
 
 interface ActivityRecord extends RaRecord {
   status: "success" | "error";
   timestamp: string;
   operation: string;
   resource: string;
-  user_email: string;
+  user_fullname: string;
   details?: string;
 }
 
@@ -137,7 +106,7 @@ const DetailsDialog = ({
           <Typography variant="subtitle2" color="textSecondary">
             User
           </Typography>
-          <Typography paragraph>{record.user_email}</Typography>
+          <Typography paragraph>{record.user_fullname}</Typography>
 
           <Typography variant="subtitle2" color="textSecondary">
             Details
@@ -164,6 +133,17 @@ const DetailsDialog = ({
   </Dialog>
 );
 
+const filters = [
+  <SearchInput
+    key="search"
+    source="details"
+    placeholder="Search"
+    resettable
+    alwaysOn
+    sx={{ m: 1 }}
+  />,
+];
+
 export const ActivityLogList = () => {
   const [selectedRecord, setSelectedRecord] = useState<ActivityRecord | null>(
     null,
@@ -186,9 +166,9 @@ export const ActivityLogList = () => {
           }}
         >
           <DateField source="timestamp" showTime />
-          <TextField source="user_email" />
-          <ChipField source="operation" />
+          <TextField source="operation" />
           <TextField source="resource" />
+          <TextField source="user_fullname" label="User" />
           <StatusChip source="status" />
           <TextField source="details" />
         </Datagrid>

@@ -18,6 +18,7 @@ interface LogEntry {
   resource: string; // Which resource was affected (customers, products, etc.)
   user_id?: string; // Who performed the operation
   user_email?: string; // Email of user who performed the operation
+  user_fullname?: string; // Full name of user who performed the operation
   status: "success" | "error"; // Whether the operation succeeded or failed
   details?: string; // Additional information about the operation
 }
@@ -38,8 +39,42 @@ export const createTrackingSupabaseProvider = (
 
   const logOperation = async (entry: LogEntry) => {
     try {
-      const { error } = await supabaseClient.from("audit_logs").insert([entry]);
-      if (error) throw error;
+      console.log("Logging operation:", entry);
+      // Get user's full name from user_role table
+      if (entry.user_id) {
+        const { data: userData } = await supabaseClient
+          .from("user_role")
+          .select("fullname")
+          .eq("user_id", entry.user_id)
+          .single();
+        console.log("User data from user_role:", userData);
+        entry.user_fullname = userData?.fullname;
+
+        // Get user's email
+        const {
+          data: { user },
+        } = await supabaseClient.auth.getUser();
+        entry.user_email = user?.email;
+      }
+
+      // Convert Date object to ISO string for Postgres timestamptz
+      const logEntry = {
+        ...entry,
+        timestamp: entry.timestamp.toISOString(),
+      };
+
+      console.log("Inserting into audit_logs:", logEntry);
+      const { data, error } = await supabaseClient
+        .from("audit_logs")
+        .insert([logEntry])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error inserting into audit_logs:", error.message);
+        throw error;
+      }
+      console.log("Successfully logged operation:", data);
     } catch (error) {
       console.error("Failed to log operation:", error);
     }
@@ -91,7 +126,6 @@ export const createTrackingSupabaseProvider = (
           operation: "CREATE",
           resource,
           user_id: user?.id,
-          user_email: user?.email,
           status: "success",
           details: `Created ${resource}: ${recordName}`,
         });
@@ -102,7 +136,6 @@ export const createTrackingSupabaseProvider = (
           operation: "CREATE",
           resource,
           user_id: user?.id,
-          user_email: user?.email,
           status: "error",
           details: `Failed to create ${resource}: ${error}`,
         });
@@ -174,7 +207,6 @@ export const createTrackingSupabaseProvider = (
           operation: "UPDATE",
           resource,
           user_id: user?.id,
-          user_email: user?.email,
           status: "success",
           details: `Updated ${resource}: ${recordName}`,
         });
@@ -185,7 +217,6 @@ export const createTrackingSupabaseProvider = (
           operation: "UPDATE",
           resource,
           user_id: user?.id,
-          user_email: user?.email,
           status: "error",
           details: `Failed to update ${resource}: ${error}`,
         });
@@ -265,7 +296,6 @@ export const createTrackingSupabaseProvider = (
           operation: "DELETE",
           resource,
           user_id: user?.id,
-          user_email: user?.email,
           status: "success",
           details: `Deleted ${resource}: ${recordName}`,
         });
@@ -276,7 +306,6 @@ export const createTrackingSupabaseProvider = (
           operation: "DELETE",
           resource,
           user_id: user?.id,
-          user_email: user?.email,
           status: "error",
           details: `Failed to delete ${resource}: ${error}`,
         });
@@ -307,22 +336,6 @@ export const createTrackingSupabaseProvider = (
             .select("id, fullname")
             .in("id", params.ids)) as { data: Customer[] | null };
           names = (data || []).map((record) => record.fullname || record.id);
-        } else if (resource === "purchases") {
-          const { data } = (await supabaseClient
-            .from("purchases")
-            .select(
-              `
-              id,
-              customers:customers(id, fullname),
-              products:products(id, name)
-            `,
-            )
-            .in("id", params.ids)) as { data: Purchase[] | null };
-          names = (data || []).map((record) =>
-            record.products?.name && record.customers?.fullname
-              ? `${record.products.name} for ${record.customers.fullname}`
-              : record.id,
-          );
         }
 
         const response = await baseDataProvider.deleteMany(resource, params);
@@ -332,22 +345,29 @@ export const createTrackingSupabaseProvider = (
           operation: "BULK_DELETE",
           resource,
           user_id: user?.id,
-          user_email: user?.email,
           status: "success",
           details: `Bulk deleted ${resource}: ${names.join(", ")}`,
         });
         return response;
-      } catch (error) {
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        const isConstraintViolation = errorMessage.includes(
+          "violates foreign key constraint",
+        );
+        const friendlyMessage = isConstraintViolation
+          ? `Cannot delete ${resource} that have associated ${resource === "customers" ? "purchases" : "records"}`
+          : errorMessage;
+
         await logOperation({
           timestamp: new Date(),
           operation: "BULK_DELETE",
           resource,
           user_id: user?.id,
-          user_email: user?.email,
           status: "error",
-          details: `Failed to bulk delete ${resource}: ${error}`,
+          details: `Failed to bulk delete ${resource}: ${friendlyMessage}`,
         });
-        throw new Error("ra.notification.http_error");
+        throw new Error(friendlyMessage);
       }
     },
     getList: async (resource: string, params: GetListParams) => {
