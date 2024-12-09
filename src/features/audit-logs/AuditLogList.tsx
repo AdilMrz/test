@@ -5,6 +5,7 @@ import {
   DateField,
   ChipField,
   SearchInput,
+  SelectInput,
   useRecordContext,
   type RaRecord,
 } from "react-admin";
@@ -166,6 +167,27 @@ const filters = [
     resettable
     alwaysOn
     sx={{ m: 1 }}
+  />,
+  <SelectInput
+    key="operation"
+    source="operation"
+    choices={[
+      { id: "CREATE", name: "Create" },
+      { id: "EDIT", name: "Edit" },
+      { id: "DELETE", name: "Delete" },
+      { id: "BULK_DELETE", name: "Bulk Delete" },
+    ]}
+    alwaysOn
+  />,
+  <SelectInput
+    key="resource"
+    source="resource"
+    choices={[
+      { id: "customers", name: "Customers" },
+      { id: "products", name: "Products" },
+      { id: "purchases", name: "Purchases" },
+    ]}
+    alwaysOn
   />,
 ];
 
