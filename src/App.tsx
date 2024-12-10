@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ForgotPasswordPage, LoginPage, SetPasswordPage } from "ra-supabase";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
+import frenchMessages from "./i18n/fr";
 import { Dashboard } from "./features/dashboard/Dashboard";
 import themes from "./themes";
 import { useResources } from "./AppResources";
@@ -19,7 +20,15 @@ import { useRBAC } from "./contexts/RBACContext";
 
 const queryClient = new QueryClient(queryClientConfig);
 const authProvider = baseAuthProvider;
-const i18nProvider = polyglotI18nProvider(() => englishMessages, "en");
+const i18nProvider = polyglotI18nProvider(
+  (locale) => {
+    if (locale === "fr") {
+      return frenchMessages;
+    }
+    return englishMessages;
+  },
+  "en", // Default locale
+);
 
 const CustomLoginPage = (props = {}) => <LoginPage {...props} />;
 

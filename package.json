@@ -21,6 +21,7 @@
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
     "ra-data-json-server": "^5.4.0",
+    "ra-language-french": "^5.4.2",
     "ra-supabase": "^3.3.1",
     "react": "^18.3.0",
     "react-admin": "^5.4.0",

@@ -1,87 +1,67 @@
+import { useState } from "react";
+import { Box, Button } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Card, Button } from "@mui/material";
-import type { SxProps, Theme } from "@mui/material";
+import { useLocale, useTranslate } from "react-admin";
+import { fr, enUS } from "date-fns/locale";
+
 interface DateRangeFilterProps {
-  startDate: Date | null;
-  endDate: Date | null;
-  onStartDateChange: (date: Date | null) => void;
-  onEndDateChange: (date: Date | null) => void;
-  cardStyle: SxProps<Theme>;
-  onExport: () => void;
+  onFilterChange: (startDate: Date | null, endDate: Date | null) => void;
 }
 
-export const DateRangeFilter = ({
-  startDate,
-  endDate,
-  onStartDateChange,
-  onEndDateChange,
-  cardStyle,
-  onExport,
-}: DateRangeFilterProps) => {
+export const DateRangeFilter = ({ onFilterChange }: DateRangeFilterProps) => {
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const translate = useTranslate();
+  const locale = useLocale();
+  const dateLocale = locale === "fr" ? fr : enUS;
+
+  const handleApply = () => {
+    onFilterChange(startDate, endDate);
+  };
+
   const handleClear = () => {
-    onStartDateChange(null);
-    onEndDateChange(null);
+    setStartDate(null);
+    setEndDate(null);
+    onFilterChange(null, null);
   };
 
   return (
-    <Card sx={{ ...cardStyle, padding: 2 }}>
-      <div className="flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex flex-wrap gap-4 items-center">
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Start Date"
-              value={startDate}
-              onChange={onStartDateChange}
-              slotProps={{
-                textField: {
-                  size: "small",
-                  sx: { minWidth: "200px" },
-                },
-              }}
-            />
-            <DatePicker
-              label="End Date"
-              value={endDate}
-              onChange={onEndDateChange}
-              slotProps={{
-                textField: {
-                  size: "small",
-                  sx: { minWidth: "200px" },
-                },
-              }}
-            />
-          </LocalizationProvider>
-          <Button
-            onClick={handleClear}
-            variant="outlined"
-            sx={{
-              borderColor: "#14532d",
-              color: "#14532d",
-              "&:hover": {
-                borderColor: "#0f4024",
-                backgroundColor: "rgba(20, 83, 45, 0.04)",
-              },
-            }}
-          >
-            Clear Filter
-          </Button>
-        </div>
-
+    <LocalizationProvider
+      dateAdapter={AdapterDateFns}
+      adapterLocale={dateLocale}
+    >
+      <Box sx={{ display: "flex", gap: 2, alignItems: "center", mb: 2 }}>
+        <DatePicker
+          label={translate("dashboard.startDate")}
+          value={startDate}
+          onChange={(newValue) => setStartDate(newValue)}
+          slotProps={{ textField: { size: "small" } }}
+          format="P"
+        />
+        <DatePicker
+          label={translate("dashboard.endDate")}
+          value={endDate}
+          onChange={(newValue) => setEndDate(newValue)}
+          slotProps={{ textField: { size: "small" } }}
+          format="P"
+        />
         <Button
-          onClick={onExport}
           variant="contained"
-          sx={{
-            backgroundColor: "#14532d",
-            "&:hover": {
-              backgroundColor: "#0f4024",
-            },
-          }}
+          onClick={handleApply}
+          disabled={!startDate || !endDate}
         >
-          Export to PDF
+          {translate("dashboard.apply")}
         </Button>
-      </div>
-    </Card>
+        <Button
+          variant="outlined"
+          onClick={handleClear}
+          disabled={!startDate && !endDate}
+        >
+          {translate("dashboard.clear")}
+        </Button>
+      </Box>
+    </LocalizationProvider>
   );
 };

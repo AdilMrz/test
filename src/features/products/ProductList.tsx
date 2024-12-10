@@ -9,10 +9,37 @@ import {
   BulkDeleteButton,
   useRecordContext,
 } from "react-admin";
-import { Card } from "@mui/material";
+import { Card, Box } from "@mui/material";
 import { ListActions } from "./components/ListActions";
 import { DATAGRID_STYLES } from "./constants";
 import { Protected } from "../../components/Protected";
+import { supabaseClient } from "../../supabase";
+
+const ProductImage = () => {
+  const record = useRecordContext();
+  if (!record || !record.photo_url) return null;
+
+  const {
+    data: { publicUrl },
+  } = supabaseClient.storage.from("img").getPublicUrl(record.photo_url);
+
+  return (
+    <Box
+      component="img"
+      src={publicUrl}
+      alt={record.name}
+      sx={{
+        width: 50,
+        height: 50,
+        objectFit: "cover",
+        borderRadius: 1,
+        cursor: "pointer",
+      }}
+      onClick={() => window.open(publicUrl, "_blank")}
+    />
+  );
+};
+
 const filters = [
   <SearchInput
     key="name"
@@ -58,6 +85,9 @@ export const ProductList = () => (
           </Protected>
         }
       >
+        <WrapperField label="Image" sortable={false}>
+          <ProductImage />
+        </WrapperField>
         <TextField source="name" label="Name" />
         <TextField source="description" label="Description" />
         <WrapperField label="Actions">

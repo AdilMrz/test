@@ -75,6 +75,7 @@ export const CreateCustomerDialog = ({
               setFormData({ ...formData, fullname: e.target.value })
             }
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+            required
           />
           <input
             type="email"
@@ -84,6 +85,7 @@ export const CreateCustomerDialog = ({
               setFormData({ ...formData, email: e.target.value })
             }
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+            required
           />
           <input
             type="text"
@@ -93,6 +95,7 @@ export const CreateCustomerDialog = ({
               setFormData({ ...formData, address: e.target.value })
             }
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+            required
           />
         </div>
       </DialogContent>

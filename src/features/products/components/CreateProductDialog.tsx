@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useCreate, useNotify, useRefresh } from "react-admin";
 import {
   Dialog,
@@ -6,9 +6,12 @@ import {
   DialogContent,
   DialogActions,
   Button as MuiButton,
+  Box,
 } from "@mui/material";
+import { Upload as UploadIcon } from "@mui/icons-material";
 import type { CreateProductDialogProps } from "../types";
 import { THEME_COLORS } from "../constants";
+import { supabaseClient } from "../../../supabase";
 
 export const CreateProductDialog = ({
   open,
@@ -20,14 +23,79 @@ export const CreateProductDialog = ({
   const [formData, setFormData] = useState({
     name: "",
     description: "",
+    photo_url: "",
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      notify("File size must be less than 5MB", { type: "error" });
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      notify("File must be an image", { type: "error" });
+      return;
+    }
+
+    // Validate image dimensions
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      if (img.width > 1920 || img.height > 1080) {
+        notify("Image dimensions must be 1920x1080 pixels or smaller", {
+          type: "error",
+        });
+        return;
+      }
+      setSelectedFile(file);
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      notify("Error loading image", { type: "error" });
+    };
+
+    img.src = objectUrl;
+  };
 
   const handleSubmit = async () => {
+    if (!formData.name || !formData.description) {
+      notify("Name and description are required", { type: "error" });
+      return;
+    }
+
     try {
+      setUploading(true);
+      let photoUrl = "";
+
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split(".").pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+
+        const { error: uploadError } = await supabaseClient.storage
+          .from("img")
+          .upload(fileName, selectedFile);
+
+        if (uploadError) throw uploadError;
+        photoUrl = fileName;
+      }
+
       await create(
         "products",
         {
-          data: formData,
+          data: { ...formData, photo_url: photoUrl },
         },
         {
           onSuccess: () => {
@@ -42,6 +110,8 @@ export const CreateProductDialog = ({
       );
     } catch (error) {
       notify("Error creating product", { type: "error" });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -84,6 +154,45 @@ export const CreateProductDialog = ({
             }
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
           />
+          <Box sx={{ mt: 2 }}>
+            <input
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleFileSelect}
+              ref={fileInputRef}
+            />
+            <MuiButton
+              variant="outlined"
+              component="span"
+              startIcon={<UploadIcon />}
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              sx={{
+                borderColor: THEME_COLORS.primary,
+                color: THEME_COLORS.primary,
+                "&:hover": {
+                  borderColor: THEME_COLORS.primaryDark,
+                  backgroundColor: "rgba(20, 83, 45, 0.04)",
+                },
+              }}
+            >
+              {selectedFile ? "Change Photo" : "Upload Photo"}
+            </MuiButton>
+            {selectedFile && (
+              <Box sx={{ mt: 2 }}>
+                <img
+                  src={URL.createObjectURL(selectedFile)}
+                  alt="Preview"
+                  style={{
+                    maxWidth: "200px",
+                    maxHeight: "200px",
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
         </div>
       </DialogContent>
       <DialogActions
@@ -105,6 +214,7 @@ export const CreateProductDialog = ({
         <MuiButton
           onClick={handleSubmit}
           variant="contained"
+          disabled={uploading}
           sx={{
             backgroundColor: THEME_COLORS.primary,
             "&:hover": { backgroundColor: THEME_COLORS.primaryDark },

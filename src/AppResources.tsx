@@ -3,6 +3,7 @@ import {
   ShoppingCart as ShoppingCartIcon,
   Inventory as InventoryIcon,
   History as HistoryIcon,
+  Build as BuildIcon,
 } from "@mui/icons-material";
 import {
   CustomerList,
@@ -26,6 +27,7 @@ import { ActivityLogList } from "./features/audit-logs";
 import { Protected } from "./components/Protected";
 import { useRBAC } from "./contexts/RBACContext";
 import { useState, useEffect } from "react";
+import { MaintenancePanel } from "./features/maintenance/MaintenancePanel";
 
 const EmptyComponent = () => <></>;
 
@@ -38,11 +40,17 @@ const AuditLogList = () => (
 export const useResources = () => {
   const { checkPermission } = useRBAC();
   const [showAuditLogs, setShowAuditLogs] = useState(false);
+  const [showMaintenance, setShowMaintenance] = useState(false);
 
   useEffect(() => {
     const checkPermissions = async () => {
-      const hasPermission = await checkPermission("read", "audit_logs");
-      setShowAuditLogs(hasPermission);
+      const hasAuditLogPermission = await checkPermission("read", "audit_logs");
+      const hasMaintenancePermission = await checkPermission(
+        "read",
+        "maintenance",
+      );
+      setShowAuditLogs(hasAuditLogPermission);
+      setShowMaintenance(hasMaintenancePermission);
     };
     checkPermissions();
   }, [checkPermission]);
@@ -73,6 +81,17 @@ export const useResources = () => {
       icon: ShoppingCartIcon,
     },
   ];
+
+  if (showMaintenance) {
+    baseResources.push({
+      name: "maintenance",
+      list: MaintenancePanel,
+      create: EmptyComponent,
+      edit: EmptyComponent,
+      show: EmptyComponent,
+      icon: BuildIcon,
+    });
+  }
 
   if (showAuditLogs) {
     baseResources.push({

@@ -8,12 +8,20 @@ import {
   Button,
   useRefresh,
   TopToolbar,
+  required,
 } from "react-admin";
 import { Button as MuiButton } from "@mui/material";
 import { Add as AddIcon, ArrowBack } from "@mui/icons-material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateCustomerDialog } from "./components/CreateCustomerDialog";
+
+interface PurchaseFormData {
+  customer_id: string;
+  product_id: string;
+  price: number;
+  purchase_date?: string;
+}
 
 export const PurchaseCreate = () => {
   const navigate = useNavigate();
@@ -25,6 +33,11 @@ export const PurchaseCreate = () => {
     setIsCreateCustomerOpen(false);
   };
 
+  const transform = (data: PurchaseFormData) => ({
+    ...data,
+    purchase_date: data.purchase_date || new Date().toISOString(),
+  });
+
   return (
     <Create
       actions={
@@ -34,6 +47,7 @@ export const PurchaseCreate = () => {
           </Button>
         </TopToolbar>
       }
+      transform={transform}
     >
       <SimpleForm>
         <div
@@ -46,7 +60,7 @@ export const PurchaseCreate = () => {
         >
           <div style={{ flex: 1, paddingRight: "180px" }}>
             <ReferenceInput source="customer_id" reference="customers">
-              <SelectInput optionText="fullname" />
+              <SelectInput optionText="fullname" validate={required()} />
             </ReferenceInput>
           </div>
           <div style={{ position: "absolute", right: "32px", top: "0" }}>
@@ -76,20 +90,23 @@ export const PurchaseCreate = () => {
         </div>
         <div style={{ marginBottom: "24px" }}>
           <ReferenceInput source="product_id" reference="products">
-            <SelectInput optionText="name" />
+            <SelectInput optionText="name" validate={required()} />
           </ReferenceInput>
         </div>
         <div style={{ marginBottom: "24px" }}>
           <NumberInput
             source="price"
             min={0}
-            validate={(value) => {
-              if (value < 0) return "Price cannot be negative";
-              return undefined;
-            }}
+            validate={[
+              required(),
+              (value) => {
+                if (value < 0) return "Price cannot be negative";
+                return undefined;
+              },
+            ]}
           />
         </div>
-        <DateInput source="purchase_date" />
+        <DateInput source="purchase_date" defaultValue={new Date()} />
       </SimpleForm>
       <CreateCustomerDialog
         open={isCreateCustomerOpen}

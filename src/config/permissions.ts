@@ -7,6 +7,8 @@ export const rolePermissions: RolePermissions = {
     { action: "update", resource: "*" },
     { action: "delete", resource: "*" },
     { action: "list", resource: "*" },
+    { action: "read", resource: "maintenance" },
+    { action: "list", resource: "maintenance" },
   ],
   manager: [
     { action: "read", resource: "dashboard" },
@@ -15,19 +17,19 @@ export const rolePermissions: RolePermissions = {
     // Products permissions
     { action: "create", resource: "products" },
     { action: "update", resource: "products", ownership: "any" },
-    { action: "delete", resource: "products", ownership: "own" },
+    { action: "delete", resource: "products", ownership: "any" },
     { action: "read", resource: "products" },
     { action: "list", resource: "products" },
     // Customers permissions
     { action: "create", resource: "customers" },
     { action: "update", resource: "customers", ownership: "any" },
-    { action: "delete", resource: "customers", ownership: "own" },
+    { action: "delete", resource: "customers", ownership: "any" },
     { action: "read", resource: "customers" },
     { action: "list", resource: "customers" },
     // Purchases permissions
     { action: "create", resource: "purchases" },
     { action: "update", resource: "purchases", ownership: "any" },
-    { action: "delete", resource: "purchases", ownership: "own" },
+    { action: "delete", resource: "purchases", ownership: "any" },
     { action: "read", resource: "purchases" },
     { action: "list", resource: "purchases" },
   ],
