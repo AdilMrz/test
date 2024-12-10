@@ -1,6 +1,7 @@
 import { Title, Loading } from "react-admin";
-import { useTheme, alpha } from "@mui/material";
+import { useTheme, alpha, Box, Button } from "@mui/material";
 import { useGetList } from "react-admin";
+import { Download as DownloadIcon } from "@mui/icons-material";
 import {
   PurchaseDistributionCard,
   ProductRevenueCard,
@@ -10,6 +11,7 @@ import { DateRangeFilter } from "./DateRangefilter";
 import { exportDashboardToPDF } from "../../utils/dashboardExport";
 import { useState } from "react";
 import { Protected } from "../../components/Protected";
+
 interface Product {
   id: number;
   name: string;
@@ -155,14 +157,28 @@ export const Dashboard = () => {
     <Protected action="read" resource="dashboard">
       <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
         <Title title="Dashboard" />
-        <DateRangeFilter
-          startDate={startDate}
-          endDate={endDate}
-          onStartDateChange={setStartDate}
-          onEndDateChange={setEndDate}
-          cardStyle={cardStyle}
-          onExport={handleExport}
-        />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <DateRangeFilter
+            onFilterChange={(start, end) => {
+              setStartDate(start);
+              setEndDate(end);
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={handleExport}
+            startIcon={<DownloadIcon />}
+          >
+            Export PDF
+          </Button>
+        </Box>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <PurchaseDistributionCard
             data={productPurchases}

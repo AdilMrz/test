@@ -5,6 +5,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useLocale, useTranslate } from "react-admin";
 import { fr, enUS } from "date-fns/locale";
+import { startOfDay, endOfDay } from "date-fns";
 
 interface DateRangeFilterProps {
   onFilterChange: (startDate: Date | null, endDate: Date | null) => void;
@@ -18,7 +19,12 @@ export const DateRangeFilter = ({ onFilterChange }: DateRangeFilterProps) => {
   const dateLocale = locale === "fr" ? fr : enUS;
 
   const handleApply = () => {
-    onFilterChange(startDate, endDate);
+    if (startDate && endDate) {
+      // Set start date to beginning of day and end date to end of day
+      const adjustedStartDate = startOfDay(startDate);
+      const adjustedEndDate = endOfDay(endDate);
+      onFilterChange(adjustedStartDate, adjustedEndDate);
+    }
   };
 
   const handleClear = () => {
@@ -36,16 +42,27 @@ export const DateRangeFilter = ({ onFilterChange }: DateRangeFilterProps) => {
         <DatePicker
           label={translate("dashboard.startDate")}
           value={startDate}
-          onChange={(newValue) => setStartDate(newValue)}
+          onChange={(newValue) => {
+            setStartDate(newValue);
+            if (endDate && newValue && newValue > endDate) {
+              setEndDate(newValue);
+            }
+          }}
           slotProps={{ textField: { size: "small" } }}
           format="P"
         />
         <DatePicker
           label={translate("dashboard.endDate")}
           value={endDate}
-          onChange={(newValue) => setEndDate(newValue)}
+          onChange={(newValue) => {
+            setEndDate(newValue);
+            if (startDate && newValue && newValue < startDate) {
+              setStartDate(newValue);
+            }
+          }}
           slotProps={{ textField: { size: "small" } }}
           format="P"
+          minDate={startDate}
         />
         <Button
           variant="contained"

@@ -24,6 +24,8 @@ import {
 } from "@mui/icons-material";
 import { supabaseClient } from "../../supabase";
 import { Protected } from "../../components/Protected";
+import { Title } from "react-admin";
+import { PageTitle } from "./components/PageTitle";
 
 interface BucketFile {
   name: string;
@@ -190,6 +192,7 @@ export const MaintenancePanel = () => {
 
   return (
     <Protected action="read" resource="maintenance">
+      <Title title={<PageTitle />} />
       <Card>
         <Box p={2}>
           <Typography variant="h6">Storage Management</Typography>
