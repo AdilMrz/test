@@ -178,6 +178,7 @@ const filters = [
       { id: "BULK_DELETE", name: "Bulk Delete" },
     ]}
     alwaysOn
+    sx={{ m: 1 }}
   />,
   <SelectInput
     key="resource"
@@ -188,6 +189,7 @@ const filters = [
       { id: "purchases", name: "Purchases" },
     ]}
     alwaysOn
+    sx={{ m: 1 }}
   />,
 ];
 
