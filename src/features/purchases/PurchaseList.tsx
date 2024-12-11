@@ -105,7 +105,7 @@ export const PurchaseList = () => (
           label="Price"
         />
         <DateField source="purchase_date" label="Purchase Date" />
-        <WrapperField source="actions" label="Actions">
+        <WrapperField label="Actions" sortable={false}>
           <ActionButtons />
         </WrapperField>
       </DatagridConfigurable>

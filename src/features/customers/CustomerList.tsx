@@ -80,7 +80,7 @@ export const CustomerList = () => (
         <TextField source="fullname" label="Full Name" />
         <EmailField source="email" label="Email" />
         <TextField source="address" label="Address" />
-        <WrapperField source="actions" label="Actions">
+        <WrapperField label="Actions" sortable={false}>
           <ActionButtons />
         </WrapperField>
       </DatagridConfigurable>

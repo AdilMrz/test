@@ -106,7 +106,7 @@ export const ProductList = () => (
         </WrapperField>
         <TextField source="name" label="Name" />
         <TextField source="description" label="Description" />
-        <WrapperField source="actions" label="Actions">
+        <WrapperField label="Actions" sortable={false}>
           <ActionButtons />
         </WrapperField>
       </DatagridConfigurable>
