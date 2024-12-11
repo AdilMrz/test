@@ -156,7 +156,7 @@ export const MaintenancePanel = () => {
       setLoading(true);
       setError(null);
 
-      const { data, error } = await supabaseClient.rpc("delete_unused_images");
+      const { data, error } = await supabaseClient.rpc("delete_unused_photos");
 
       if (error) throw error;
 
