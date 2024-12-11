@@ -17,6 +17,7 @@ import {
   FormControlLabel,
   Switch,
   Chip,
+  TableSortLabel,
 } from "@mui/material";
 import {
   DeleteSweep as DeleteSweepIcon,
@@ -47,6 +48,10 @@ interface BucketFile {
   isUsed?: boolean;
 }
 
+// Add these types
+type SortField = "name" | "size" | "updated_at";
+type SortOrder = "asc" | "desc";
+
 export const MaintenancePanel = () => {
   // State to manage loading status
   const [loading, setLoading] = useState(false);
@@ -58,6 +63,8 @@ export const MaintenancePanel = () => {
   const [files, setFiles] = useState<BucketFile[]>([]);
   // State to toggle the view of only unused files
   const [showOnlyUnused, setShowOnlyUnused] = useState(false);
+  const [sortField, setSortField] = useState<SortField>("name");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   // Function to check if images are used in the products table
   const checkImageUsage = useCallback(async (files: BucketFile[]) => {
@@ -190,6 +197,34 @@ export const MaintenancePanel = () => {
     ? files.filter((file) => !file.isUsed)
     : files;
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
+
+  // Sort files
+  const sortedFiles = [...filteredFiles].sort((a, b) => {
+    const multiplier = sortOrder === "asc" ? 1 : -1;
+
+    switch (sortField) {
+      case "name":
+        return multiplier * a.name.localeCompare(b.name);
+      case "size":
+        return multiplier * (a.size - b.size);
+      case "updated_at":
+        return (
+          multiplier *
+          (new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime())
+        );
+      default:
+        return 0;
+    }
+  });
+
   return (
     <Protected action="read" resource="maintenance">
       <Title title={<PageTitle />} />
@@ -250,16 +285,40 @@ export const MaintenancePanel = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>Preview</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Size</TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortField === "name"}
+                      direction={sortField === "name" ? sortOrder : "asc"}
+                      onClick={() => handleSort("name")}
+                    >
+                      Name
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortField === "size"}
+                      direction={sortField === "size" ? sortOrder : "asc"}
+                      onClick={() => handleSort("size")}
+                    >
+                      Size
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell>Type</TableCell>
-                  <TableCell>Last Modified</TableCell>
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortField === "updated_at"}
+                      direction={sortField === "updated_at" ? sortOrder : "asc"}
+                      onClick={() => handleSort("updated_at")}
+                    >
+                      Last Modified
+                    </TableSortLabel>
+                  </TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredFiles.map((file) => (
+                {sortedFiles.map((file) => (
                   <TableRow key={file.name}>
                     <TableCell>
                       {file.metadata.mimetype?.startsWith("image/") ? (
@@ -317,7 +376,7 @@ export const MaintenancePanel = () => {
                     </TableCell>
                   </TableRow>
                 ))}
-                {filteredFiles.length === 0 && (
+                {sortedFiles.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={7} align="center">
                       No files found

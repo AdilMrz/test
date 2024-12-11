@@ -7,7 +7,6 @@ import { ForgotPasswordPage, LoginPage, SetPasswordPage } from "ra-supabase";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
-import { Dashboard } from "./features/dashboard/Dashboard";
 import themes from "./themes";
 import { useResources } from "./AppResources";
 import { queryClientConfig } from "./auth";
@@ -35,15 +34,6 @@ const CustomLoginPage = (props = {}) => <LoginPage {...props} />;
 const AdminApp = ({ role = null }: { role?: Role | null }) => {
   const { checkPermission } = useRBAC();
   const resources = useResources();
-  const [showDashboard, setShowDashboard] = useState(false);
-
-  useEffect(() => {
-    const checkDashboardPermission = async () => {
-      const hasPermission = await checkPermission("read", "dashboard");
-      setShowDashboard(hasPermission);
-    };
-    checkDashboardPermission();
-  }, [checkPermission]);
 
   const trackingDataProvider = useMemo(
     () => createTrackingSupabaseProvider(supabaseClient, checkPermission),
@@ -53,7 +43,6 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
   return (
     <Admin
       key={role || "no-role"}
-      dashboard={showDashboard ? Dashboard : undefined}
       dataProvider={trackingDataProvider}
       authProvider={authProvider}
       i18nProvider={i18nProvider}
@@ -62,7 +51,7 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
       layout={CustomLayout}
       {...themes}
     >
-      {resources.map((resource: ResourceProps) => (
+      {resources.resources.map((resource: ResourceProps) => (
         <Resource key={resource.name} {...resource} />
       ))}
       <CustomRoutes noLayout>

@@ -11,6 +11,7 @@ import {
   DeleteButton,
   BulkDeleteButton,
   useRecordContext,
+  useGetIdentity,
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
@@ -27,17 +28,32 @@ const filters = [
   />,
 ];
 
-const DeleteWithConfirmButton = () => {
+const ActionButtons = () => {
   const record = useRecordContext();
+  const { identity } = useGetIdentity();
+
   if (!record) return null;
+
+  const isOwner = record.created_by === identity?.id;
+  const isAdmin = identity?.role === "admin";
+
   return (
-    <Protected action="delete" resource="purchases">
-      <DeleteButton
-        confirmTitle="Delete Purchase"
-        confirmContent="Are you sure you want to delete this purchase?"
-        mutationMode="pessimistic"
-      />
-    </Protected>
+    <WrapperField label="Actions">
+      {(isOwner || isAdmin) && (
+        <>
+          <Protected action="update" resource="purchases">
+            <EditButton />
+          </Protected>
+          <Protected action="delete" resource="purchases">
+            <DeleteButton
+              confirmTitle="Delete Purchase"
+              confirmContent="Are you sure you want to delete this purchase?"
+              mutationMode="pessimistic"
+            />
+          </Protected>
+        </>
+      )}
+    </WrapperField>
   );
 };
 
@@ -89,11 +105,8 @@ export const PurchaseList = () => (
           label="Price"
         />
         <DateField source="purchase_date" label="Purchase Date" />
-        <WrapperField label="Actions">
-          <Protected action="update" resource="purchases">
-            <EditButton />
-          </Protected>
-          <DeleteWithConfirmButton />
+        <WrapperField source="actions" label="Actions">
+          <ActionButtons />
         </WrapperField>
       </DatagridConfigurable>
     </List>

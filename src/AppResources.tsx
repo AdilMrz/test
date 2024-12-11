@@ -4,6 +4,7 @@ import {
   Inventory as InventoryIcon,
   History as HistoryIcon,
   Build as BuildIcon,
+  Dashboard as DashboardIcon,
 } from "@mui/icons-material";
 import {
   CustomerList,
@@ -28,6 +29,7 @@ import { Protected } from "./components/Protected";
 import { useRBAC } from "./contexts/RBACContext";
 import { useState, useEffect } from "react";
 import { MaintenancePanel } from "./features/maintenance/MaintenancePanel";
+import { Dashboard } from "./features/dashboard/Dashboard";
 
 const EmptyComponent = () => <></>;
 
@@ -37,20 +39,32 @@ const AuditLogList = () => (
   </Protected>
 );
 
+const DashboardWrapper = () => {
+  const dash = Dashboard();
+  return dash || <div />;
+};
+
 export const useResources = () => {
   const { checkPermission } = useRBAC();
   const [showAuditLogs, setShowAuditLogs] = useState(false);
   const [showMaintenance, setShowMaintenance] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
 
   useEffect(() => {
     const checkPermissions = async () => {
-      const hasAuditLogPermission = await checkPermission("read", "audit_logs");
-      const hasMaintenancePermission = await checkPermission(
-        "read",
-        "maintenance",
-      );
+      const [
+        hasAuditLogPermission,
+        hasMaintenancePermission,
+        hasDashboardPermission,
+      ] = await Promise.all([
+        checkPermission("read", "audit_logs"),
+        checkPermission("read", "maintenance"),
+        checkPermission("read", "dashboard"),
+      ]);
+
       setShowAuditLogs(hasAuditLogPermission);
       setShowMaintenance(hasMaintenancePermission);
+      setShowDashboard(hasDashboardPermission);
     };
     checkPermissions();
   }, [checkPermission]);
@@ -103,6 +117,19 @@ export const useResources = () => {
       icon: HistoryIcon,
     });
   }
+  if (showDashboard) {
+    baseResources.push({
+      name: "dashboard",
+      list: DashboardWrapper,
+      create: EmptyComponent,
+      edit: EmptyComponent,
+      show: EmptyComponent,
+      icon: DashboardIcon,
+    });
+  }
 
-  return baseResources;
+  return {
+    resources: baseResources,
+    showDashboard,
+  };
 };
