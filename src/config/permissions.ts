@@ -34,16 +34,19 @@ export const rolePermissions: RolePermissions = {
     { action: "list", resource: "purchases" },
   ],
   user: [
+    // Products permissions
     { action: "create", resource: "products" },
     { action: "update", resource: "products", ownership: "own" },
     { action: "delete", resource: "products", ownership: "own" },
     { action: "read", resource: "products" },
     { action: "list", resource: "products" },
+    // Customers permissions
     { action: "create", resource: "customers" },
     { action: "update", resource: "customers", ownership: "own" },
     { action: "delete", resource: "customers", ownership: "own" },
     { action: "read", resource: "customers", ownership: "own" },
     { action: "list", resource: "customers", ownership: "own" },
+    // Purchases permissions
     { action: "create", resource: "purchases" },
     { action: "update", resource: "purchases", ownership: "own" },
     { action: "delete", resource: "purchases", ownership: "own" },
