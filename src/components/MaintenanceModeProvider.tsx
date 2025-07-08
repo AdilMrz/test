@@ -28,12 +28,16 @@ interface MaintenanceContextType {
   setContactInfo: (info: any) => void;
 }
 
-const MaintenanceContext = createContext<MaintenanceContextType | undefined>(undefined);
+const MaintenanceContext = createContext<MaintenanceContextType | undefined>(
+  undefined,
+);
 
 export const useMaintenanceMode = () => {
   const context = useContext(MaintenanceContext);
   if (!context) {
-    throw new Error("useMaintenanceMode must be used within a MaintenanceModeProvider");
+    throw new Error(
+      "useMaintenanceMode must be used within a MaintenanceModeProvider",
+    );
   }
   return context;
 };
@@ -48,11 +52,9 @@ interface MaintenanceModeProviderProps {
   };
 }
 
-export const MaintenanceModeProvider: React.FC<MaintenanceModeProviderProps> = ({
-  children,
-  defaultTasks = [],
-  defaultContactInfo = {},
-}) => {
+export const MaintenanceModeProvider: React.FC<
+  MaintenanceModeProviderProps
+> = ({ children, defaultTasks = [], defaultContactInfo = {} }) => {
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
   const [tasks, setTasks] = useState<MaintenanceTask[]>(defaultTasks);
   const [estimatedCompletion, setEstimatedCompletion] = useState<string>();
@@ -64,10 +66,15 @@ export const MaintenanceModeProvider: React.FC<MaintenanceModeProviderProps> = (
     if (savedMaintenanceMode === "true") {
       setIsMaintenanceMode(true);
     }
-    
-    // Check environment variable for maintenance mode
-    if (process.env.REACT_APP_MAINTENANCE_MODE === "true") {
-      setIsMaintenanceMode(true);
+
+    // Check environment variable for maintenance mode (safely)
+    try {
+      if (import.meta.env?.VITE_MAINTENANCE_MODE === "true") {
+        setIsMaintenanceMode(true);
+      }
+    } catch (error) {
+      // Fallback for environments where import.meta.env is not available
+      console.log("Environment variables not available");
     }
   }, []);
 
@@ -81,10 +88,10 @@ export const MaintenanceModeProvider: React.FC<MaintenanceModeProviderProps> = (
   };
 
   const updateTask = (taskId: string, updates: Partial<MaintenanceTask>) => {
-    setTasks(prevTasks =>
-      prevTasks.map(task =>
-        task.id === taskId ? { ...task, ...updates } : task
-      )
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, ...updates } : task,
+      ),
     );
   };
 
@@ -130,18 +137,18 @@ export const MaintenanceModeProvider: React.FC<MaintenanceModeProviderProps> = (
  * Hook for managing maintenance mode programmatically
  */
 export const useMaintenanceControls = () => {
-  const { 
-    setMaintenanceMode, 
-    setTasks, 
-    updateTask, 
-    setEstimatedCompletion, 
-    setContactInfo 
+  const {
+    setMaintenanceMode,
+    setTasks,
+    updateTask,
+    setEstimatedCompletion,
+    setContactInfo,
   } = useMaintenanceMode();
 
   const startMaintenance = (
     tasks: MaintenanceTask[],
     estimatedCompletion?: string,
-    contactInfo?: any
+    contactInfo?: any,
   ) => {
     setTasks(tasks);
     if (estimatedCompletion) setEstimatedCompletion(estimatedCompletion);
@@ -192,7 +199,7 @@ export const useMaintenanceControls = () => {
         email: "support@example.com",
         phone: "+1 (555) 123-4567",
         website: "https://status.example.com",
-      }
+      },
     );
 
     // Simulate progress updates
@@ -201,21 +208,21 @@ export const useMaintenanceControls = () => {
     }, 5000);
 
     setTimeout(() => {
-      updateTask("2", { 
-        status: "completed", 
-        endTime: new Date().toLocaleTimeString() 
+      updateTask("2", {
+        status: "completed",
+        endTime: new Date().toLocaleTimeString(),
       });
-      updateTask("3", { 
-        status: "in-progress", 
+      updateTask("3", {
+        status: "in-progress",
         startTime: new Date().toLocaleTimeString(),
-        progress: 30 
+        progress: 30,
       });
     }, 10000);
 
     setTimeout(() => {
-      updateTask("3", { 
-        status: "completed", 
-        endTime: new Date().toLocaleTimeString() 
+      updateTask("3", {
+        status: "completed",
+        endTime: new Date().toLocaleTimeString(),
       });
       // Auto-end maintenance after all tasks complete
       setTimeout(() => {
@@ -237,11 +244,8 @@ export const useMaintenanceControls = () => {
  */
 export const MaintenanceControls: React.FC = () => {
   const { isMaintenanceMode } = useMaintenanceMode();
-  const { 
-    startMaintenance, 
-    endMaintenance, 
-    simulateMaintenanceProgress 
-  } = useMaintenanceControls();
+  const { startMaintenance, endMaintenance, simulateMaintenanceProgress } =
+    useMaintenanceControls();
 
   if (isMaintenanceMode) {
     return null; // Don't show controls during maintenance
@@ -249,7 +253,9 @@ export const MaintenanceControls: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 right-4 z-50 bg-white rounded-lg shadow-lg border p-4 space-y-2">
-      <h4 className="font-semibold text-sm text-gray-900">Maintenance Controls</h4>
+      <h4 className="font-semibold text-sm text-gray-900">
+        Maintenance Controls
+      </h4>
       <div className="space-y-2">
         <button
           onClick={simulateMaintenanceProgress}
