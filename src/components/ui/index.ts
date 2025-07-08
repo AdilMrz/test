@@ -6,3 +6,8 @@ export * from "./Select";
 export * from "./Checkbox";
 export * from "./Radio";
 export * from "./Alert";
+export * from "./Tabs";
+export * from "./Tooltip";
+export * from "./Badge";
+export * from "./Progress";
+export * from "./Switch";

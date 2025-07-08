@@ -18,13 +18,23 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  Tooltip,
+  Badge,
+  Progress,
+  Switch,
 } from "./ui";
 
 export const TailwindShowcase: React.FC = () => {
   const [selectValue, setSelectValue] = useState("");
   const [radioValue, setRadioValue] = useState("");
   const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [switchChecked, setSwitchChecked] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("tab1");
 
   const selectOptions = [
     { value: "option1", label: "Option 1" },
@@ -237,6 +247,135 @@ export const TailwindShowcase: React.FC = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* New Components */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Tabs</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs
+              defaultValue="tab1"
+              value={activeTab}
+              onValueChange={setActiveTab}
+            >
+              <TabsList>
+                <TabsTrigger value="tab1">Overview</TabsTrigger>
+                <TabsTrigger value="tab2">Analytics</TabsTrigger>
+                <TabsTrigger value="tab3">Settings</TabsTrigger>
+              </TabsList>
+              <TabsContent value="tab1">
+                <p className="text-gray-600">
+                  Overview content goes here. This is the main dashboard view.
+                </p>
+              </TabsContent>
+              <TabsContent value="tab2">
+                <p className="text-gray-600">
+                  Analytics content with charts and metrics would be displayed
+                  here.
+                </p>
+              </TabsContent>
+              <TabsContent value="tab3">
+                <p className="text-gray-600">
+                  Settings and configuration options would be available in this
+                  tab.
+                </p>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* Badges and Progress */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Badges & Progress</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Badges</h4>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="default">Default</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="success">Success</Badge>
+                <Badge variant="warning">Warning</Badge>
+                <Badge variant="destructive">Error</Badge>
+                <Badge variant="outline">Outline</Badge>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">
+                Progress Bars
+              </h4>
+              <div className="space-y-4">
+                <Progress value={75} showLabel label="Project Progress" />
+                <Progress
+                  value={45}
+                  variant="warning"
+                  showLabel
+                  label="Storage Used"
+                />
+                <Progress
+                  value={90}
+                  variant="success"
+                  showLabel
+                  label="Profile Complete"
+                />
+                <Progress
+                  value={25}
+                  variant="error"
+                  showLabel
+                  label="Issues Resolved"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Switch and Tooltip */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Switch & Tooltip</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">
+                Switch Components
+              </h4>
+              <div className="space-y-4">
+                <Switch
+                  checked={switchChecked}
+                  onChange={(e) => setSwitchChecked(e.target.checked)}
+                  label="Enable notifications"
+                  description="Receive email notifications for important updates"
+                />
+                <Switch label="Dark mode" description="Switch to dark theme" />
+                <Switch
+                  label="Auto-save"
+                  description="Automatically save your work"
+                  size="sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">
+                Tooltips
+              </h4>
+              <div className="flex space-x-4">
+                <Tooltip content="This is a helpful tooltip">
+                  <Button variant="outline">Hover me</Button>
+                </Tooltip>
+                <Tooltip content="Settings and preferences" side="bottom">
+                  <Button variant="ghost">Bottom tooltip</Button>
+                </Tooltip>
+                <Tooltip content="User profile information" side="left">
+                  <Button variant="secondary">Left tooltip</Button>
+                </Tooltip>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

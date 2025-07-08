@@ -7,6 +7,7 @@ import { ForgotPasswordPage, SetPasswordPage } from "ra-supabase";
 import { TailwindLoginPage } from "./components/TailwindLoginPage";
 import { TailwindShowcase } from "./components/TailwindShowcase";
 import { TailwindDashboard } from "./components/dashboard/TailwindDashboard";
+import { TailwindForm } from "./components/forms/TailwindForm";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
@@ -68,6 +69,7 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
       <CustomRoutes>
         <Route path="/tailwind-showcase" element={<TailwindShowcase />} />
         <Route path="/tailwind-dashboard" element={<TailwindDashboard />} />
+        <Route path="/tailwind-form" element={<TailwindForm />} />
       </CustomRoutes>
     </Admin>
   );
