@@ -80,10 +80,14 @@ export const normalizeError = (
   }
 
   if (typeof error === "object" && error !== null) {
-    const errorObj = error as any;
+    const errorObj = error as {
+      message?: string;
+      code?: string;
+      status?: number;
+    };
     return createAppError(
       errorObj.message || "Unknown error",
-      errorObj.code,
+      errorObj.code as ErrorCode | undefined,
       errorObj.status,
       context,
     );
@@ -101,7 +105,7 @@ export const normalizeError = (
  * Checks if an error is retryable
  */
 export const isRetryableError = (error: AppError): boolean => {
-  const retryableCodes = [
+  const retryableCodes: ErrorCode[] = [
     ERROR_CODES.NETWORK_ERROR,
     ERROR_CODES.TIMEOUT_ERROR,
     ERROR_CODES.CONNECTION_LOST,
@@ -112,8 +116,8 @@ export const isRetryableError = (error: AppError): boolean => {
   const retryableStatuses = [408, 429, 500, 502, 503, 504];
 
   return (
-    (error.code && retryableCodes.includes(error.code as any)) ||
-    (error.status && retryableStatuses.includes(error.status))
+    Boolean(error.code && retryableCodes.includes(error.code as ErrorCode)) ||
+    Boolean(error.status && retryableStatuses.includes(error.status))
   );
 };
 
@@ -188,7 +192,7 @@ export const getUserFriendlyMessage = (error: AppError): string => {
  * Parses Supabase errors and converts them to AppError
  */
 export const parseSupabaseError = (
-  error: any,
+  error: unknown,
   context?: ErrorContext,
 ): AppError => {
   if (!error) {
@@ -200,8 +204,14 @@ export const parseSupabaseError = (
     );
   }
 
+  const supabaseError = error as {
+    message?: string;
+    code?: string;
+    status?: number;
+  };
+
   // Handle Supabase auth errors
-  if (error.message?.includes("Invalid login credentials")) {
+  if (supabaseError.message?.includes("Invalid login credentials")) {
     return createAppError(
       "Invalid email or password",
       ERROR_CODES.INVALID_CREDENTIALS,
@@ -210,7 +220,7 @@ export const parseSupabaseError = (
     );
   }
 
-  if (error.message?.includes("Email not confirmed")) {
+  if (supabaseError.message?.includes("Email not confirmed")) {
     return createAppError(
       "Please confirm your email address",
       ERROR_CODES.UNAUTHORIZED,
@@ -220,7 +230,10 @@ export const parseSupabaseError = (
   }
 
   // Handle database constraint errors
-  if (error.code === "23505" || error.message?.includes("duplicate key")) {
+  if (
+    supabaseError.code === "23505" ||
+    supabaseError.message?.includes("duplicate key")
+  ) {
     return createAppError(
       "This value already exists",
       ERROR_CODES.UNIQUE_VIOLATION,
@@ -229,7 +242,10 @@ export const parseSupabaseError = (
     );
   }
 
-  if (error.code === "23503" || error.message?.includes("foreign key")) {
+  if (
+    supabaseError.code === "23503" ||
+    supabaseError.message?.includes("foreign key")
+  ) {
     return createAppError(
       "Cannot delete item that is referenced by other records",
       ERROR_CODES.FOREIGN_KEY_VIOLATION,
@@ -238,7 +254,10 @@ export const parseSupabaseError = (
     );
   }
 
-  if (error.code === "23514" || error.message?.includes("check constraint")) {
+  if (
+    supabaseError.code === "23514" ||
+    supabaseError.message?.includes("check constraint")
+  ) {
     return createAppError(
       "Data validation failed",
       ERROR_CODES.CONSTRAINT_VIOLATION,
@@ -248,7 +267,10 @@ export const parseSupabaseError = (
   }
 
   // Handle network errors
-  if (error.message?.includes("fetch") || error.message?.includes("network")) {
+  if (
+    supabaseError.message?.includes("fetch") ||
+    supabaseError.message?.includes("network")
+  ) {
     return createAppError(
       "Network error occurred",
       ERROR_CODES.NETWORK_ERROR,
@@ -258,9 +280,9 @@ export const parseSupabaseError = (
   }
 
   return createAppError(
-    error.message || "Database operation failed",
+    supabaseError.message || "Database operation failed",
     ERROR_CODES.OPERATION_FAILED,
-    error.status || 500,
+    supabaseError.status || 500,
     context,
   );
 };
@@ -269,7 +291,7 @@ export const parseSupabaseError = (
  * Generates a unique error ID for tracking
  */
 export const generateErrorId = (): string => {
-  return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `err_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 };
 
 /**

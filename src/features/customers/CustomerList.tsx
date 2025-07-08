@@ -9,7 +9,6 @@ import {
   DeleteButton,
   BulkDeleteButton,
   useRecordContext,
-  useGetIdentity,
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
@@ -28,29 +27,29 @@ const filters = [
 
 const ActionButtons = () => {
   const record = useRecordContext();
-  const { identity } = useGetIdentity();
 
   if (!record) return null;
 
-  const isOwner = record.created_by === identity?.id;
-  const isAdmin = identity?.role === "admin";
-
   return (
     <WrapperField>
-      {(isOwner || isAdmin) && (
-        <>
-          <Protected action="update" resource="customers">
-            <EditButton />
-          </Protected>
-          <Protected action="delete" resource="customers">
-            <DeleteButton
-              confirmTitle="Delete Customer"
-              confirmContent={`Are you sure you want to delete the customer "${record.fullname}"? This action will fail if the customer has any associated purchases.`}
-              mutationMode="pessimistic"
-            />
-          </Protected>
-        </>
-      )}
+      <Protected
+        action="update"
+        resource="customers"
+        recordUserId={record.created_by}
+      >
+        <EditButton />
+      </Protected>
+      <Protected
+        action="delete"
+        resource="customers"
+        recordUserId={record.created_by}
+      >
+        <DeleteButton
+          confirmTitle="Delete Customer"
+          confirmContent={`Are you sure you want to delete the customer "${record.fullname}"? This action will fail if the customer has any associated purchases.`}
+          mutationMode="pessimistic"
+        />
+      </Protected>
     </WrapperField>
   );
 };

@@ -154,13 +154,20 @@ export const createTrackingSupabaseProvider = (
         .eq("user_id", user?.id)
         .single();
 
+      // First get the record to check ownership
+      const { data: record } = await supabaseClient
+        .from(resource)
+        .select("created_by")
+        .eq("id", params.id)
+        .single();
+
       // For admin and manager, skip ownership check
       const hasPermission = await checkPermission(
         "update",
         resource,
         ["admin", "manager"].includes(userRole?.role || "")
           ? undefined
-          : user?.id,
+          : record?.created_by,
       );
 
       if (!hasPermission) {
@@ -465,7 +472,7 @@ export const createTrackingSupabaseProvider = (
         resource,
         ["admin", "manager"].includes(userRole?.role || "")
           ? undefined
-          : user?.id,
+          : response.data?.created_by,
       );
 
       if (!hasPermission) {

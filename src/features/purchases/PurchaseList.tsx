@@ -11,7 +11,6 @@ import {
   DeleteButton,
   BulkDeleteButton,
   useRecordContext,
-  useGetIdentity,
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
@@ -30,29 +29,29 @@ const filters = [
 
 const ActionButtons = () => {
   const record = useRecordContext();
-  const { identity } = useGetIdentity();
 
   if (!record) return null;
 
-  const isOwner = record.created_by === identity?.id;
-  const isAdmin = identity?.role === "admin";
-
   return (
     <WrapperField label="Actions">
-      {(isOwner || isAdmin) && (
-        <>
-          <Protected action="update" resource="purchases">
-            <EditButton />
-          </Protected>
-          <Protected action="delete" resource="purchases">
-            <DeleteButton
-              confirmTitle="Delete Purchase"
-              confirmContent="Are you sure you want to delete this purchase?"
-              mutationMode="pessimistic"
-            />
-          </Protected>
-        </>
-      )}
+      <Protected
+        action="update"
+        resource="purchases"
+        recordUserId={record.created_by}
+      >
+        <EditButton />
+      </Protected>
+      <Protected
+        action="delete"
+        resource="purchases"
+        recordUserId={record.created_by}
+      >
+        <DeleteButton
+          confirmTitle="Delete Purchase"
+          confirmContent="Are you sure you want to delete this purchase?"
+          mutationMode="pessimistic"
+        />
+      </Protected>
     </WrapperField>
   );
 };
