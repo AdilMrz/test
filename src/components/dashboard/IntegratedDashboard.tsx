@@ -1,15 +1,28 @@
 import React from "react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Progress } from "../ui";
-import { useGetList, useGetOne, useDataProvider } from "react-admin";
-import { 
-  UsersIcon, 
-  ShoppingCartIcon, 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Button,
+  Badge,
+  Progress,
+} from "../ui";
+import {
+  useGetList,
+  useGetOne,
+  useDataProvider,
+  useNavigate,
+} from "react-admin";
+import {
+  UsersIcon,
+  ShoppingCartIcon,
   CurrencyDollarIcon,
   ChartBarIcon,
   ArrowUpIcon,
   ArrowDownIcon,
   EyeIcon,
-  PlusIcon
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import { useEnhancedNotifications } from "../ReactAdminNotificationBridge";
 
@@ -25,13 +38,13 @@ interface StatCardProps {
   isLoading?: boolean;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ 
-  title, 
-  value, 
-  change, 
-  icon: Icon, 
+const StatCard: React.FC<StatCardProps> = ({
+  title,
+  value,
+  change,
+  icon: Icon,
   color = "green",
-  isLoading = false
+  isLoading = false,
 }) => {
   const colorClasses = {
     green: "text-project-green-800 bg-project-green-100",
@@ -74,12 +87,18 @@ const StatCard: React.FC<StatCardProps> = ({
                 ) : (
                   <ArrowDownIcon className="w-4 h-4 text-red-600 mr-1" />
                 )}
-                <span className={`text-sm font-medium ${
-                  change.type === "increase" ? "text-green-600" : "text-red-600"
-                }`}>
+                <span
+                  className={`text-sm font-medium ${
+                    change.type === "increase"
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
                   {Math.abs(change.value)}%
                 </span>
-                <span className="text-sm text-gray-500 ml-1">vs last month</span>
+                <span className="text-sm text-gray-500 ml-1">
+                  vs last month
+                </span>
               </div>
             )}
           </div>
@@ -94,41 +113,39 @@ const StatCard: React.FC<StatCardProps> = ({
 
 const QuickActions: React.FC = () => {
   const { notifySuccess } = useEnhancedNotifications();
+  const navigate = useNavigate();
 
   const actions = [
-    { 
-      label: "Add Customer", 
+    {
+      label: "Add Customer",
       color: "bg-blue-600 hover:bg-blue-700",
       onClick: () => {
-        notifySuccess("Navigation", false);
-        // Navigate to customer creation
-        window.location.href = "/#/customers/create";
-      }
+        notifySuccess("Navigating to customer creation");
+        navigate("/customers/create");
+      },
     },
-    { 
-      label: "Create Product", 
+    {
+      label: "Create Product",
       color: "bg-green-600 hover:bg-green-700",
       onClick: () => {
-        notifySuccess("Navigation", false);
-        // Navigate to product creation
-        window.location.href = "/#/products/create";
-      }
+        notifySuccess("Navigating to product creation");
+        navigate("/products/create");
+      },
     },
-    { 
-      label: "New Purchase", 
+    {
+      label: "New Purchase",
       color: "bg-purple-600 hover:bg-purple-700",
       onClick: () => {
-        notifySuccess("Navigation", false);
-        // Navigate to purchase creation
-        window.location.href = "/#/purchases/create";
-      }
+        notifySuccess("Navigating to purchase creation");
+        navigate("/purchases/create");
+      },
     },
-    { 
-      label: "View Reports", 
+    {
+      label: "View Reports",
       color: "bg-orange-600 hover:bg-orange-700",
       onClick: () => {
-        notifySuccess("Feature coming soon!", false);
-      }
+        notifySuccess("Feature coming soon!");
+      },
     },
   ];
 
@@ -160,29 +177,35 @@ const QuickActions: React.FC = () => {
 
 const RecentActivity: React.FC = () => {
   // Get recent data from React Admin
-  const { data: customers, isLoading: customersLoading } = useGetList('customers', {
-    pagination: { page: 1, perPage: 3 },
-    sort: { field: 'id', order: 'DESC' }
-  });
+  const { data: customers, isLoading: customersLoading } = useGetList(
+    "customers",
+    {
+      pagination: { page: 1, perPage: 3 },
+      sort: { field: "id", order: "DESC" },
+    },
+  );
 
-  const { data: purchases, isLoading: purchasesLoading } = useGetList('purchases', {
-    pagination: { page: 1, perPage: 3 },
-    sort: { field: 'id', order: 'DESC' }
-  });
+  const { data: purchases, isLoading: purchasesLoading } = useGetList(
+    "purchases",
+    {
+      pagination: { page: 1, perPage: 3 },
+      sort: { field: "id", order: "DESC" },
+    },
+  );
 
   const activities = [
-    ...(customers || []).map(customer => ({
+    ...(customers || []).map((customer) => ({
       id: `customer-${customer.id}`,
       type: "user" as const,
-      message: `New customer registered: ${customer.fullname || customer.name || 'Unknown'}`,
-      time: "Recently"
+      message: `New customer registered: ${customer.fullname || customer.name || "Unknown"}`,
+      time: "Recently",
     })),
-    ...(purchases || []).map(purchase => ({
+    ...(purchases || []).map((purchase) => ({
       id: `purchase-${purchase.id}`,
       type: "order" as const,
-      message: `New purchase: $${purchase.total || '0.00'}`,
-      time: "Recently"
-    }))
+      message: `New purchase: $${purchase.total || "0.00"}`,
+      time: "Recently",
+    })),
   ].slice(0, 5);
 
   const getActivityIcon = (type: string) => {
@@ -226,17 +249,19 @@ const RecentActivity: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {activities.length > 0 ? activities.map((activity) => (
-            <div key={activity.id} className="flex items-start space-x-3">
-              <div className="flex-shrink-0 mt-1">
-                {getActivityIcon(activity.type)}
+          {activities.length > 0 ? (
+            activities.map((activity) => (
+              <div key={activity.id} className="flex items-start space-x-3">
+                <div className="flex-shrink-0 mt-1">
+                  {getActivityIcon(activity.type)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-900">{activity.message}</p>
+                  <p className="text-xs text-gray-500">{activity.time}</p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-900">{activity.message}</p>
-                <p className="text-xs text-gray-500">{activity.time}</p>
-              </div>
-            </div>
-          )) : (
+            ))
+          ) : (
             <p className="text-sm text-gray-500">No recent activity</p>
           )}
         </div>
@@ -253,33 +278,45 @@ const RecentActivity: React.FC = () => {
 
 export const IntegratedDashboard: React.FC = () => {
   // Get data from React Admin resources
-  const { data: customers, isLoading: customersLoading } = useGetList('customers', {
-    pagination: { page: 1, perPage: 1000 },
-    sort: { field: 'id', order: 'ASC' }
-  });
+  const { data: customers, isLoading: customersLoading } = useGetList(
+    "customers",
+    {
+      pagination: { page: 1, perPage: 1000 },
+      sort: { field: "id", order: "ASC" },
+    },
+  );
 
-  const { data: purchases, isLoading: purchasesLoading } = useGetList('purchases', {
-    pagination: { page: 1, perPage: 1000 },
-    sort: { field: 'id', order: 'ASC' }
-  });
+  const { data: purchases, isLoading: purchasesLoading } = useGetList(
+    "purchases",
+    {
+      pagination: { page: 1, perPage: 1000 },
+      sort: { field: "id", order: "ASC" },
+    },
+  );
 
-  const { data: products, isLoading: productsLoading } = useGetList('products', {
-    pagination: { page: 1, perPage: 1000 },
-    sort: { field: 'id', order: 'ASC' }
-  });
+  const { data: products, isLoading: productsLoading } = useGetList(
+    "products",
+    {
+      pagination: { page: 1, perPage: 1000 },
+      sort: { field: "id", order: "ASC" },
+    },
+  );
 
   // Calculate stats from real data
   const totalCustomers = customers?.length || 0;
   const totalPurchases = purchases?.length || 0;
   const totalProducts = products?.length || 0;
-  const totalRevenue = purchases?.reduce((sum, purchase) => sum + (purchase.total || 0), 0) || 0;
+  const totalRevenue =
+    purchases?.reduce((sum, purchase) => sum + (purchase.total || 0), 0) || 0;
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Welcome back! Here's what's happening with your business.</p>
+        <p className="text-gray-600">
+          Welcome back! Here's what's happening with your business.
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -324,7 +361,7 @@ export const IntegratedDashboard: React.FC = () => {
         <div className="lg:col-span-2">
           <RecentActivity />
         </div>
-        
+
         {/* Quick Actions - Takes 1 column */}
         <div>
           <QuickActions />

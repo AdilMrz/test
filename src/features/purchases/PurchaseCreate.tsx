@@ -48,6 +48,7 @@ export const PurchaseCreate = () => {
         </TopToolbar>
       }
       transform={transform}
+      redirect="list"
     >
       <SimpleForm>
         <div
