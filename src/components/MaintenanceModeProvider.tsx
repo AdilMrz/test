@@ -19,13 +19,17 @@ interface MaintenanceContextType {
   setTasks: (tasks: MaintenanceTask[]) => void;
   updateTask: (taskId: string, updates: Partial<MaintenanceTask>) => void;
   estimatedCompletion?: string;
-  setEstimatedCompletion: (time: string) => void;
+  setEstimatedCompletion: (time: string | undefined) => void;
   contactInfo?: {
     email?: string;
     phone?: string;
     website?: string;
   };
-  setContactInfo: (info: any) => void;
+  setContactInfo: (info: {
+    email?: string;
+    phone?: string;
+    website?: string;
+  }) => void;
 }
 
 const MaintenanceContext = createContext<MaintenanceContextType | undefined>(
@@ -69,12 +73,13 @@ export const MaintenanceModeProvider: React.FC<
 
     // Check environment variable for maintenance mode (safely)
     try {
-      if (import.meta.env?.VITE_MAINTENANCE_MODE === "true") {
+      const envMaintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE;
+      if (envMaintenanceMode === "true") {
         setIsMaintenanceMode(true);
       }
     } catch (error) {
       // Fallback for environments where import.meta.env is not available
-      console.log("Environment variables not available");
+      console.log("Environment variables not available:", error);
     }
   }, []);
 
@@ -148,7 +153,7 @@ export const useMaintenanceControls = () => {
   const startMaintenance = (
     tasks: MaintenanceTask[],
     estimatedCompletion?: string,
-    contactInfo?: any,
+    contactInfo?: { email?: string; phone?: string; website?: string },
   ) => {
     setTasks(tasks);
     if (estimatedCompletion) setEstimatedCompletion(estimatedCompletion);
@@ -244,7 +249,7 @@ export const useMaintenanceControls = () => {
  */
 export const MaintenanceControls: React.FC = () => {
   const { isMaintenanceMode } = useMaintenanceMode();
-  const { startMaintenance, endMaintenance, simulateMaintenanceProgress } =
+  const { endMaintenance, simulateMaintenanceProgress } =
     useMaintenanceControls();
 
   if (isMaintenanceMode) {
