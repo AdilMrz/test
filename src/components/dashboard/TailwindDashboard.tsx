@@ -1,13 +1,13 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent, Button } from "../ui";
-import { 
-  UsersIcon, 
-  ShoppingCartIcon, 
+import {
+  UsersIcon,
+  ShoppingCartIcon,
   CurrencyDollarIcon,
-  TrendingUpIcon,
+  ChartBarIcon,
   ArrowUpIcon,
   ArrowDownIcon,
-  EyeIcon
+  EyeIcon,
 } from "@heroicons/react/24/outline";
 
 interface StatCardProps {
@@ -21,12 +21,12 @@ interface StatCardProps {
   color?: "green" | "blue" | "purple" | "orange";
 }
 
-const StatCard: React.FC<StatCardProps> = ({ 
-  title, 
-  value, 
-  change, 
-  icon: Icon, 
-  color = "green" 
+const StatCard: React.FC<StatCardProps> = ({
+  title,
+  value,
+  change,
+  icon: Icon,
+  color = "green",
 }) => {
   const colorClasses = {
     green: "text-project-green-800 bg-project-green-100",
@@ -49,12 +49,18 @@ const StatCard: React.FC<StatCardProps> = ({
                 ) : (
                   <ArrowDownIcon className="w-4 h-4 text-red-600 mr-1" />
                 )}
-                <span className={`text-sm font-medium ${
-                  change.type === "increase" ? "text-green-600" : "text-red-600"
-                }`}>
+                <span
+                  className={`text-sm font-medium ${
+                    change.type === "increase"
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
                   {Math.abs(change.value)}%
                 </span>
-                <span className="text-sm text-gray-500 ml-1">vs last month</span>
+                <span className="text-sm text-gray-500 ml-1">
+                  vs last month
+                </span>
               </div>
             )}
           </div>
@@ -76,11 +82,36 @@ interface RecentActivityItem {
 
 const RecentActivity: React.FC = () => {
   const activities: RecentActivityItem[] = [
-    { id: "1", type: "user", message: "New user registered: john@example.com", time: "2 minutes ago" },
-    { id: "2", type: "order", message: "Order #1234 completed successfully", time: "5 minutes ago" },
-    { id: "3", type: "product", message: "Product 'Laptop Pro' updated", time: "10 minutes ago" },
-    { id: "4", type: "user", message: "User profile updated: jane@example.com", time: "15 minutes ago" },
-    { id: "5", type: "order", message: "New order received: #1235", time: "20 minutes ago" },
+    {
+      id: "1",
+      type: "user",
+      message: "New user registered: john@example.com",
+      time: "2 minutes ago",
+    },
+    {
+      id: "2",
+      type: "order",
+      message: "Order #1234 completed successfully",
+      time: "5 minutes ago",
+    },
+    {
+      id: "3",
+      type: "product",
+      message: "Product 'Laptop Pro' updated",
+      time: "10 minutes ago",
+    },
+    {
+      id: "4",
+      type: "user",
+      message: "User profile updated: jane@example.com",
+      time: "15 minutes ago",
+    },
+    {
+      id: "5",
+      type: "order",
+      message: "New order received: #1235",
+      time: "20 minutes ago",
+    },
   ];
 
   const getActivityIcon = (type: string) => {
@@ -162,7 +193,9 @@ export const TailwindDashboard: React.FC = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Welcome back! Here's what's happening with your business.</p>
+        <p className="text-gray-600">
+          Welcome back! Here's what's happening with your business.
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -192,7 +225,7 @@ export const TailwindDashboard: React.FC = () => {
           title="Growth Rate"
           value="15.3%"
           change={{ value: 3, type: "decrease" }}
-          icon={TrendingUpIcon}
+          icon={ChartBarIcon}
           color="orange"
         />
       </div>
@@ -203,7 +236,7 @@ export const TailwindDashboard: React.FC = () => {
         <div className="lg:col-span-2">
           <RecentActivity />
         </div>
-        
+
         {/* Quick Actions - Takes 1 column */}
         <div>
           <QuickActions />

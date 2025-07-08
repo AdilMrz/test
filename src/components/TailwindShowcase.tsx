@@ -64,21 +64,25 @@ export const TailwindShowcase: React.FC = () => {
                 Your changes have been saved successfully.
               </AlertDescription>
             </Alert>
-            
+
             <Alert variant="warning">
               <AlertTitle>Warning</AlertTitle>
               <AlertDescription>
                 Please review your settings before proceeding.
               </AlertDescription>
             </Alert>
-            
-            <Alert variant="error" dismissible onDismiss={() => console.log("Dismissed")}>
+
+            <Alert
+              variant="error"
+              dismissible
+              onDismiss={() => console.log("Dismissed")}
+            >
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>
                 Something went wrong. Please try again.
               </AlertDescription>
             </Alert>
-            
+
             <Alert variant="info">
               <AlertTitle>Information</AlertTitle>
               <AlertDescription>
@@ -103,7 +107,7 @@ export const TailwindShowcase: React.FC = () => {
               <Button variant="destructive">Destructive</Button>
               <Button disabled>Disabled</Button>
             </div>
-            
+
             <div className="flex flex-wrap gap-4 mt-4">
               <Button size="sm">Small</Button>
               <Button size="default">Default</Button>
@@ -143,7 +147,7 @@ export const TailwindShowcase: React.FC = () => {
             <div>
               <Checkbox
                 checked={checkboxChecked}
-                onCheckedChange={setCheckboxChecked}
+                onChange={(e) => setCheckboxChecked(e.target.checked)}
                 label="Accept terms and conditions"
                 description="By checking this box, you agree to our terms of service."
               />
@@ -170,25 +174,25 @@ export const TailwindShowcase: React.FC = () => {
             <CardTitle>Dialog</CardTitle>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => setDialogOpen(true)}>
-              Open Dialog
-            </Button>
-            
+            <Button onClick={() => setDialogOpen(true)}>Open Dialog</Button>
+
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Confirm Action</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to proceed? This action cannot be undone.
+                    Are you sure you want to proceed? This action cannot be
+                    undone.
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
-                  <Button onClick={() => setDialogOpen(false)}>
-                    Confirm
-                  </Button>
+                  <Button onClick={() => setDialogOpen(false)}>Confirm</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -202,27 +206,33 @@ export const TailwindShowcase: React.FC = () => {
               <CardTitle>Dashboard Stats</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-project-green-800">1,234</div>
+              <div className="text-3xl font-bold text-project-green-800">
+                1,234
+              </div>
               <p className="text-gray-600">Total Users</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Revenue</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-project-green-800">$45,678</div>
+              <div className="text-3xl font-bold text-project-green-800">
+                $45,678
+              </div>
               <p className="text-gray-600">This Month</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Growth</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-project-green-800">+23%</div>
+              <div className="text-3xl font-bold text-project-green-800">
+                +23%
+              </div>
               <p className="text-gray-600">vs Last Month</p>
             </CardContent>
           </Card>
