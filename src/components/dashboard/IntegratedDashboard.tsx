@@ -8,12 +8,8 @@ import {
   Badge,
   Progress,
 } from "../ui";
-import {
-  useGetList,
-  useGetOne,
-  useDataProvider,
-  useNavigate,
-} from "react-admin";
+import { useGetList, useGetOne, useDataProvider } from "react-admin";
+import { useNavigate } from "react-router-dom";
 import {
   UsersIcon,
   ShoppingCartIcon,
