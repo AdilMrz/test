@@ -10,6 +10,7 @@ import { TailwindDashboard } from "./components/dashboard/TailwindDashboard";
 import { TailwindForm } from "./components/forms/TailwindForm";
 import { TailwindMaintenancePanel } from "./components/TailwindMaintenancePanel";
 import { TailwindNotificationDemo } from "./components/TailwindNotificationDemo";
+import { IntegratedDashboard } from "./components/dashboard/IntegratedDashboard";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
@@ -19,6 +20,11 @@ import { queryClient } from "./auth";
 import { authProvider as baseAuthProvider, supabaseClient } from "./supabase";
 import { createTrackingSupabaseProvider } from "./providers/trackingSupabaseProvider";
 import { TailwindCustomLayout } from "./components/TailwindCustomLayout";
+import { NotificationProvider } from "./components/TailwindNotificationSystem";
+import {
+  MaintenanceModeProvider,
+  MaintenanceControls,
+} from "./components/MaintenanceModeProvider";
 import { RBACProvider } from "./contexts/RBACContext";
 import type { Role } from "./types/rbac";
 import { useRBAC } from "./contexts/RBACContext";
@@ -48,81 +54,94 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
   );
 
   return (
-    <Admin
-      key={role || "no-role"}
-      dataProvider={trackingDataProvider}
-      authProvider={authProvider}
-      i18nProvider={i18nProvider}
-      loginPage={TailwindLoginPage}
-      defaultTheme="light"
-      layout={TailwindCustomLayout}
-      {...themes}
+    <MaintenanceModeProvider
+      defaultContactInfo={{
+        email: "support@example.com",
+        phone: "+1 (555) 123-4567",
+        website: "https://status.example.com",
+      }}
     >
-      {resources.resources.map((resource: ResourceProps) => (
-        <Resource key={resource.name} {...resource} />
-      ))}
-      <CustomRoutes noLayout>
-        <Route path={SetPasswordPage.path} element={<SetPasswordPage />} />
-        <Route
-          path={ForgotPasswordPage.path}
-          element={<ForgotPasswordPage />}
-        />
-      </CustomRoutes>
-      <CustomRoutes>
-        <Route path="/tailwind-showcase" element={<TailwindShowcase />} />
-        <Route path="/tailwind-dashboard" element={<TailwindDashboard />} />
-        <Route path="/tailwind-form" element={<TailwindForm />} />
-        <Route
-          path="/tailwind-maintenance"
-          element={
-            <TailwindMaintenancePanel
-              isMaintenanceMode={true}
-              tasks={[
-                {
-                  id: "1",
-                  title: "Database Migration",
-                  description:
-                    "Upgrading database schema to improve performance",
-                  status: "completed",
-                  estimatedTime: "30 minutes",
-                  startTime: "2:00 PM",
-                  endTime: "2:25 PM",
-                },
-                {
-                  id: "2",
-                  title: "Server Updates",
-                  description: "Installing security patches and system updates",
-                  status: "in-progress",
-                  progress: 75,
-                  estimatedTime: "45 minutes",
-                  startTime: "2:30 PM",
-                },
-                {
-                  id: "3",
-                  title: "Cache Optimization",
-                  description:
-                    "Optimizing cache configuration for better response times",
-                  status: "pending",
-                  estimatedTime: "20 minutes",
-                },
-              ]}
-              estimatedCompletion="3:30 PM EST"
-              contactInfo={{
-                email: "support@example.com",
-                phone: "+1 (555) 123-4567",
-                website: "https://status.example.com",
-              }}
-              onRefresh={() => window.location.reload()}
-              onRetry={() => console.log("Retry clicked")}
+      <NotificationProvider>
+        <Admin
+          key={role || "no-role"}
+          dataProvider={trackingDataProvider}
+          authProvider={authProvider}
+          i18nProvider={i18nProvider}
+          loginPage={TailwindLoginPage}
+          dashboard={IntegratedDashboard}
+          defaultTheme="light"
+          layout={TailwindCustomLayout}
+          {...themes}
+        >
+          {resources.resources.map((resource: ResourceProps) => (
+            <Resource key={resource.name} {...resource} />
+          ))}
+          <CustomRoutes noLayout>
+            <Route path={SetPasswordPage.path} element={<SetPasswordPage />} />
+            <Route
+              path={ForgotPasswordPage.path}
+              element={<ForgotPasswordPage />}
             />
-          }
-        />
-        <Route
-          path="/tailwind-notifications"
-          element={<TailwindNotificationDemo />}
-        />
-      </CustomRoutes>
-    </Admin>
+          </CustomRoutes>
+          <CustomRoutes>
+            <Route path="/tailwind-showcase" element={<TailwindShowcase />} />
+            <Route path="/tailwind-dashboard" element={<TailwindDashboard />} />
+            <Route path="/tailwind-form" element={<TailwindForm />} />
+            <Route
+              path="/tailwind-maintenance"
+              element={
+                <TailwindMaintenancePanel
+                  isMaintenanceMode={true}
+                  tasks={[
+                    {
+                      id: "1",
+                      title: "Database Migration",
+                      description:
+                        "Upgrading database schema to improve performance",
+                      status: "completed",
+                      estimatedTime: "30 minutes",
+                      startTime: "2:00 PM",
+                      endTime: "2:25 PM",
+                    },
+                    {
+                      id: "2",
+                      title: "Server Updates",
+                      description:
+                        "Installing security patches and system updates",
+                      status: "in-progress",
+                      progress: 75,
+                      estimatedTime: "45 minutes",
+                      startTime: "2:30 PM",
+                    },
+                    {
+                      id: "3",
+                      title: "Cache Optimization",
+                      description:
+                        "Optimizing cache configuration for better response times",
+                      status: "pending",
+                      estimatedTime: "20 minutes",
+                    },
+                  ]}
+                  estimatedCompletion="3:30 PM EST"
+                  contactInfo={{
+                    email: "support@example.com",
+                    phone: "+1 (555) 123-4567",
+                    website: "https://status.example.com",
+                  }}
+                  onRefresh={() => window.location.reload()}
+                  onRetry={() => console.log("Retry clicked")}
+                />
+              }
+            />
+            <Route
+              path="/tailwind-notifications"
+              element={<TailwindNotificationDemo />}
+            />
+          </CustomRoutes>
+        </Admin>
+        <MaintenanceControls />
+      </NotificationProvider>
+    </MaintenanceModeProvider>
   );
 };
 
