@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseDataProvider } from "ra-supabase";
 import type { Permission } from "../types/rbac";
+import { rolePermissions } from "../config/permissions";
 import type { Product, Customer, Purchase } from "../types/database";
 import type {
   CreateParams,
@@ -10,6 +11,61 @@ import type {
   GetListParams,
   GetOneParams,
 } from "react-admin";
+
+// Cache for user data to avoid repeated database calls
+interface UserCache {
+  user: { id: string; email?: string };
+  role: string;
+  fullname?: string;
+  email?: string;
+  timestamp: number;
+}
+
+const userCache = new Map<string, UserCache>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Helper function to get cached user data or fetch from database
+const getCachedUserData = async (
+  supabaseClient: SupabaseClient,
+): Promise<UserCache | null> => {
+  const {
+    data: { user },
+  } = await supabaseClient.auth.getUser();
+
+  if (!user) return null;
+
+  const cached = userCache.get(user.id);
+  const now = Date.now();
+
+  // Return cached data if it's still valid
+  if (cached && now - cached.timestamp < CACHE_DURATION) {
+    return cached;
+  }
+
+  // Fetch fresh data from database
+  try {
+    const { data: userRole } = await supabaseClient
+      .from("user_role")
+      .select("role, fullname")
+      .eq("user_id", user.id)
+      .single();
+
+    const userData: UserCache = {
+      user: { id: user.id, email: user.email },
+      role: userRole?.role || "user",
+      fullname: userRole?.fullname,
+      email: user.email,
+      timestamp: now,
+    };
+
+    // Cache the data
+    userCache.set(user.id, userData);
+    return userData;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return null;
+  }
+};
 
 // Interface for audit log entries
 interface LogEntry {
@@ -37,24 +93,14 @@ export const createTrackingSupabaseProvider = (
     supabaseClient,
   });
 
-  const logOperation = async (entry: LogEntry) => {
+  const logOperation = async (entry: LogEntry, userData?: UserCache) => {
     try {
       console.log("Logging operation:", entry);
-      // Get user's full name from user_role table
-      if (entry.user_id) {
-        const { data: userData } = await supabaseClient
-          .from("user_role")
-          .select("fullname")
-          .eq("user_id", entry.user_id)
-          .single();
-        console.log("User data from user_role:", userData);
-        entry.user_fullname = userData?.fullname;
 
-        // Get user's email
-        const {
-          data: { user },
-        } = await supabaseClient.auth.getUser();
-        entry.user_email = user?.email;
+      // Use provided userData or get from cache if user_id is available
+      if (entry.user_id && userData) {
+        entry.user_fullname = userData.fullname;
+        entry.user_email = userData.email;
       }
 
       // Convert Date object to ISO string for Postgres timestamptz
@@ -64,17 +110,21 @@ export const createTrackingSupabaseProvider = (
       };
 
       console.log("Inserting into audit_logs:", logEntry);
-      const { data, error } = await supabaseClient
-        .from("audit_logs")
-        .insert([logEntry])
-        .select()
-        .single();
 
-      if (error) {
-        console.error("Error inserting into audit_logs:", error.message);
-        throw error;
-      }
-      console.log("Successfully logged operation:", data);
+      // Use fire-and-forget for audit logging to avoid blocking the main operation
+      const logPromise = supabaseClient.from("audit_logs").insert([logEntry]);
+
+      Promise.resolve(logPromise)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Error inserting into audit_logs:", error.message);
+          } else {
+            console.log("Successfully logged operation");
+          }
+        })
+        .catch((error: unknown) => {
+          console.error("Failed to log operation:", error);
+        });
     } catch (error) {
       console.error("Failed to log operation:", error);
     }
@@ -83,9 +133,13 @@ export const createTrackingSupabaseProvider = (
   return {
     ...baseDataProvider,
     create: async (resource: string, params: CreateParams) => {
-      const {
-        data: { user },
-      } = await supabaseClient.auth.getUser();
+      const userData = await getCachedUserData(supabaseClient);
+
+      if (!userData) {
+        console.warn("No authenticated user found - redirecting to login");
+        throw new Error("ra.auth.auth_check_error");
+      }
+
       const hasPermission = await checkPermission("create", resource);
 
       if (!hasPermission) {
@@ -96,7 +150,7 @@ export const createTrackingSupabaseProvider = (
         ...params,
         data: {
           ...params.data,
-          created_by: user?.id,
+          created_by: userData.user.id,
         },
       };
 
@@ -106,55 +160,59 @@ export const createTrackingSupabaseProvider = (
           params.data.fullname || params.data.name || response.data.id;
 
         if (resource === "purchases") {
-          const { data: customer } = await supabaseClient
-            .from("customers")
-            .select("fullname")
-            .eq("id", params.data.customer_id)
-            .single();
+          // Parallelize the customer and product queries
+          const [customerResult, productResult] = await Promise.all([
+            supabaseClient
+              .from("customers")
+              .select("fullname")
+              .eq("id", params.data.customer_id)
+              .single(),
+            supabaseClient
+              .from("products")
+              .select("name")
+              .eq("id", params.data.product_id)
+              .single(),
+          ]);
 
-          const { data: product } = await supabaseClient
-            .from("products")
-            .select("name")
-            .eq("id", params.data.product_id)
-            .single();
-
-          recordName = `${product?.name || "Unknown Product"} for ${customer?.fullname || "Unknown Customer"}`;
+          recordName = `${productResult.data?.name || "Unknown Product"} for ${customerResult.data?.fullname || "Unknown Customer"}`;
         }
 
-        await logOperation({
-          timestamp: new Date(),
-          operation: "CREATE",
-          resource,
-          user_id: user?.id,
-          status: "success",
-          details: `Created ${resource}: ${recordName}`,
-        });
+        logOperation(
+          {
+            timestamp: new Date(),
+            operation: "CREATE",
+            resource,
+            user_id: userData.user.id,
+            status: "success",
+            details: `Created ${resource}: ${recordName}`,
+          },
+          userData,
+        );
         return response;
       } catch (error) {
-        await logOperation({
-          timestamp: new Date(),
-          operation: "CREATE",
-          resource,
-          user_id: user?.id,
-          status: "error",
-          details: `Failed to create ${resource}: ${error}`,
-        });
+        logOperation(
+          {
+            timestamp: new Date(),
+            operation: "CREATE",
+            resource,
+            user_id: userData.user.id,
+            status: "error",
+            details: `Failed to create ${resource}: ${error}`,
+          },
+          userData,
+        );
         throw new Error("ra.notification.http_error");
       }
     },
     update: async (resource: string, params: UpdateParams) => {
-      const {
-        data: { user },
-      } = await supabaseClient.auth.getUser();
+      const userData = await getCachedUserData(supabaseClient);
 
-      // Get user role
-      const { data: userRole } = await supabaseClient
-        .from("user_role")
-        .select("role")
-        .eq("user_id", user?.id)
-        .single();
+      if (!userData) {
+        console.warn("No authenticated user found - redirecting to login");
+        throw new Error("ra.auth.auth_check_error");
+      }
 
-      // First get the record to check ownership
+      // Get the record to check ownership
       const { data: record } = await supabaseClient
         .from(resource)
         .select("created_by")
@@ -165,7 +223,7 @@ export const createTrackingSupabaseProvider = (
       const hasPermission = await checkPermission(
         "update",
         resource,
-        ["admin", "manager"].includes(userRole?.role || "")
+        ["admin", "manager"].includes(userData.role)
           ? undefined
           : record?.created_by,
       );
@@ -175,7 +233,7 @@ export const createTrackingSupabaseProvider = (
       }
 
       try {
-        // Get the record name before update
+        // Get the record name before update - parallelize queries where possible
         let recordName = params.id;
         if (resource === "products") {
           const { data } = await supabaseClient
@@ -192,57 +250,61 @@ export const createTrackingSupabaseProvider = (
             .single();
           recordName = data?.fullname || params.id;
         } else if (resource === "purchases") {
-          const { data: customer } = await supabaseClient
-            .from("customers")
-            .select("fullname")
-            .eq("id", params.data.customer_id)
-            .single();
+          // Parallelize the customer and product queries
+          const [customerResult, productResult] = await Promise.all([
+            supabaseClient
+              .from("customers")
+              .select("fullname")
+              .eq("id", params.data.customer_id)
+              .single(),
+            supabaseClient
+              .from("products")
+              .select("name")
+              .eq("id", params.data.product_id)
+              .single(),
+          ]);
 
-          const { data: product } = await supabaseClient
-            .from("products")
-            .select("name")
-            .eq("id", params.data.product_id)
-            .single();
-
-          recordName = `${product?.name || "Unknown Product"} for ${customer?.fullname || "Unknown Customer"}`;
+          recordName = `${productResult.data?.name || "Unknown Product"} for ${customerResult.data?.fullname || "Unknown Customer"}`;
         }
 
         const response = await baseDataProvider.update(resource, params);
 
-        await logOperation({
-          timestamp: new Date(),
-          operation: "UPDATE",
-          resource,
-          user_id: user?.id,
-          status: "success",
-          details: `Updated ${resource}: ${recordName}`,
-        });
+        logOperation(
+          {
+            timestamp: new Date(),
+            operation: "UPDATE",
+            resource,
+            user_id: userData.user.id,
+            status: "success",
+            details: `Updated ${resource}: ${recordName}`,
+          },
+          userData,
+        );
         return response;
       } catch (error) {
-        await logOperation({
-          timestamp: new Date(),
-          operation: "UPDATE",
-          resource,
-          user_id: user?.id,
-          status: "error",
-          details: `Failed to update ${resource}: ${error}`,
-        });
+        logOperation(
+          {
+            timestamp: new Date(),
+            operation: "UPDATE",
+            resource,
+            user_id: userData.user.id,
+            status: "error",
+            details: `Failed to update ${resource}: ${error}`,
+          },
+          userData,
+        );
         throw new Error("ra.notification.http_error");
       }
     },
     delete: async (resource: string, params: DeleteParams) => {
-      const {
-        data: { user },
-      } = await supabaseClient.auth.getUser();
+      const userData = await getCachedUserData(supabaseClient);
 
-      // Get user role
-      const { data: userRole } = await supabaseClient
-        .from("user_role")
-        .select("role")
-        .eq("user_id", user?.id)
-        .single();
+      if (!userData) {
+        console.warn("No authenticated user found - redirecting to login");
+        throw new Error("ra.auth.auth_check_error");
+      }
 
-      // First get the record to check ownership
+      // Get the record to check ownership
       const { data: record } = await supabaseClient
         .from(resource)
         .select("created_by")
@@ -253,7 +315,7 @@ export const createTrackingSupabaseProvider = (
       const hasPermission = await checkPermission(
         "delete",
         resource,
-        ["admin", "manager"].includes(userRole?.role || "")
+        ["admin", "manager"].includes(userData.role)
           ? undefined
           : record?.created_by,
       );
@@ -298,31 +360,41 @@ export const createTrackingSupabaseProvider = (
 
         const response = await baseDataProvider.delete(resource, params);
 
-        await logOperation({
-          timestamp: new Date(),
-          operation: "DELETE",
-          resource,
-          user_id: user?.id,
-          status: "success",
-          details: `Deleted ${resource}: ${recordName}`,
-        });
+        logOperation(
+          {
+            timestamp: new Date(),
+            operation: "DELETE",
+            resource,
+            user_id: userData.user.id,
+            status: "success",
+            details: `Deleted ${resource}: ${recordName}`,
+          },
+          userData,
+        );
         return response;
       } catch (error) {
-        await logOperation({
-          timestamp: new Date(),
-          operation: "DELETE",
-          resource,
-          user_id: user?.id,
-          status: "error",
-          details: `Failed to delete ${resource}: ${error}`,
-        });
+        logOperation(
+          {
+            timestamp: new Date(),
+            operation: "DELETE",
+            resource,
+            user_id: userData.user.id,
+            status: "error",
+            details: `Failed to delete ${resource}: ${error}`,
+          },
+          userData,
+        );
         throw new Error("ra.notification.http_error");
       }
     },
     deleteMany: async (resource: string, params: DeleteManyParams) => {
-      const {
-        data: { user },
-      } = await supabaseClient.auth.getUser();
+      const userData = await getCachedUserData(supabaseClient);
+
+      if (!userData) {
+        console.warn("No authenticated user found - redirecting to login");
+        throw new Error("ra.auth.auth_check_error");
+      }
+
       const hasPermission = await checkPermission("delete", resource);
 
       if (!hasPermission) {
@@ -347,14 +419,17 @@ export const createTrackingSupabaseProvider = (
 
         const response = await baseDataProvider.deleteMany(resource, params);
 
-        await logOperation({
-          timestamp: new Date(),
-          operation: "BULK_DELETE",
-          resource,
-          user_id: user?.id,
-          status: "success",
-          details: `Bulk deleted ${resource}: ${names.join(", ")}`,
-        });
+        logOperation(
+          {
+            timestamp: new Date(),
+            operation: "BULK_DELETE",
+            resource,
+            user_id: userData.user.id,
+            status: "success",
+            details: `Bulk deleted ${resource}: ${names.join(", ")}`,
+          },
+          userData,
+        );
         return response;
       } catch (error: unknown) {
         const errorMessage =
@@ -366,103 +441,94 @@ export const createTrackingSupabaseProvider = (
           ? `Cannot delete ${resource} that have associated ${resource === "customers" ? "purchases" : "records"}`
           : errorMessage;
 
-        await logOperation({
-          timestamp: new Date(),
-          operation: "BULK_DELETE",
-          resource,
-          user_id: user?.id,
-          status: "error",
-          details: `Failed to bulk delete ${resource}: ${friendlyMessage}`,
-        });
+        logOperation(
+          {
+            timestamp: new Date(),
+            operation: "BULK_DELETE",
+            resource,
+            user_id: userData.user.id,
+            status: "error",
+            details: `Failed to bulk delete ${resource}: ${friendlyMessage}`,
+          },
+          userData,
+        );
         throw new Error(friendlyMessage);
       }
     },
     getList: async (resource: string, params: GetListParams) => {
-      const {
-        data: { user },
-      } = await supabaseClient.auth.getUser();
+      const userData = await getCachedUserData(supabaseClient);
 
-      if (!user) {
-        console.warn("No authenticated user found");
-        throw new Error("ra.notification.unauthorized");
+      if (!userData) {
+        console.warn("No authenticated user found - redirecting to login");
+        throw new Error("ra.auth.auth_check_error");
       }
 
-      // Get user role first
-      const { data: userRole, error: roleError } = await supabaseClient
-        .from("user_role")
-        .select("role")
-        .eq("user_id", user.id)
-        .single();
-
-      if (roleError || !userRole) {
-        console.warn("User role not found or error:", {
-          userId: user.id,
-          error: roleError,
-          userRole,
-        });
-        // For development, allow access with default 'user' role if no role is set
-        if (import.meta.env.MODE === "development" && !userRole) {
-          console.warn("Development mode: Using default 'user' role");
-          // Create a default user role entry for development
-          const { error: insertError } = await supabaseClient
+      // Handle development mode role creation if needed
+      if (import.meta.env.MODE === "development" && !userData.role) {
+        console.warn("Development mode: Creating default 'user' role");
+        try {
+          await supabaseClient
             .from("user_role")
-            .insert({ user_id: user.id, role: "user" });
-
-          if (insertError) {
-            console.error("Failed to create default user role:", insertError);
-            throw new Error("ra.notification.unauthorized");
-          }
-        } else {
+            .insert({ user_id: userData.user.id, role: "user" });
+          userData.role = "user"; // Update cached data
+        } catch (insertError) {
+          console.error("Failed to create default user role:", insertError);
           throw new Error("ra.notification.unauthorized");
         }
       }
-
-      // Get the actual role (either from DB or default 'user')
-      const actualRole = userRole?.role || "user";
 
       // Check permissions without ownership for admin and manager
       const hasPermission = await checkPermission(
         "list",
         resource,
-        ["admin", "manager"].includes(actualRole) ? undefined : user.id,
+        ["admin", "manager"].includes(userData.role)
+          ? undefined
+          : userData.user.id,
       );
 
       if (!hasPermission) {
         throw new Error("ra.notification.unauthorized");
       }
 
-      // If admin, manager, or unrestricted resources, return unfiltered list
+      // Check if the permission allows "any" ownership or if user is admin/manager
+      const permissions =
+        rolePermissions[userData.role as keyof typeof rolePermissions] || [];
+      const listPermission = permissions.find(
+        (p: Permission) =>
+          p.action === "list" &&
+          (p.resource === "*" || p.resource === resource),
+      );
+
+      const allowsAnyOwnership =
+        listPermission?.ownership === "any" || !listPermission?.ownership;
+
+      // If admin, manager, or permission allows "any" ownership, return unfiltered list
       if (
-        actualRole === "admin" ||
-        actualRole === "manager" ||
-        resource === "products" ||
-        resource === "customers"
+        userData.role === "admin" ||
+        userData.role === "manager" ||
+        allowsAnyOwnership
       ) {
         return baseDataProvider.getList(resource, params);
       }
 
-      // For other roles and resources, apply ownership filter
+      // For ownership-restricted resources, apply ownership filter
       const newParams = {
         ...params,
         filter: {
           ...params.filter,
-          created_by: user.id,
+          created_by: userData.user.id,
         },
       };
       return baseDataProvider.getList(resource, newParams);
     },
 
     getOne: async (resource: string, params: GetOneParams) => {
-      const {
-        data: { user },
-      } = await supabaseClient.auth.getUser();
+      const userData = await getCachedUserData(supabaseClient);
 
-      // Get user role
-      const { data: userRole } = await supabaseClient
-        .from("user_role")
-        .select("role")
-        .eq("user_id", user?.id)
-        .single();
+      if (!userData) {
+        console.warn("No authenticated user found - redirecting to login");
+        throw new Error("ra.auth.auth_check_error");
+      }
 
       const response = await baseDataProvider.getOne(resource, params);
 
@@ -470,7 +536,7 @@ export const createTrackingSupabaseProvider = (
       const hasPermission = await checkPermission(
         "read",
         resource,
-        ["admin", "manager"].includes(userRole?.role || "")
+        ["admin", "manager"].includes(userData.role)
           ? undefined
           : response.data?.created_by,
       );
