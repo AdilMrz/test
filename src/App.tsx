@@ -13,7 +13,7 @@ import { useResources } from "./AppResources";
 import { queryClient } from "./auth";
 import { authProvider as baseAuthProvider, supabaseClient } from "./supabase";
 import { createTrackingSupabaseProvider } from "./providers/trackingSupabaseProvider";
-import CustomLayout from "./CustomLayout";
+import { TailwindCustomLayout } from "./components/TailwindCustomLayout";
 import { RBACProvider } from "./contexts/RBACContext";
 import type { Role } from "./types/rbac";
 import { useRBAC } from "./contexts/RBACContext";
@@ -50,7 +50,7 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
       i18nProvider={i18nProvider}
       loginPage={TailwindLoginPage}
       defaultTheme="light"
-      layout={CustomLayout}
+      layout={TailwindCustomLayout}
       {...themes}
     >
       {resources.resources.map((resource: ResourceProps) => (
