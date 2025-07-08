@@ -9,6 +9,7 @@ import {
   useRefresh,
   TopToolbar,
   required,
+  useTranslate,
 } from "react-admin";
 import { Button as MuiButton } from "@mui/material";
 import { Add as AddIcon, ArrowBack } from "@mui/icons-material";
@@ -27,6 +28,7 @@ export const PurchaseCreate = () => {
   const navigate = useNavigate();
   const [isCreateCustomerOpen, setIsCreateCustomerOpen] = useState(false);
   const refresh = useRefresh();
+  const translate = useTranslate();
 
   const handleCustomerCreated = () => {
     refresh();
@@ -42,7 +44,10 @@ export const PurchaseCreate = () => {
     <Create
       actions={
         <TopToolbar>
-          <Button label="Back" onClick={() => navigate("/purchases")}>
+          <Button
+            label={translate("ra.action.back")}
+            onClick={() => navigate("/purchases")}
+          >
             <ArrowBack />
           </Button>
         </TopToolbar>
@@ -85,7 +90,7 @@ export const PurchaseCreate = () => {
                 },
               }}
             >
-              New Customer
+              {translate("buttons.create_customer")}
             </MuiButton>
           </div>
         </div>

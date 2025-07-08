@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TopToolbar, SelectColumnsButton } from "react-admin";
+import { TopToolbar, SelectColumnsButton, useTranslate } from "react-admin";
 import { Button as MuiButton } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { CreateProductDialog } from "./CreateProductDialog";
@@ -8,6 +8,7 @@ import { Protected } from "../../../components/Protected";
 
 export const ListActions = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const translate = useTranslate();
 
   return (
     <TopToolbar>
@@ -30,7 +31,7 @@ export const ListActions = () => {
             },
           }}
         >
-          Create Product
+          {translate("resources.products.create")}
         </MuiButton>
       </Protected>
       <CreateProductDialog

@@ -2,6 +2,70 @@ import frenchMessages from "ra-language-french";
 
 const customFrenchMessages = {
   ...frenchMessages,
+  ra: {
+    ...frenchMessages.ra,
+    page: {
+      ...frenchMessages.ra.page,
+      create: "Créer %{name}",
+      edit: "%{name} %{recordRepresentation}",
+      list: "%{name}",
+      show: "%{name} %{recordRepresentation}",
+    },
+    action: {
+      ...frenchMessages.ra.action,
+      create: "Créer",
+      edit: "Modifier",
+      delete: "Supprimer",
+      show: "Afficher",
+      list: "Liste",
+      save: "Enregistrer",
+      cancel: "Annuler",
+      back: "Retour",
+      refresh: "Actualiser",
+      add_filter: "Ajouter un filtre",
+      remove_filter: "Supprimer ce filtre",
+      remove_all_filters: "Supprimer tous les filtres",
+      export: "Exporter",
+      search: "Rechercher",
+      sort: "Trier",
+      undo: "Annuler",
+      expand: "Développer",
+      close: "Fermer",
+      open_menu: "Ouvrir le menu",
+      close_menu: "Fermer le menu",
+    },
+    navigation: {
+      ...frenchMessages.ra.navigation,
+      page: "Aller à la page %{page}",
+      current_page: "page %{page}",
+      first: "Aller à la première page",
+      last: "Aller à la dernière page",
+      next: "Aller à la page suivante",
+      previous: "Aller à la page précédente",
+      page_rows_per_page: "Lignes par page :",
+      skip_nav: "Aller au contenu",
+    },
+    message: {
+      ...frenchMessages.ra.message,
+      bulk_delete_content:
+        "Êtes-vous sûr de vouloir supprimer cet élément ? |||| Êtes-vous sûr de vouloir supprimer ces %{smart_count} éléments ?",
+      bulk_delete_title:
+        "Supprimer %{name} |||| Supprimer %{smart_count} %{name}",
+      delete_content: "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      delete_title: "Supprimer %{name} #%{id}",
+      details: "Détails",
+      error:
+        "Une erreur s'est produite et votre demande n'a pas pu être traitée.",
+      invalid_form:
+        "Le formulaire n'est pas valide. Veuillez vérifier les erreurs",
+      loading: "La page se charge, merci de patienter",
+      no: "Non",
+      not_found: "Vous avez tapé une mauvaise URL ou suivi un mauvais lien.",
+      yes: "Oui",
+      unsaved_changes:
+        "Certaines de vos modifications n'ont pas été sauvegardées. Êtes-vous sûr de vouloir les ignorer ?",
+    },
+  },
   resources: {
     customers: {
       name: "Client |||| Clients",

@@ -1,4 +1,4 @@
-import { useCreate, useNotify, useRefresh } from "react-admin";
+import { useCreate, useNotify, useRefresh, useTranslate } from "react-admin";
 import {
   Dialog,
   DialogTitle,
@@ -22,6 +22,7 @@ export const CreateCustomerDialog = ({
   const [create] = useCreate();
   const notify = useNotify();
   const refresh = useRefresh();
+  const translate = useTranslate();
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -31,7 +32,7 @@ export const CreateCustomerDialog = ({
   const handleSubmit = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      notify("Invalid email format", { type: "error" });
+      notify(translate("validation.email"), { type: "error" });
       return;
     }
 
@@ -75,7 +76,7 @@ export const CreateCustomerDialog = ({
           fontSize: "1.2rem",
         }}
       >
-        Create New Customer
+        {translate("dialogs.create.customer")}
       </DialogTitle>
       <DialogContent sx={{ padding: "24px" }}>
         <form
@@ -84,7 +85,7 @@ export const CreateCustomerDialog = ({
         >
           <input
             type="text"
-            placeholder="Full Name"
+            placeholder={translate("resources.customers.fields.fullname")}
             value={formData.fullname}
             onChange={(e) =>
               setFormData({ ...formData, fullname: e.target.value })
@@ -93,7 +94,7 @@ export const CreateCustomerDialog = ({
           />
           <input
             type="email"
-            placeholder="Email"
+            placeholder={translate("resources.customers.fields.email")}
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
@@ -102,7 +103,7 @@ export const CreateCustomerDialog = ({
           />
           <input
             type="text"
-            placeholder="Address"
+            placeholder={translate("resources.customers.fields.address")}
             value={formData.address}
             onChange={(e) =>
               setFormData({ ...formData, address: e.target.value })
@@ -125,7 +126,7 @@ export const CreateCustomerDialog = ({
             "&:hover": { backgroundColor: "#f5f5f5" },
           }}
         >
-          Cancel
+          {translate("ra.action.cancel")}
         </MuiButton>
         <MuiButton
           onClick={handleSubmit}
@@ -135,7 +136,7 @@ export const CreateCustomerDialog = ({
             "&:hover": { backgroundColor: "#0f4024" },
           }}
         >
-          Create Customer
+          {translate("resources.customers.create")}
         </MuiButton>
       </DialogActions>
     </Dialog>

@@ -1,4 +1,4 @@
-import { SelectColumnsButton, TopToolbar } from "react-admin";
+import { SelectColumnsButton, TopToolbar, useTranslate } from "react-admin";
 import { Button as MuiButton } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { Protected } from "../../../components/Protected";
 
 export const ListActions = () => {
   const navigate = useNavigate();
+  const translate = useTranslate();
 
   return (
     <TopToolbar>
@@ -28,7 +29,7 @@ export const ListActions = () => {
             },
           }}
         >
-          Create Purchase
+          {translate("resources.purchases.create")}
         </MuiButton>
       </Protected>
     </TopToolbar>

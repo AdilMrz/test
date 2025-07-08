@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCreate, useNotify, useRefresh } from "react-admin";
+import { useCreate, useNotify, useRefresh, useTranslate } from "react-admin";
 import {
   Dialog,
   DialogTitle,
@@ -17,6 +17,7 @@ export const CreateCustomerDialog = ({
   const [create] = useCreate();
   const notify = useNotify();
   const refresh = useRefresh();
+  const translate = useTranslate();
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -30,17 +31,17 @@ export const CreateCustomerDialog = ({
         { data: formData },
         {
           onSuccess: () => {
-            notify("Customer created successfully");
+            notify(translate("notifications.success.create"));
             refresh();
             onClose();
           },
           onError: () => {
-            notify("Error creating customer", { type: "error" });
+            notify(translate("notifications.error.create"), { type: "error" });
           },
         },
       );
     } catch (error) {
-      notify("Error creating customer", { type: "error" });
+      notify(translate("notifications.error.create"), { type: "error" });
     }
   };
 
@@ -63,13 +64,13 @@ export const CreateCustomerDialog = ({
           fontSize: "1.2rem",
         }}
       >
-        Create New Customer
+        {translate("dialogs.create.customer")}
       </DialogTitle>
       <DialogContent sx={{ padding: "24px" }}>
         <div className="flex flex-col gap-4 min-w-[400px] mt-2">
           <input
             type="text"
-            placeholder="Full Name"
+            placeholder={translate("resources.customers.fields.fullname")}
             value={formData.fullname}
             onChange={(e) =>
               setFormData({ ...formData, fullname: e.target.value })
@@ -79,7 +80,7 @@ export const CreateCustomerDialog = ({
           />
           <input
             type="email"
-            placeholder="Email"
+            placeholder={translate("resources.customers.fields.email")}
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
@@ -89,7 +90,7 @@ export const CreateCustomerDialog = ({
           />
           <input
             type="text"
-            placeholder="Address"
+            placeholder={translate("resources.customers.fields.address")}
             value={formData.address}
             onChange={(e) =>
               setFormData({ ...formData, address: e.target.value })
@@ -113,7 +114,7 @@ export const CreateCustomerDialog = ({
             "&:hover": { backgroundColor: "#f5f5f5" },
           }}
         >
-          Cancel
+          {translate("ra.action.cancel")}
         </MuiButton>
         <MuiButton
           onClick={handleSubmit}
@@ -123,7 +124,7 @@ export const CreateCustomerDialog = ({
             "&:hover": { backgroundColor: THEME_COLORS.primaryDark },
           }}
         >
-          Create Customer
+          {translate("resources.customers.create")}
         </MuiButton>
       </DialogActions>
     </Dialog>
