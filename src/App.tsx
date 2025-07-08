@@ -3,7 +3,8 @@ import { Admin, Resource, CustomRoutes } from "react-admin";
 import type { ResourceProps } from "react-admin";
 import { BrowserRouter, Route } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ForgotPasswordPage, LoginPage, SetPasswordPage } from "ra-supabase";
+import { ForgotPasswordPage, SetPasswordPage } from "ra-supabase";
+import { TailwindLoginPage } from "./components/TailwindLoginPage";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
@@ -32,8 +33,6 @@ const i18nProvider = polyglotI18nProvider(
   "en", // Default locale
 );
 
-const CustomLoginPage = (props = {}) => <LoginPage {...props} />;
-
 const AdminApp = ({ role = null }: { role?: Role | null }) => {
   const { checkPermission } = useRBAC();
   const resources = useResources();
@@ -49,7 +48,7 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
       dataProvider={trackingDataProvider}
       authProvider={authProvider}
       i18nProvider={i18nProvider}
-      loginPage={CustomLoginPage}
+      loginPage={TailwindLoginPage}
       defaultTheme="light"
       layout={CustomLayout}
       {...themes}
