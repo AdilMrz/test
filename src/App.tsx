@@ -6,7 +6,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ForgotPasswordPage, SetPasswordPage } from "ra-supabase";
 import { TailwindLoginPage } from "./components/TailwindLoginPage";
 
-import { IntegratedDashboard } from "./components/dashboard/IntegratedDashboard";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
@@ -61,7 +60,6 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
           authProvider={authProvider}
           i18nProvider={i18nProvider}
           loginPage={TailwindLoginPage}
-          dashboard={IntegratedDashboard}
           defaultTheme="light"
           layout={TailwindCustomLayout}
           {...themes}
