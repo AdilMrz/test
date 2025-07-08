@@ -15,15 +15,18 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
     const sizeClasses = {
       sm: {
         track: "h-5 w-9",
-        thumb: "h-4 w-4 data-[state=checked]:translate-x-4",
+        thumb: "h-4 w-4",
+        translate: props.checked ? "translate-x-4" : "translate-x-0",
       },
       default: {
         track: "h-6 w-11",
-        thumb: "h-5 w-5 data-[state=checked]:translate-x-5",
+        thumb: "h-5 w-5",
+        translate: props.checked ? "translate-x-5" : "translate-x-0",
       },
       lg: {
         track: "h-7 w-12",
-        thumb: "h-6 w-6 data-[state=checked]:translate-x-5",
+        thumb: "h-6 w-6",
+        translate: props.checked ? "translate-x-5" : "translate-x-0",
       },
     };
 
@@ -43,14 +46,14 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
               "relative inline-flex cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-within:ring-2 focus-within:ring-project-green-800 focus-within:ring-offset-2 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
               "bg-gray-200 peer-checked:bg-project-green-800",
               sizeClasses[size].track,
-              className
+              className,
             )}
           >
             <span
               className={cn(
                 "pointer-events-none block rounded-full bg-white shadow-lg ring-0 transition-transform duration-200 ease-in-out",
-                "translate-x-0 peer-checked:translate-x-5",
-                sizeClasses[size].thumb
+                sizeClasses[size].thumb,
+                sizeClasses[size].translate,
               )}
             />
           </label>
@@ -73,7 +76,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Switch.displayName = "Switch";
