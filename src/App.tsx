@@ -15,8 +15,7 @@ import { queryClient } from "./auth";
 import { authProvider as baseAuthProvider, supabaseClient } from "./supabase";
 import { createTrackingSupabaseProvider } from "./providers/trackingSupabaseProvider";
 import { TailwindCustomLayout } from "./components/TailwindCustomLayout";
-import { NotificationProvider } from "./components/TailwindNotificationSystem";
-import { MaintenanceModeProvider } from "./components/MaintenanceModeProvider";
+
 import { RBACProvider } from "./contexts/RBACContext";
 import type { Role } from "./types/rbac";
 import { useRBAC } from "./contexts/RBACContext";
@@ -46,37 +45,27 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
   );
 
   return (
-    <MaintenanceModeProvider
-      defaultContactInfo={{
-        email: "support@example.com",
-        phone: "+1 (555) 123-4567",
-        website: "https://status.example.com",
-      }}
+    <Admin
+      key={role || "no-role"}
+      dataProvider={trackingDataProvider}
+      authProvider={authProvider}
+      i18nProvider={i18nProvider}
+      loginPage={TailwindLoginPage}
+      defaultTheme="light"
+      layout={TailwindCustomLayout}
+      {...themes}
     >
-      <NotificationProvider>
-        <Admin
-          key={role || "no-role"}
-          dataProvider={trackingDataProvider}
-          authProvider={authProvider}
-          i18nProvider={i18nProvider}
-          loginPage={TailwindLoginPage}
-          defaultTheme="light"
-          layout={TailwindCustomLayout}
-          {...themes}
-        >
-          {resources.resources.map((resource: ResourceProps) => (
-            <Resource key={resource.name} {...resource} />
-          ))}
-          <CustomRoutes noLayout>
-            <Route path={SetPasswordPage.path} element={<SetPasswordPage />} />
-            <Route
-              path={ForgotPasswordPage.path}
-              element={<ForgotPasswordPage />}
-            />
-          </CustomRoutes>
-        </Admin>
-      </NotificationProvider>
-    </MaintenanceModeProvider>
+      {resources.resources.map((resource: ResourceProps) => (
+        <Resource key={resource.name} {...resource} />
+      ))}
+      <CustomRoutes noLayout>
+        <Route path={SetPasswordPage.path} element={<SetPasswordPage />} />
+        <Route
+          path={ForgotPasswordPage.path}
+          element={<ForgotPasswordPage />}
+        />
+      </CustomRoutes>
+    </Admin>
   );
 };
 

@@ -6,7 +6,6 @@ import {
 } from "react-admin";
 import type { LayoutProps } from "react-admin";
 import { TailwindLanguageSwitcher } from "./TailwindLanguageSwitcher";
-import { ReactAdminNotificationBridge } from "./ReactAdminNotificationBridge";
 import { TailwindCustomMenu } from "./TailwindCustomMenu";
 
 const TailwindCustomAppBar = () => (
@@ -21,7 +20,6 @@ export const TailwindCustomLayout = (props: LayoutProps) => (
   <Layout {...props} appBar={TailwindCustomAppBar} menu={TailwindCustomMenu}>
     {props.children}
     <CheckForApplicationUpdate />
-    <ReactAdminNotificationBridge />
   </Layout>
 );
 
