@@ -117,6 +117,7 @@ export const useResources = () => {
       icon: HistoryIcon,
     });
   }
+
   if (showDashboard) {
     baseResources.push({
       name: "dashboard",

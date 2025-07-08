@@ -2,22 +2,25 @@ import { useState, useEffect, useMemo } from "react";
 import { Admin, Resource, CustomRoutes } from "react-admin";
 import type { ResourceProps } from "react-admin";
 import { BrowserRouter, Route } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ForgotPasswordPage, LoginPage, SetPasswordPage } from "ra-supabase";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
 import themes from "./themes";
 import { useResources } from "./AppResources";
-import { queryClientConfig } from "./auth";
+import { queryClient } from "./auth";
 import { authProvider as baseAuthProvider, supabaseClient } from "./supabase";
 import { createTrackingSupabaseProvider } from "./providers/trackingSupabaseProvider";
 import CustomLayout from "./CustomLayout";
 import { RBACProvider } from "./contexts/RBACContext";
 import type { Role } from "./types/rbac";
 import { useRBAC } from "./contexts/RBACContext";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { useErrorHandler } from "./hooks/useErrorHandler";
+import { initSentry } from "./utils/sentry";
 
-const queryClient = new QueryClient(queryClientConfig);
+// queryClient is now imported from auth.ts
 const authProvider = baseAuthProvider;
 const i18nProvider = polyglotI18nProvider(
   (locale) => {
@@ -65,8 +68,12 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
   );
 };
 
+// Initialize Sentry
+initSentry();
+
 export const App = () => {
   const [userRole, setUserRole] = useState<Role | null>(null);
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -76,6 +83,10 @@ export const App = () => {
           setUserRole(identity.role);
         }
       } catch (error) {
+        await handleError(error, {
+          action: "fetch_user_role",
+          metadata: { component: "App" },
+        });
         setUserRole(null);
       }
     };
@@ -91,16 +102,33 @@ export const App = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [handleError]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <RBACProvider role={userRole}>
-          <AdminApp role={userRole} />
-        </RBACProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <ErrorBoundary
+      onError={(error, errorId) => {
+        console.error("App Error Boundary caught error:", { error, errorId });
+        handleError(error, {
+          action: "error_boundary",
+          metadata: { component: "App", errorId },
+        });
+      }}
+      enableRetry={true}
+      showDetails={true}
+    >
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <RBACProvider role={userRole}>
+            <AdminApp role={userRole} />
+          </RBACProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 

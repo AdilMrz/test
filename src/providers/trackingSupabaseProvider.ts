@@ -376,6 +376,7 @@ export const createTrackingSupabaseProvider = (
       } = await supabaseClient.auth.getUser();
 
       if (!user) {
+        console.warn("No authenticated user found");
         throw new Error("ra.notification.unauthorized");
       }
 
@@ -387,14 +388,36 @@ export const createTrackingSupabaseProvider = (
         .single();
 
       if (roleError || !userRole) {
-        throw new Error("ra.notification.unauthorized");
+        console.warn("User role not found or error:", {
+          userId: user.id,
+          error: roleError,
+          userRole,
+        });
+        // For development, allow access with default 'user' role if no role is set
+        if (import.meta.env.MODE === "development" && !userRole) {
+          console.warn("Development mode: Using default 'user' role");
+          // Create a default user role entry for development
+          const { error: insertError } = await supabaseClient
+            .from("user_role")
+            .insert({ user_id: user.id, role: "user" });
+
+          if (insertError) {
+            console.error("Failed to create default user role:", insertError);
+            throw new Error("ra.notification.unauthorized");
+          }
+        } else {
+          throw new Error("ra.notification.unauthorized");
+        }
       }
+
+      // Get the actual role (either from DB or default 'user')
+      const actualRole = userRole?.role || "user";
 
       // Check permissions without ownership for admin and manager
       const hasPermission = await checkPermission(
         "list",
         resource,
-        ["admin", "manager"].includes(userRole.role) ? undefined : user.id,
+        ["admin", "manager"].includes(actualRole) ? undefined : user.id,
       );
 
       if (!hasPermission) {
@@ -403,8 +426,8 @@ export const createTrackingSupabaseProvider = (
 
       // If admin, manager, or unrestricted resources, return unfiltered list
       if (
-        userRole.role === "admin" ||
-        userRole.role === "manager" ||
+        actualRole === "admin" ||
+        actualRole === "manager" ||
         resource === "products" ||
         resource === "customers"
       ) {

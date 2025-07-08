@@ -17,6 +17,7 @@
     "@mui/material": "^5.16.7",
     "@mui/x-date-pickers": "^6.19.0",
     "@sentry/react": "^9.35.0",
+    "@sentry/tracing": "^7.120.3",
     "@tanstack/react-query": "^4.36.1",
     "date-fns": "^2.30.0",
     "jspdf": "^2.5.2",

@@ -1,8 +1,4 @@
-export const AUTHORIZED_EMAILS = [
-  "adil.mrz.1987@gmail.com",
-  "jules.dupk@gmail.com",
-  "johndoe@example.com",
-];
+import { QueryClient } from "@tanstack/react-query";
 
 export const queryClientConfig = {
   defaultOptions: {
@@ -16,3 +12,5 @@ export const queryClientConfig = {
     },
   },
 };
+
+export const queryClient = new QueryClient(queryClientConfig);
