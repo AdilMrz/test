@@ -8,6 +8,8 @@ import { TailwindLoginPage } from "./components/TailwindLoginPage";
 import { TailwindShowcase } from "./components/TailwindShowcase";
 import { TailwindDashboard } from "./components/dashboard/TailwindDashboard";
 import { TailwindForm } from "./components/forms/TailwindForm";
+import { TailwindMaintenancePanel } from "./components/TailwindMaintenancePanel";
+import { TailwindNotificationDemo } from "./components/TailwindNotificationDemo";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
@@ -70,6 +72,55 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
         <Route path="/tailwind-showcase" element={<TailwindShowcase />} />
         <Route path="/tailwind-dashboard" element={<TailwindDashboard />} />
         <Route path="/tailwind-form" element={<TailwindForm />} />
+        <Route
+          path="/tailwind-maintenance"
+          element={
+            <TailwindMaintenancePanel
+              isMaintenanceMode={true}
+              tasks={[
+                {
+                  id: "1",
+                  title: "Database Migration",
+                  description:
+                    "Upgrading database schema to improve performance",
+                  status: "completed",
+                  estimatedTime: "30 minutes",
+                  startTime: "2:00 PM",
+                  endTime: "2:25 PM",
+                },
+                {
+                  id: "2",
+                  title: "Server Updates",
+                  description: "Installing security patches and system updates",
+                  status: "in-progress",
+                  progress: 75,
+                  estimatedTime: "45 minutes",
+                  startTime: "2:30 PM",
+                },
+                {
+                  id: "3",
+                  title: "Cache Optimization",
+                  description:
+                    "Optimizing cache configuration for better response times",
+                  status: "pending",
+                  estimatedTime: "20 minutes",
+                },
+              ]}
+              estimatedCompletion="3:30 PM EST"
+              contactInfo={{
+                email: "support@example.com",
+                phone: "+1 (555) 123-4567",
+                website: "https://status.example.com",
+              }}
+              onRefresh={() => window.location.reload()}
+              onRetry={() => console.log("Retry clicked")}
+            />
+          }
+        />
+        <Route
+          path="/tailwind-notifications"
+          element={<TailwindNotificationDemo />}
+        />
       </CustomRoutes>
     </Admin>
   );

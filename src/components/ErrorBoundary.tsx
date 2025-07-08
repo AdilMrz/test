@@ -1,20 +1,18 @@
 import React, { Component, ReactNode } from "react";
 import {
-  Box,
-  Typography,
   Button,
   Card,
   CardContent,
   Alert,
-  Collapse,
-  IconButton,
-} from "@mui/material";
+  AlertTitle,
+  AlertDescription,
+} from "./ui";
 import {
-  Refresh as RefreshIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  BugReport as BugReportIcon,
-} from "@mui/icons-material";
+  ArrowPathIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
 import type { AppError, ErrorBoundaryState } from "../types/errors";
 import {
   normalizeError,
@@ -147,79 +145,78 @@ export class ErrorBoundary extends Component<
 
       // Default error UI
       return (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          minHeight="50vh"
-          p={3}
-        >
-          <Card sx={{ maxWidth: 600, width: "100%" }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" mb={2}>
-                <BugReportIcon color="error" sx={{ mr: 1 }} />
-                <Typography variant="h5" color="error">
+        <div className="flex justify-center items-center min-h-[50vh] p-6">
+          <Card className="max-w-2xl w-full">
+            <CardContent className="p-8">
+              <div className="flex items-center mb-6">
+                <ExclamationTriangleIcon className="w-8 h-8 text-red-600 mr-3" />
+                <h1 className="text-2xl font-bold text-red-600">
                   Something went wrong
-                </Typography>
-              </Box>
+                </h1>
+              </div>
 
-              <Typography variant="body1" color="text.secondary" mb={3}>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
                 {getUserFriendlyMessage(this.state.error)}
-              </Typography>
+              </p>
 
-              <Alert severity="info" sx={{ mb: 2 }}>
-                Error ID: {this.state.errorId}
+              <Alert variant="info" className="mb-6">
+                <AlertTitle>Error Information</AlertTitle>
+                <AlertDescription>
+                  Error ID:{" "}
+                  <code className="bg-gray-100 px-2 py-1 rounded text-sm">
+                    {this.state.errorId}
+                  </code>
+                </AlertDescription>
               </Alert>
 
-              <Box display="flex" gap={2} mb={2}>
+              <div className="flex flex-wrap gap-4 mb-6">
                 {this.props.enableRetry !== false && (
                   <Button
-                    variant="contained"
-                    startIcon={<RefreshIcon />}
+                    variant="default"
                     onClick={this.handleRetry}
                     disabled={this.state.retryCount >= 3}
+                    className="flex items-center space-x-2"
                   >
-                    {this.state.retryCount >= 3
-                      ? "Max retries reached"
-                      : "Try Again"}
+                    <ArrowPathIcon className="w-4 h-4" />
+                    <span>
+                      {this.state.retryCount >= 3
+                        ? "Max retries reached"
+                        : "Try Again"}
+                    </span>
                   </Button>
                 )}
 
                 <Button
-                  variant="outlined"
+                  variant="outline"
                   onClick={() => window.location.reload()}
                 >
                   Reload Page
                 </Button>
-              </Box>
+              </div>
 
               {this.props.showDetails !== false && (
                 <>
-                  <Box display="flex" alignItems="center">
-                    <IconButton onClick={this.handleToggleDetails} size="small">
-                      {this.state.showDetails ? (
-                        <ExpandLessIcon />
-                      ) : (
-                        <ExpandMoreIcon />
-                      )}
-                    </IconButton>
-                    <Typography variant="body2" color="text.secondary">
+                  <button
+                    onClick={this.handleToggleDetails}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-4"
+                  >
+                    {this.state.showDetails ? (
+                      <ChevronUpIcon className="w-5 h-5" />
+                    ) : (
+                      <ChevronDownIcon className="w-5 h-5" />
+                    )}
+                    <span className="text-sm font-medium">
                       {this.state.showDetails ? "Hide" : "Show"} technical
                       details
-                    </Typography>
-                  </Box>
+                    </span>
+                  </button>
 
-                  <Collapse in={this.state.showDetails}>
-                    <Box mt={2} p={2} bgcolor="grey.100" borderRadius={1}>
-                      <Typography
-                        variant="body2"
-                        component="pre"
-                        sx={{
-                          whiteSpace: "pre-wrap",
-                          fontSize: "0.75rem",
-                          fontFamily: "monospace",
-                        }}
-                      >
+                  {this.state.showDetails && (
+                    <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                        Technical Details
+                      </h4>
+                      <pre className="text-xs font-mono text-gray-600 whitespace-pre-wrap overflow-x-auto">
                         {JSON.stringify(
                           {
                             message: this.state.error.message,
@@ -234,25 +231,22 @@ export class ErrorBoundary extends Component<
                           null,
                           2,
                         )}
-                      </Typography>
-                    </Box>
-                  </Collapse>
+                      </pre>
+                    </div>
+                  )}
                 </>
               )}
 
               {this.state.retryCount > 0 && (
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  mt={2}
-                  display="block"
-                >
-                  Retry attempts: {this.state.retryCount}/3
-                </Typography>
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                  <p className="text-sm text-gray-500">
+                    Retry attempts: {this.state.retryCount}/3
+                  </p>
+                </div>
               )}
             </CardContent>
           </Card>
-        </Box>
+        </div>
       );
     }
 
