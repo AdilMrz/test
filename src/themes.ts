@@ -63,13 +63,27 @@ export default {
   lightTheme: {
     ...defaultTheme,
     palette: {
-      primary: { main: "#14532d" },
-      secondary: { main: "#eef2ea" },
-      background: { default: "#f0f1f6" },
+      primary: {
+        main: "#14532d",
+        light: "#16a34a",
+        dark: "#0f172a",
+        contrastText: "#ffffff",
+      },
+      secondary: {
+        main: "#eef2ea",
+        light: "#f7f9f5",
+        dark: "#d1d5db",
+        contrastText: "#14532d",
+      },
+      background: {
+        default: "#f8fafc",
+        paper: "#ffffff",
+      },
       text: {
         primary: "#14532d",
-        secondary: "#14532d",
+        secondary: "#6b7280",
       },
+      divider: "#e2e8f0",
       mode: "light" as const,
       ...alert,
     },
@@ -79,6 +93,63 @@ export default {
           colorSecondary: {
             backgroundColor: "#eef2ea",
             color: "#14532d",
+          },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: "12px",
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            transition: "all 0.2s ease-in-out",
+          },
+          contained: {
+            boxShadow: "none",
+            "&:hover": {
+              boxShadow: "0 4px 12px rgba(20, 83, 45, 0.4)",
+              transform: "translateY(-1px)",
+            },
+          },
+        },
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "12px",
+              backgroundColor: "#f8fafc",
+              transition: "all 0.2s ease-in-out",
+              "&:hover": {
+                backgroundColor: "#ffffff",
+              },
+              "&.Mui-focused": {
+                backgroundColor: "#ffffff",
+                boxShadow: "0 0 0 3px rgba(20, 83, 45, 0.1)",
+              },
+            },
+          },
+        },
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            borderRadius: "16px",
+            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+            border: "1px solid #e2e8f0",
+            transition: "all 0.2s ease-in-out",
+            "&:hover": {
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+            },
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            borderRadius: "12px",
+            border: "1px solid #e2e8f0",
           },
         },
       },

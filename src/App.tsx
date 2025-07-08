@@ -5,6 +5,8 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ForgotPasswordPage, SetPasswordPage } from "ra-supabase";
 import { TailwindLoginPage } from "./components/TailwindLoginPage";
+import { TailwindShowcase } from "./components/TailwindShowcase";
+import { TailwindDashboard } from "./components/dashboard/TailwindDashboard";
 import polyglotI18nProvider from "ra-i18n-polyglot";
 import englishMessages from "./i18n/en";
 import frenchMessages from "./i18n/fr";
@@ -62,6 +64,10 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
           path={ForgotPasswordPage.path}
           element={<ForgotPasswordPage />}
         />
+      </CustomRoutes>
+      <CustomRoutes>
+        <Route path="/tailwind-showcase" element={<TailwindShowcase />} />
+        <Route path="/tailwind-dashboard" element={<TailwindDashboard />} />
       </CustomRoutes>
     </Admin>
   );
