@@ -7,6 +7,7 @@ import {
   SearchInput,
   SelectInput,
   useRecordContext,
+  useTranslate,
   type RaRecord,
 } from "react-admin";
 import {
@@ -57,148 +58,156 @@ const DetailsDialog = ({
   open: boolean;
   onClose: () => void;
   record: ActivityRecord | null;
-}) => (
-  <Dialog
-    open={open}
-    onClose={onClose}
-    maxWidth="sm"
-    fullWidth
-    PaperProps={{
-      sx: {
-        borderRadius: "8px",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-      },
-    }}
-  >
-    <DialogTitle
-      sx={{
-        borderBottom: "1px solid #e0e0e0",
-        backgroundColor: "#14532d",
-        color: "#ffffff",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
+}) => {
+  const translate = useTranslate();
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: "8px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        },
       }}
     >
-      <div>Activity Log Details</div>
-      <IconButton onClick={onClose} sx={{ color: "#ffffff" }}>
-        <CloseIcon />
-      </IconButton>
-    </DialogTitle>
-    <DialogContent sx={{ mt: 2 }}>
-      {record && (
-        <>
-          <Typography
-            variant="subtitle2"
-            color="textSecondary"
-            fontWeight="bold"
-          >
-            Timestamp
-          </Typography>
-          <Typography paragraph>
-            {new Date(record.timestamp).toLocaleString()}
-          </Typography>
+      <DialogTitle
+        sx={{
+          borderBottom: "1px solid #e0e0e0",
+          backgroundColor: "#14532d",
+          color: "#ffffff",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <div>{translate("audit_logs.details.title")}</div>
+        <IconButton onClick={onClose} sx={{ color: "#ffffff" }}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent sx={{ mt: 2 }}>
+        {record && (
+          <>
+            <Typography
+              variant="subtitle2"
+              color="textSecondary"
+              fontWeight="bold"
+            >
+              {translate("audit_logs.fields.timestamp")}
+            </Typography>
+            <Typography paragraph>
+              {new Date(record.timestamp).toLocaleString()}
+            </Typography>
 
-          <Typography
-            variant="subtitle2"
-            color="textSecondary"
-            fontWeight="bold"
-          >
-            Operation
-          </Typography>
-          <Typography paragraph>{record.operation}</Typography>
+            <Typography
+              variant="subtitle2"
+              color="textSecondary"
+              fontWeight="bold"
+            >
+              {translate("audit_logs.fields.operation")}
+            </Typography>
+            <Typography paragraph>{record.operation}</Typography>
 
-          <Typography
-            variant="subtitle2"
-            color="textSecondary"
-            fontWeight="bold"
-          >
-            Resource
-          </Typography>
-          <Typography paragraph>{record.resource}</Typography>
+            <Typography
+              variant="subtitle2"
+              color="textSecondary"
+              fontWeight="bold"
+            >
+              {translate("audit_logs.fields.resource")}
+            </Typography>
+            <Typography paragraph>{record.resource}</Typography>
 
-          <Typography
-            variant="subtitle2"
-            color="textSecondary"
-            fontWeight="bold"
-          >
-            User
-          </Typography>
-          <Typography paragraph>{record.user_fullname}</Typography>
+            <Typography
+              variant="subtitle2"
+              color="textSecondary"
+              fontWeight="bold"
+            >
+              {translate("audit_logs.fields.user")}
+            </Typography>
+            <Typography paragraph>{record.user_fullname}</Typography>
 
-          <Typography
-            variant="subtitle2"
-            color="textSecondary"
-            fontWeight="bold"
-          >
-            Details
-          </Typography>
-          <Typography paragraph>
-            {record.details || "No details available"}
-          </Typography>
+            <Typography
+              variant="subtitle2"
+              color="textSecondary"
+              fontWeight="bold"
+            >
+              {translate("audit_logs.fields.details")}
+            </Typography>
+            <Typography paragraph>
+              {record.details || translate("audit_logs.messages.no_details")}
+            </Typography>
 
-          <Typography
-            variant="subtitle2"
-            color="textSecondary"
-            fontWeight="bold"
-          >
-            Status
-          </Typography>
-          <Typography
-            paragraph
-            sx={{
-              color: record.status === "success" ? "#4caf50" : "#f44336",
-              fontWeight: "bold",
-            }}
-          >
-            {record.status.toUpperCase()}
-          </Typography>
-        </>
-      )}
-    </DialogContent>
-  </Dialog>
-);
-
-const filters = [
-  <SearchInput
-    key="search"
-    source="details"
-    placeholder="Search"
-    resettable
-    alwaysOn
-    sx={{ m: 1 }}
-  />,
-  <SelectInput
-    key="operation"
-    source="operation"
-    choices={[
-      { id: "CREATE", name: "Create" },
-      { id: "EDIT", name: "Edit" },
-      { id: "DELETE", name: "Delete" },
-      { id: "BULK_DELETE", name: "Bulk Delete" },
-    ]}
-    alwaysOn
-    sx={{ m: 1 }}
-  />,
-  <SelectInput
-    key="resource"
-    source="resource"
-    choices={[
-      { id: "customers", name: "Customers" },
-      { id: "products", name: "Products" },
-      { id: "purchases", name: "Purchases" },
-    ]}
-    alwaysOn
-    sx={{ m: 1 }}
-  />,
-];
+            <Typography
+              variant="subtitle2"
+              color="textSecondary"
+              fontWeight="bold"
+            >
+              {translate("audit_logs.fields.status")}
+            </Typography>
+            <Typography
+              paragraph
+              sx={{
+                color: record.status === "success" ? "#4caf50" : "#f44336",
+                fontWeight: "bold",
+              }}
+            >
+              {record.status.toUpperCase()}
+            </Typography>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 export const ActivityLogList = () => {
+  const translate = useTranslate();
   const [selectedRecord, setSelectedRecord] = useState<ActivityRecord | null>(
     null,
   );
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+
+  const filters = [
+    <SearchInput
+      key="search"
+      source="details"
+      placeholder={translate("audit_logs.filters.search")}
+      resettable
+      alwaysOn
+      sx={{ m: 1 }}
+    />,
+    <SelectInput
+      key="operation"
+      source="operation"
+      choices={[
+        { id: "CREATE", name: translate("audit_logs.operations.create") },
+        { id: "EDIT", name: translate("audit_logs.operations.edit") },
+        { id: "DELETE", name: translate("audit_logs.operations.delete") },
+        {
+          id: "BULK_DELETE",
+          name: translate("audit_logs.operations.bulk_delete"),
+        },
+      ]}
+      alwaysOn
+      sx={{ m: 1 }}
+    />,
+    <SelectInput
+      key="resource"
+      source="resource"
+      choices={[
+        { id: "customers", name: translate("audit_logs.resources.customers") },
+        { id: "products", name: translate("audit_logs.resources.products") },
+        { id: "purchases", name: translate("audit_logs.resources.purchases") },
+      ]}
+      alwaysOn
+      sx={{ m: 1 }}
+    />,
+  ];
 
   const filterList = {
     ...(startDate && { "timestamp@gte": startDate.toISOString() }),
@@ -237,7 +246,7 @@ export const ActivityLogList = () => {
             <DateField source="timestamp" showTime />
             <TextField source="operation" />
             <TextField source="resource" />
-            <TextField source="user_fullname" label="User" />
+            <TextField source="user_fullname" />
             <StatusChip source="status" />
             <TextField source="details" />
           </Datagrid>

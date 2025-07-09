@@ -108,6 +108,7 @@ const customFrenchMessages = {
         name: "Nom",
         description: "Description",
         photo_url: "Photo",
+        image: "Image",
         created_at: "Créé le",
         updated_at: "Modifié le",
       },
@@ -141,12 +142,80 @@ const customFrenchMessages = {
         user: "Utilisateur",
         details: "Détails",
         created_at: "Créé le",
+        timestamp: "Horodatage",
+        operation: "Opération",
+        user_fullname: "Utilisateur",
+        status: "Statut",
       },
     },
     maintenance: {
       name: "Maintenance",
       title: "Maintenance du système",
       description: "Maintenance et configuration du système",
+    },
+    dashboard: {
+      name: "Tableau de bord",
+      title: "Tableau de bord",
+      description: "Vue d'ensemble des données",
+    },
+  },
+  maintenance: {
+    storage: {
+      title: "Gestion du stockage",
+    },
+    buttons: {
+      clear_unused: "Nettoyer les images inutilisées",
+      refresh: "Actualiser",
+      delete: "Supprimer",
+    },
+    filters: {
+      show_unused: "Afficher uniquement les images inutilisées",
+    },
+    table: {
+      preview: "Aperçu",
+      name: "Nom",
+      size: "Taille",
+      type: "Type",
+      last_modified: "Dernière modification",
+      status: "Statut",
+      actions: "Actions",
+    },
+    status: {
+      in_use: "Utilisé",
+      unused: "Inutilisé",
+    },
+    messages: {
+      no_files: "Aucun fichier trouvé",
+    },
+  },
+  audit_logs: {
+    details: {
+      title: "Détails du journal d'activité",
+    },
+    fields: {
+      timestamp: "Horodatage",
+      operation: "Opération",
+      resource: "Ressource",
+      user: "Utilisateur",
+      details: "Détails",
+      status: "Statut",
+    },
+    filters: {
+      search: "Rechercher",
+    },
+    operations: {
+      create: "Créer",
+      edit: "Modifier",
+      delete: "Supprimer",
+      bulk_delete: "Suppression en masse",
+    },
+    messages: {
+      no_details: "Aucun détail disponible",
+    },
+    resources: {
+      customers: "Clients",
+      products: "Produits",
+      purchases: "Achats",
     },
   },
   dashboard: {
@@ -157,6 +226,17 @@ const customFrenchMessages = {
     apply: "Appliquer",
     clear: "Effacer",
     export: "Exporter en PDF",
+    unknown: "Inconnu",
+    purchaseDistribution: "Distribution des achats",
+    productRevenue: "Revenus par produit",
+    recentPurchases: "Achats récents",
+    table: {
+      date: "Date",
+      customer: "Client",
+      product: "Produit",
+      price: "Prix",
+      no_purchases: "Aucun achat récent trouvé",
+    },
     cards: {
       purchaseDistribution: "Distribution des achats",
       productRevenue: "Revenus par produit",
@@ -194,6 +274,16 @@ const customFrenchMessages = {
     delete: {
       title: "Confirmation de suppression",
       content: "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      customer: {
+        title: "Supprimer le client",
+        content:
+          'Êtes-vous sûr de vouloir supprimer le client "%{name}" ? Cette action échouera si le client a des achats associés.',
+      },
+      customers: {
+        title: "Supprimer les clients",
+        content:
+          "Êtes-vous sûr de vouloir supprimer ces clients ? Cette action échouera pour tout client ayant des achats associés.",
+      },
     },
     create: {
       customer: "Créer un nouveau client",

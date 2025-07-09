@@ -1,4 +1,4 @@
-import { Title, Loading } from "react-admin";
+import { Title, Loading, useTranslate } from "react-admin";
 import { useTheme, alpha, Box, Button } from "@mui/material";
 import { useGetList } from "react-admin";
 import { Download as DownloadIcon } from "@mui/icons-material";
@@ -51,6 +51,7 @@ export interface RecentPurchaseData {
 }
 
 export const Dashboard = () => {
+  const translate = useTranslate();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -136,9 +137,10 @@ export const Dashboard = () => {
     id: purchase.id,
     customer_name:
       customers?.find((c) => c.id === purchase.customer_id)?.fullname ||
-      "Unknown",
+      translate("dashboard.unknown"),
     product_name:
-      products?.find((p) => p.id === purchase.product_id)?.name || "Unknown",
+      products?.find((p) => p.id === purchase.product_id)?.name ||
+      translate("dashboard.unknown"),
     price: purchase.price,
     purchase_date: purchase.purchase_date,
   }));
@@ -156,7 +158,7 @@ export const Dashboard = () => {
   return (
     <Protected action="read" resource="dashboard">
       <div className="container mx-auto p-2 sm:p-4 max-w-[2000px]">
-        <Title title="Dashboard" />
+        <Title title={translate("dashboard.title")} />
         <Box
           sx={{
             display: "flex",
@@ -176,7 +178,7 @@ export const Dashboard = () => {
             onClick={handleExport}
             startIcon={<DownloadIcon />}
           >
-            Export PDF
+            {translate("dashboard.export")}
           </Button>
         </Box>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

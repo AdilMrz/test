@@ -56,12 +56,80 @@ const customEnglishMessages = {
         user: "User",
         details: "Details",
         created_at: "Created At",
+        timestamp: "Timestamp",
+        operation: "Operation",
+        user_fullname: "User",
+        status: "Status",
       },
     },
     maintenance: {
       name: "Maintenance",
       title: "System Maintenance",
       description: "System maintenance and configuration",
+    },
+    dashboard: {
+      name: "Dashboard",
+      title: "Dashboard",
+      description: "Overview of system data",
+    },
+  },
+  maintenance: {
+    storage: {
+      title: "Storage Management",
+    },
+    buttons: {
+      clear_unused: "Clear Unused Images",
+      refresh: "Refresh",
+      delete: "Delete",
+    },
+    filters: {
+      show_unused: "Show Only Unused Images",
+    },
+    table: {
+      preview: "Preview",
+      name: "Name",
+      size: "Size",
+      type: "Type",
+      last_modified: "Last Modified",
+      status: "Status",
+      actions: "Actions",
+    },
+    status: {
+      in_use: "In Use",
+      unused: "Unused",
+    },
+    messages: {
+      no_files: "No files found",
+    },
+  },
+  audit_logs: {
+    details: {
+      title: "Activity Log Details",
+    },
+    fields: {
+      timestamp: "Timestamp",
+      operation: "Operation",
+      resource: "Resource",
+      user: "User",
+      details: "Details",
+      status: "Status",
+    },
+    filters: {
+      search: "Search",
+    },
+    operations: {
+      create: "Create",
+      edit: "Edit",
+      delete: "Delete",
+      bulk_delete: "Bulk Delete",
+    },
+    messages: {
+      no_details: "No details available",
+    },
+    resources: {
+      customers: "Customers",
+      products: "Products",
+      purchases: "Purchases",
     },
   },
   dashboard: {
@@ -72,10 +140,16 @@ const customEnglishMessages = {
     apply: "Apply",
     clear: "Clear",
     export: "Export PDF",
-    cards: {
-      purchaseDistribution: "Purchase Distribution",
-      productRevenue: "Product Revenue",
-      recentPurchases: "Recent Purchases",
+    unknown: "Unknown",
+    purchaseDistribution: "Purchase Distribution",
+    productRevenue: "Product Revenue",
+    recentPurchases: "Recent Purchases",
+    table: {
+      date: "Date",
+      customer: "Customer",
+      product: "Product",
+      price: "Price",
+      no_purchases: "No recent purchases found",
     },
   },
   common: {

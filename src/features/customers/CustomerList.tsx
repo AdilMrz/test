@@ -9,24 +9,16 @@ import {
   DeleteButton,
   BulkDeleteButton,
   useRecordContext,
+  useTranslate,
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
 import { DATAGRID_STYLES } from "./constants";
 import { Protected } from "../../components/Protected";
-const filters = [
-  <SearchInput
-    key="fullname"
-    source="fullname@ilike"
-    placeholder="Search"
-    resettable
-    alwaysOn
-    sx={{ m: 1 }}
-  />,
-];
 
 const ActionButtons = () => {
   const record = useRecordContext();
+  const translate = useTranslate();
 
   if (!record) return null;
 
@@ -45,8 +37,10 @@ const ActionButtons = () => {
         recordUserId={record.created_by}
       >
         <DeleteButton
-          confirmTitle="Delete Customer"
-          confirmContent={`Are you sure you want to delete the customer "${record.fullname}"? This action will fail if the customer has any associated purchases.`}
+          confirmTitle={translate("dialogs.delete.customer.title")}
+          confirmContent={translate("dialogs.delete.customer.content", {
+            name: record.fullname,
+          })}
           mutationMode="pessimistic"
         />
       </Protected>
@@ -54,35 +48,50 @@ const ActionButtons = () => {
   );
 };
 
-export const CustomerList = () => (
-  <Card>
-    <List
-      actions={<ListActions />}
-      filters={filters}
-      className="p-0"
-      sx={{ "& .RaList-main": { padding: 0 } }}
-    >
-      <DatagridConfigurable
-        omit={[]}
-        preferenceKey="customers.datagrid"
-        sx={DATAGRID_STYLES}
-        bulkActionButtons={
-          <Protected action="delete" resource="customers">
-            <BulkDeleteButton
-              confirmTitle="Delete Customers"
-              confirmContent="Are you sure you want to delete these customers? This action will fail for any customers who have associated purchases."
-              mutationMode="pessimistic"
-            />
-          </Protected>
-        }
+export const CustomerList = () => {
+  const translate = useTranslate();
+
+  const filters = [
+    <SearchInput
+      key="fullname"
+      source="fullname@ilike"
+      placeholder={translate("common.search")}
+      resettable
+      alwaysOn
+      sx={{ m: 1 }}
+    />,
+  ];
+
+  return (
+    <Card>
+      <List
+        actions={<ListActions />}
+        filters={filters}
+        className="p-0"
+        sx={{ "& .RaList-main": { padding: 0 } }}
       >
-        <TextField source="fullname" label="Full Name" />
-        <EmailField source="email" label="Email" />
-        <TextField source="address" label="Address" />
-        <WrapperField label="Actions" sortable={false}>
-          <ActionButtons />
-        </WrapperField>
-      </DatagridConfigurable>
-    </List>
-  </Card>
-);
+        <DatagridConfigurable
+          omit={[]}
+          preferenceKey="customers.datagrid"
+          sx={DATAGRID_STYLES}
+          bulkActionButtons={
+            <Protected action="delete" resource="customers">
+              <BulkDeleteButton
+                confirmTitle={translate("dialogs.delete.customers.title")}
+                confirmContent={translate("dialogs.delete.customers.content")}
+                mutationMode="pessimistic"
+              />
+            </Protected>
+          }
+        >
+          <TextField source="fullname" />
+          <EmailField source="email" />
+          <TextField source="address" />
+          <WrapperField label="common.actions" sortable={false}>
+            <ActionButtons />
+          </WrapperField>
+        </DatagridConfigurable>
+      </List>
+    </Card>
+  );
+};

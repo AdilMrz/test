@@ -25,7 +25,7 @@ import {
 } from "@mui/icons-material";
 import { supabaseClient } from "../../supabase";
 import { Protected } from "../../components/Protected";
-import { Title } from "react-admin";
+import { Title, useTranslate } from "react-admin";
 import { PageTitle } from "./components/PageTitle";
 
 interface BucketFile {
@@ -53,6 +53,7 @@ type SortField = "name" | "size" | "updated_at";
 type SortOrder = "asc" | "desc";
 
 export const MaintenancePanel = () => {
+  const translate = useTranslate();
   // State to manage loading status
   const [loading, setLoading] = useState(false);
   // State to store error messages
@@ -230,7 +231,9 @@ export const MaintenancePanel = () => {
       <Title title={<PageTitle />} />
       <Card>
         <Box p={2}>
-          <Typography variant="h6">Storage Management</Typography>
+          <Typography variant="h6">
+            {translate("maintenance.storage.title")}
+          </Typography>
 
           <Box sx={{ mt: 2, mb: 2 }}>
             <Stack direction="row" spacing={2} alignItems="center">
@@ -241,7 +244,7 @@ export const MaintenancePanel = () => {
                 onClick={clearUnusedImages}
                 disabled={loading}
               >
-                Clear Unused Images
+                {translate("maintenance.buttons.clear_unused")}
               </Button>
               <Button
                 variant="contained"
@@ -249,7 +252,7 @@ export const MaintenancePanel = () => {
                 onClick={loadBucketContents}
                 disabled={loading}
               >
-                Refresh
+                {translate("maintenance.buttons.refresh")}
               </Button>
               <FormControlLabel
                 control={
@@ -258,7 +261,7 @@ export const MaintenancePanel = () => {
                     onChange={(e) => setShowOnlyUnused(e.target.checked)}
                   />
                 }
-                label="Show Only Unused Images"
+                label={translate("maintenance.filters.show_unused")}
               />
             </Stack>
           </Box>
@@ -284,14 +287,16 @@ export const MaintenancePanel = () => {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Preview</TableCell>
+                  <TableCell>
+                    {translate("maintenance.table.preview")}
+                  </TableCell>
                   <TableCell>
                     <TableSortLabel
                       active={sortField === "name"}
                       direction={sortField === "name" ? sortOrder : "asc"}
                       onClick={() => handleSort("name")}
                     >
-                      Name
+                      {translate("maintenance.table.name")}
                     </TableSortLabel>
                   </TableCell>
                   <TableCell>
@@ -300,21 +305,23 @@ export const MaintenancePanel = () => {
                       direction={sortField === "size" ? sortOrder : "asc"}
                       onClick={() => handleSort("size")}
                     >
-                      Size
+                      {translate("maintenance.table.size")}
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>Type</TableCell>
+                  <TableCell>{translate("maintenance.table.type")}</TableCell>
                   <TableCell>
                     <TableSortLabel
                       active={sortField === "updated_at"}
                       direction={sortField === "updated_at" ? sortOrder : "asc"}
                       onClick={() => handleSort("updated_at")}
                     >
-                      Last Modified
+                      {translate("maintenance.table.last_modified")}
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
+                  <TableCell>{translate("maintenance.table.status")}</TableCell>
+                  <TableCell>
+                    {translate("maintenance.table.actions")}
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -357,7 +364,11 @@ export const MaintenancePanel = () => {
                     <TableCell>{formatDate(file.updated_at)}</TableCell>
                     <TableCell>
                       <Chip
-                        label={file.isUsed ? "In Use" : "Unused"}
+                        label={
+                          file.isUsed
+                            ? translate("maintenance.status.in_use")
+                            : translate("maintenance.status.unused")
+                        }
                         color={file.isUsed ? "success" : "warning"}
                         size="small"
                       />
@@ -370,7 +381,7 @@ export const MaintenancePanel = () => {
                           onClick={() => handleDelete(file.name)}
                           disabled={loading}
                         >
-                          Delete
+                          {translate("maintenance.buttons.delete")}
                         </Button>
                       </Stack>
                     </TableCell>
@@ -379,7 +390,7 @@ export const MaintenancePanel = () => {
                 {sortedFiles.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={7} align="center">
-                      No files found
+                      {translate("maintenance.messages.no_files")}
                     </TableCell>
                   </TableRow>
                 )}

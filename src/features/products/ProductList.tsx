@@ -8,6 +8,7 @@ import {
   DeleteButton,
   BulkDeleteButton,
   useRecordContext,
+  useTranslate,
 } from "react-admin";
 import { Card, Box } from "@mui/material";
 import { ListActions } from "./components/ListActions";
@@ -40,17 +41,6 @@ const ProductImage = () => {
   );
 };
 
-const filters = [
-  <SearchInput
-    key="name"
-    source="name@ilike"
-    placeholder="Search"
-    resettable
-    alwaysOn
-    sx={{ m: 1 }}
-  />,
-];
-
 const ActionButtons = () => {
   const record = useRecordContext();
 
@@ -80,35 +70,53 @@ const ActionButtons = () => {
   );
 };
 
-export const ProductList = () => (
-  <Card>
-    <List
-      actions={<ListActions />}
-      filters={filters}
-      className="p-0"
-      sx={{ "& .RaList-main": { padding: 0 } }}
-    >
-      <DatagridConfigurable
-        sx={DATAGRID_STYLES}
-        bulkActionButtons={
-          <Protected action="delete" resource="products">
-            <BulkDeleteButton
-              confirmTitle="Delete Products"
-              confirmContent="Are you sure you want to delete these products?"
-              mutationMode="pessimistic"
-            />
-          </Protected>
-        }
+export const ProductList = () => {
+  const translate = useTranslate();
+
+  const filters = [
+    <SearchInput
+      key="name"
+      source="name@ilike"
+      placeholder={translate("common.search")}
+      resettable
+      alwaysOn
+      sx={{ m: 1 }}
+    />,
+  ];
+
+  return (
+    <Card>
+      <List
+        actions={<ListActions />}
+        filters={filters}
+        className="p-0"
+        sx={{ "& .RaList-main": { padding: 0 } }}
       >
-        <WrapperField label="Image" sortable={false}>
-          <ProductImage />
-        </WrapperField>
-        <TextField source="name" label="Name" />
-        <TextField source="description" label="Description" />
-        <WrapperField label="Actions" sortable={false}>
-          <ActionButtons />
-        </WrapperField>
-      </DatagridConfigurable>
-    </List>
-  </Card>
-);
+        <DatagridConfigurable
+          sx={DATAGRID_STYLES}
+          bulkActionButtons={
+            <Protected action="delete" resource="products">
+              <BulkDeleteButton
+                confirmTitle="Delete Products"
+                confirmContent="Are you sure you want to delete these products?"
+                mutationMode="pessimistic"
+              />
+            </Protected>
+          }
+        >
+          <WrapperField
+            label="resources.products.fields.image"
+            sortable={false}
+          >
+            <ProductImage />
+          </WrapperField>
+          <TextField source="name" />
+          <TextField source="description" />
+          <WrapperField label="common.actions" sortable={false}>
+            <ActionButtons />
+          </WrapperField>
+        </DatagridConfigurable>
+      </List>
+    </Card>
+  );
+};
