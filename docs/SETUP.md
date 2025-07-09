@@ -7,6 +7,7 @@ This guide will walk you through setting up the Lottti POC application from scra
 ### Required Software
 
 - **Node.js** (v18 or higher)
+
   ```bash
   # Check version
   node --version
@@ -41,12 +42,15 @@ npm install
 ```
 
 This will install all required dependencies including:
+
 - React and React DOM
-- React Admin
-- Material-UI components
+- React Admin (core admin functionality)
+- Material-UI components (for React Admin)
+- Tailwind CSS (for enhanced styling)
 - TypeScript
 - Vite build tool
 - Supabase client
+- React Router DOM
 
 ## Step 2: Supabase Setup
 
@@ -239,7 +243,7 @@ INSERT INTO products (name, description) VALUES
 
 -- Sample purchases
 INSERT INTO purchases (customer_id, product_id, price, purchase_date)
-SELECT 
+SELECT
   c.id,
   p.id,
   ROUND((RANDOM() * 1000 + 100)::numeric, 2),
@@ -263,6 +267,7 @@ LIMIT 10;
 ### Check Console for Errors
 
 Open browser developer tools and check for:
+
 - Network errors
 - JavaScript errors
 - Authentication issues
@@ -289,6 +294,7 @@ vercel --prod
 ### Configure Environment Variables
 
 In your deployment platform, set:
+
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 
@@ -297,21 +303,25 @@ In your deployment platform, set:
 ### Common Issues
 
 **1. Supabase Connection Failed**
+
 - Check environment variables
 - Verify Supabase project is active
 - Check network connectivity
 
 **2. Authentication Issues**
+
 - Verify auth settings in Supabase
 - Check redirect URLs
 - Ensure user_role table is populated
 
 **3. Permission Errors**
+
 - Check RLS policies
 - Verify user roles
 - Review audit logs
 
 **4. Build Errors**
+
 - Run `npm run type-check`
 - Check for missing dependencies
 - Verify environment variables

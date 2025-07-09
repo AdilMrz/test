@@ -9,12 +9,12 @@ The Lottti POC application uses Supabase as its backend, providing a PostgreSQL 
 The application uses React Admin's data provider interface with Supabase integration:
 
 ```typescript
-import { supabaseDataProvider } from 'ra-supabase';
+import { supabaseDataProvider } from "ra-supabase";
 
 const dataProvider = supabaseDataProvider({
-  instanceUrl: process.env.VITE_SUPABASE_URL,
-  apiKey: process.env.VITE_SUPABASE_ANON_KEY,
-  supabaseClient
+  instanceUrl: import.meta.env.VITE_SUPABASE_URL,
+  apiKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  supabaseClient,
 });
 ```
 
@@ -25,6 +25,7 @@ const dataProvider = supabaseDataProvider({
 **Resource Name**: `customers`
 
 **Fields**:
+
 - `id` (UUID): Unique identifier
 - `fullname` (string): Customer full name
 - `email` (string): Customer email address
@@ -37,32 +38,32 @@ const dataProvider = supabaseDataProvider({
 
 ```typescript
 // Get list of customers
-dataProvider.getList('customers', {
+dataProvider.getList("customers", {
   pagination: { page: 1, perPage: 10 },
-  sort: { field: 'fullname', order: 'ASC' },
-  filter: { fullname: 'John' }
+  sort: { field: "fullname", order: "ASC" },
+  filter: { fullname: "John" },
 });
 
 // Get single customer
-dataProvider.getOne('customers', { id: 'customer-uuid' });
+dataProvider.getOne("customers", { id: "customer-uuid" });
 
 // Create customer
-dataProvider.create('customers', {
+dataProvider.create("customers", {
   data: {
-    fullname: 'John Doe',
-    email: 'john@example.com',
-    address: '123 Main St'
-  }
+    fullname: "John Doe",
+    email: "john@example.com",
+    address: "123 Main St",
+  },
 });
 
 // Update customer
-dataProvider.update('customers', {
-  id: 'customer-uuid',
-  data: { fullname: 'John Smith' }
+dataProvider.update("customers", {
+  id: "customer-uuid",
+  data: { fullname: "John Smith" },
 });
 
 // Delete customer
-dataProvider.delete('customers', { id: 'customer-uuid' });
+dataProvider.delete("customers", { id: "customer-uuid" });
 ```
 
 ### Products
@@ -70,6 +71,7 @@ dataProvider.delete('customers', { id: 'customer-uuid' });
 **Resource Name**: `products`
 
 **Fields**:
+
 - `id` (UUID): Unique identifier
 - `name` (string): Product name
 - `description` (string): Product description
@@ -82,19 +84,19 @@ dataProvider.delete('customers', { id: 'customer-uuid' });
 
 ```typescript
 // Get products with image filtering
-dataProvider.getList('products', {
+dataProvider.getList("products", {
   pagination: { page: 1, perPage: 20 },
-  sort: { field: 'name', order: 'ASC' },
-  filter: { name: 'laptop' }
+  sort: { field: "name", order: "ASC" },
+  filter: { name: "laptop" },
 });
 
 // Create product with image
-dataProvider.create('products', {
+dataProvider.create("products", {
   data: {
-    name: 'Gaming Laptop',
-    description: 'High-performance gaming laptop',
-    image_url: 'https://example.com/image.jpg'
-  }
+    name: "Gaming Laptop",
+    description: "High-performance gaming laptop",
+    image_url: "https://example.com/image.jpg",
+  },
 });
 ```
 
@@ -103,6 +105,7 @@ dataProvider.create('products', {
 **Resource Name**: `purchases`
 
 **Fields**:
+
 - `id` (UUID): Unique identifier
 - `customer_id` (UUID): Reference to customer
 - `product_id` (UUID): Reference to product
@@ -113,6 +116,7 @@ dataProvider.create('products', {
 - `updated_at` (timestamp): Last update timestamp
 
 **Relationships**:
+
 - `customers` (object): Joined customer data
 - `products` (object): Joined product data
 
@@ -120,23 +124,23 @@ dataProvider.create('products', {
 
 ```typescript
 // Get purchases with related data
-dataProvider.getList('purchases', {
+dataProvider.getList("purchases", {
   pagination: { page: 1, perPage: 10 },
-  sort: { field: 'purchase_date', order: 'DESC' },
-  filter: { 
-    purchase_date_gte: '2024-01-01',
-    purchase_date_lte: '2024-12-31'
-  }
+  sort: { field: "purchase_date", order: "DESC" },
+  filter: {
+    purchase_date_gte: "2024-01-01",
+    purchase_date_lte: "2024-12-31",
+  },
 });
 
 // Create purchase
-dataProvider.create('purchases', {
+dataProvider.create("purchases", {
   data: {
-    customer_id: 'customer-uuid',
-    product_id: 'product-uuid',
+    customer_id: "customer-uuid",
+    product_id: "product-uuid",
     price: 999.99,
-    purchase_date: '2024-01-15'
-  }
+    purchase_date: "2024-01-15",
+  },
 });
 ```
 
@@ -147,8 +151,8 @@ dataProvider.create('purchases', {
 ```typescript
 // Login with email/password
 authProvider.login({
-  email: 'user@example.com',
-  password: 'password123'
+  email: "user@example.com",
+  password: "password123",
 });
 ```
 
@@ -171,7 +175,7 @@ authProvider.logout();
 
 ```typescript
 // Request password reset
-supabaseClient.auth.resetPasswordForEmail('user@example.com');
+supabaseClient.auth.resetPasswordForEmail("user@example.com");
 ```
 
 ## RBAC API
@@ -179,13 +183,13 @@ supabaseClient.auth.resetPasswordForEmail('user@example.com');
 ### Permission Checking
 
 ```typescript
-import { useRBAC } from './contexts/RBACContext';
+import { useRBAC } from "./contexts/RBACContext";
 
 const { checkPermission } = useRBAC();
 
 // Check if user can perform action
-const canCreate = await checkPermission('create', 'customers');
-const canDelete = await checkPermission('delete', 'products', recordUserId);
+const canCreate = await checkPermission("create", "customers");
+const canDelete = await checkPermission("delete", "products", recordUserId);
 ```
 
 ### Role Management
@@ -195,7 +199,7 @@ const canDelete = await checkPermission('delete', 'products', recordUserId);
 const { role } = useRBAC();
 
 // Role-based component rendering
-if (role === 'admin') {
+if (role === "admin") {
   // Show admin features
 }
 ```
@@ -205,6 +209,7 @@ if (role === 'admin') {
 **Resource Name**: `audit_logs`
 
 **Fields**:
+
 - `id` (UUID): Unique identifier
 - `user_id` (UUID): User who performed the action
 - `action` (string): Action performed (create, update, delete)
@@ -218,13 +223,13 @@ if (role === 'admin') {
 
 ```typescript
 // Get audit logs
-dataProvider.getList('audit_logs', {
+dataProvider.getList("audit_logs", {
   pagination: { page: 1, perPage: 50 },
-  sort: { field: 'created_at', order: 'DESC' },
-  filter: { 
-    resource: 'customers',
-    user_id: 'user-uuid'
-  }
+  sort: { field: "created_at", order: "DESC" },
+  filter: {
+    resource: "customers",
+    user_id: "user-uuid",
+  },
 });
 ```
 
@@ -233,17 +238,18 @@ dataProvider.getList('audit_logs', {
 ### Subscribe to Changes
 
 ```typescript
-import { supabaseClient } from './supabase';
+import { supabaseClient } from "./supabase";
 
 // Subscribe to customer changes
 const subscription = supabaseClient
-  .channel('customers')
-  .on('postgres_changes', 
-    { event: '*', schema: 'public', table: 'customers' },
+  .channel("customers")
+  .on(
+    "postgres_changes",
+    { event: "*", schema: "public", table: "customers" },
     (payload) => {
-      console.log('Customer changed:', payload);
+      console.log("Customer changed:", payload);
       // Refresh data or update UI
-    }
+    },
   )
   .subscribe();
 
@@ -258,20 +264,20 @@ subscription.unsubscribe();
 ```typescript
 // Upload image to Supabase Storage
 const uploadImage = async (file: File) => {
-  const fileExt = file.name.split('.').pop();
+  const fileExt = file.name.split(".").pop();
   const fileName = `${Math.random()}.${fileExt}`;
   const filePath = `product-images/${fileName}`;
 
   const { data, error } = await supabaseClient.storage
-    .from('product-images')
+    .from("product-images")
     .upload(filePath, file);
 
   if (error) throw error;
 
   // Get public URL
-  const { data: { publicUrl } } = supabaseClient.storage
-    .from('product-images')
-    .getPublicUrl(filePath);
+  const {
+    data: { publicUrl },
+  } = supabaseClient.storage.from("product-images").getPublicUrl(filePath);
 
   return publicUrl;
 };
@@ -284,7 +290,7 @@ const uploadImage = async (file: File) => {
 ```typescript
 // Network errors
 try {
-  const result = await dataProvider.getList('customers', params);
+  const result = await dataProvider.getList("customers", params);
 } catch (error) {
   if (error.status === 401) {
     // Unauthorized - redirect to login
@@ -301,11 +307,11 @@ try {
 ```typescript
 // Handle validation errors from Supabase
 try {
-  await dataProvider.create('customers', { data });
+  await dataProvider.create("customers", { data });
 } catch (error) {
-  if (error.body?.code === '23505') {
+  if (error.body?.code === "23505") {
     // Unique constraint violation
-    throw new Error('Email already exists');
+    throw new Error("Email already exists");
   }
 }
 ```
@@ -313,6 +319,7 @@ try {
 ## Rate Limiting
 
 Supabase has built-in rate limiting:
+
 - **Anonymous requests**: 100 requests per hour
 - **Authenticated requests**: 1000 requests per hour
 - **Database connections**: Limited by plan
@@ -322,6 +329,7 @@ Supabase has built-in rate limiting:
 ### Row Level Security (RLS)
 
 All tables have RLS enabled with policies that:
+
 - Require authentication for all operations
 - Allow users to access records they created
 - Provide role-based access for admin/manager roles
@@ -346,21 +354,22 @@ All tables have RLS enabled with policies that:
 
 ```typescript
 // Use select to limit fields
-dataProvider.getList('purchases', {
+dataProvider.getList("purchases", {
   meta: {
-    select: 'id,price,purchase_date,customers(fullname),products(name)'
-  }
+    select: "id,price,purchase_date,customers(fullname),products(name)",
+  },
 });
 
 // Use pagination for large datasets
-dataProvider.getList('customers', {
-  pagination: { page: 1, perPage: 25 }
+dataProvider.getList("customers", {
+  pagination: { page: 1, perPage: 25 },
 });
 ```
 
 ### Caching
 
 React Admin with TanStack Query provides automatic caching:
+
 - GET requests are cached by default
 - Cache invalidation on mutations
 - Background refetching for fresh data

@@ -4,11 +4,12 @@
 
 Lottti POC is built using a modern React architecture with the following key principles:
 
+- **Hybrid UI Architecture** combining React Admin with selective Tailwind CSS enhancements
 - **Component-based architecture** using React and TypeScript
 - **Feature-driven development** with modular organization
 - **Role-based access control** for security
 - **Real-time data synchronization** via Supabase
-- **Responsive design** with Material-UI and Tailwind CSS
+- **Production-ready design** with clean, professional interface
 
 ## System Architecture
 
@@ -32,10 +33,12 @@ Lottti POC is built using a modern React architecture with the following key pri
 
 - **React 18**: Modern React with hooks and concurrent features
 - **TypeScript**: Type safety and better developer experience
-- **React Admin 5**: Admin interface framework
-- **Material-UI 5**: Component library and design system
+- **React Admin 5**: Admin interface framework (core functionality)
+- **Material-UI 5**: Component library for React Admin components
+- **Tailwind CSS**: Enhanced styling for custom components and forms
 - **TanStack Query**: Server state management
 - **Vite**: Fast build tool and development server
+- **React Router DOM**: Client-side routing
 
 ### Component Hierarchy
 
@@ -73,6 +76,53 @@ App
 - **Authentication State**: Supabase Auth with React context
 - **RBAC State**: Custom React context for role-based permissions
 - **UI State**: Local component state and React Admin state
+
+## Hybrid UI Architecture
+
+### Design Philosophy
+
+The application uses a **hybrid approach** that combines the robustness of React Admin with selective Tailwind CSS enhancements:
+
+**✅ React Admin Core:**
+
+- Standard dashboard interface
+- Built-in CRUD operations
+- Material-UI components
+- Data grid and pagination
+- Form handling and validation
+
+**✅ Tailwind Enhancements:**
+
+- Custom login page
+- Enhanced create dialogs
+- Improved form components
+- Modern styling utilities
+- Responsive design patterns
+
+### Component Architecture
+
+```
+src/components/
+├── ui/                     # Tailwind UI component library
+│   ├── Button.tsx         # Enhanced button components
+│   ├── Input.tsx          # Custom input components
+│   ├── Card.tsx           # Card components
+│   └── ...
+├── forms/                  # Hybrid form components
+│   └── TailwindReactAdminForm.tsx
+├── TailwindCustomLayout.tsx    # Enhanced React Admin layout
+├── TailwindCustomMenu.tsx      # Custom navigation menu
+├── TailwindLoginPage.tsx       # Custom authentication page
+└── Protected.tsx              # RBAC wrapper component
+```
+
+### Benefits of Hybrid Approach
+
+1. **Production Ready**: Clean, professional interface without demo components
+2. **Maintainable**: Standard React Admin patterns with selective enhancements
+3. **Scalable**: Easy to add new features using established patterns
+4. **Flexible**: Can enhance specific components when needed
+5. **Consistent**: Unified design system across the application
 
 ## Backend Architecture
 

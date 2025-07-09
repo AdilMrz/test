@@ -5,12 +5,14 @@ This guide covers deploying the Lottti POC application to various hosting platfo
 ## Pre-deployment Checklist
 
 ### Code Quality
+
 - [ ] All TypeScript errors resolved (`npm run type-check`)
 - [ ] Linting passes (`npm run lint`)
 - [ ] Code formatted (`npm run format`)
 - [ ] Build succeeds (`npm run build`)
 
 ### Environment Setup
+
 - [ ] Production Supabase project configured
 - [ ] Environment variables documented
 - [ ] Database schema deployed
@@ -18,6 +20,7 @@ This guide covers deploying the Lottti POC application to various hosting platfo
 - [ ] Storage buckets created (if needed)
 
 ### Security Review
+
 - [ ] API keys secured
 - [ ] Authentication configured
 - [ ] RBAC permissions tested
@@ -28,16 +31,24 @@ This guide covers deploying the Lottti POC application to various hosting platfo
 ### Required Variables
 
 ```env
-# Supabase Configuration
+# Supabase Configuration (Required)
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 
-# Optional Configuration
+# Optional: Maintenance Mode
+VITE_MAINTENANCE_MODE=false
+
+# Optional: Application Configuration
 VITE_APP_TITLE=Lottti POC
 VITE_APP_VERSION=1.0.0
+
+# Optional: Error Tracking
+VITE_SENTRY_DSN=your-sentry-dsn
+VITE_SENTRY_ENVIRONMENT=production
 ```
 
 ### Security Notes
+
 - Never commit `.env` files to version control
 - Use different Supabase projects for staging/production
 - Rotate API keys regularly
@@ -46,30 +57,34 @@ VITE_APP_VERSION=1.0.0
 ## Vercel Deployment (Recommended)
 
 ### Prerequisites
+
 - Vercel account
 - GitHub repository
 
 ### Automatic Deployment
 
 1. **Connect Repository**
+
    ```bash
    # Install Vercel CLI
    npm i -g vercel
-   
+
    # Login to Vercel
    vercel login
-   
+
    # Deploy from project directory
    vercel
    ```
 
 2. **Configure Project**
+
    - Framework Preset: Vite
    - Build Command: `npm run build`
    - Output Directory: `dist`
    - Install Command: `npm install`
 
 3. **Set Environment Variables**
+
    ```bash
    # Using Vercel CLI
    vercel env add VITE_SUPABASE_URL
@@ -77,6 +92,7 @@ VITE_APP_VERSION=1.0.0
    ```
 
    Or via Vercel Dashboard:
+
    - Go to Project Settings → Environment Variables
    - Add each variable for Production, Preview, and Development
 
@@ -89,17 +105,20 @@ VITE_APP_VERSION=1.0.0
 ### GitHub Integration
 
 1. **Connect GitHub**
+
    - Go to Vercel Dashboard
    - Import Git Repository
    - Select your repository
 
 2. **Configure Build Settings**
+
    - Framework: Vite
    - Root Directory: `./`
    - Build Command: `npm run build`
    - Output Directory: `dist`
 
 3. **Environment Variables**
+
    - Add all required environment variables
    - Set for all environments (Production, Preview, Development)
 
@@ -112,6 +131,7 @@ VITE_APP_VERSION=1.0.0
 ### Manual Deployment
 
 1. **Build Project**
+
    ```bash
    npm run build
    ```
@@ -124,26 +144,30 @@ VITE_APP_VERSION=1.0.0
 ### Git Integration
 
 1. **Connect Repository**
+
    - New site from Git
    - Choose your Git provider
    - Select repository
 
 2. **Build Settings**
+
    - Build command: `npm run build`
    - Publish directory: `dist`
    - Node version: 18
 
 3. **Environment Variables**
+
    - Go to Site Settings → Environment Variables
    - Add all required variables
 
 4. **Deploy Settings**
+
    ```toml
    # netlify.toml
    [build]
      command = "npm run build"
      publish = "dist"
-   
+
    [[redirects]]
      from = "/*"
      to = "/index.html"
@@ -164,12 +188,14 @@ npm run build
 ### Upload Files
 
 1. **FTP/SFTP Upload**
+
    - Upload all files from `dist/` folder
    - Ensure `index.html` is in the root directory
 
 2. **Server Configuration**
-   
+
    **Apache (.htaccess)**
+
    ```apache
    RewriteEngine On
    RewriteBase /
@@ -180,6 +206,7 @@ npm run build
    ```
 
    **Nginx**
+
    ```nginx
    location / {
      try_files $uri $uri/ /index.html;
@@ -254,11 +281,13 @@ docker run -p 80:80 lottti-poc
 ### S3 Setup
 
 1. **Create S3 Bucket**
+
    ```bash
    aws s3 mb s3://your-bucket-name
    ```
 
 2. **Configure Static Website Hosting**
+
    ```bash
    aws s3 website s3://your-bucket-name \
      --index-document index.html \
@@ -273,6 +302,7 @@ docker run -p 80:80 lottti-poc
 ### CloudFront Setup
 
 1. **Create Distribution**
+
    - Origin: Your S3 bucket
    - Default Root Object: `index.html`
    - Error Pages: 404 → `/index.html` (for SPA routing)
@@ -284,18 +314,21 @@ docker run -p 80:80 lottti-poc
 ## Environment-Specific Configurations
 
 ### Development
+
 ```env
 VITE_SUPABASE_URL=http://localhost:54321
 VITE_SUPABASE_ANON_KEY=your-local-anon-key
 ```
 
 ### Staging
+
 ```env
 VITE_SUPABASE_URL=https://staging-project.supabase.co
 VITE_SUPABASE_ANON_KEY=staging-anon-key
 ```
 
 ### Production
+
 ```env
 VITE_SUPABASE_URL=https://production-project.supabase.co
 VITE_SUPABASE_ANON_KEY=production-anon-key
@@ -304,6 +337,7 @@ VITE_SUPABASE_ANON_KEY=production-anon-key
 ## Post-Deployment Verification
 
 ### Functional Testing
+
 - [ ] Application loads correctly
 - [ ] Authentication works
 - [ ] All CRUD operations function
@@ -311,12 +345,14 @@ VITE_SUPABASE_ANON_KEY=production-anon-key
 - [ ] File uploads work (if applicable)
 
 ### Performance Testing
+
 - [ ] Page load times acceptable
 - [ ] API response times reasonable
 - [ ] Images load properly
 - [ ] Mobile responsiveness
 
 ### Security Testing
+
 - [ ] HTTPS enabled
 - [ ] Security headers present
 - [ ] Authentication required
@@ -325,16 +361,19 @@ VITE_SUPABASE_ANON_KEY=production-anon-key
 ## Monitoring and Maintenance
 
 ### Error Monitoring
+
 - Set up error tracking (Sentry, LogRocket)
 - Monitor application performance
 - Track user analytics
 
 ### Backup Strategy
+
 - Database backups (Supabase handles this)
 - Code repository backups
 - Environment configuration backups
 
 ### Update Process
+
 1. Test changes in staging environment
 2. Create deployment checklist
 3. Deploy during low-traffic periods
@@ -346,6 +385,7 @@ VITE_SUPABASE_ANON_KEY=production-anon-key
 ### Common Issues
 
 **Build Failures**
+
 ```bash
 # Clear cache and reinstall
 rm -rf node_modules package-lock.json
@@ -354,16 +394,19 @@ npm run build
 ```
 
 **Environment Variable Issues**
+
 - Verify all variables are set
-- Check variable names (must start with VITE_)
+- Check variable names (must start with VITE\_)
 - Restart build process after changes
 
 **Routing Issues**
+
 - Ensure server redirects all routes to index.html
 - Check base URL configuration
 - Verify React Router setup
 
 **API Connection Issues**
+
 - Verify Supabase URL and key
 - Check CORS settings
 - Ensure network connectivity
@@ -371,6 +414,7 @@ npm run build
 ### Performance Optimization
 
 **Bundle Size**
+
 ```bash
 # Analyze bundle size
 npm run build
@@ -378,6 +422,7 @@ npx vite-bundle-analyzer dist
 ```
 
 **Caching Strategy**
+
 - Set appropriate cache headers
 - Use CDN for static assets
 - Implement service worker (optional)
