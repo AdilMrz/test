@@ -72,7 +72,7 @@ export const TailwindLoginPage: React.FC<TailwindLoginPageProps> = ({
             <div className="relative">
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-2 before:content-none after:content-none"
               >
                 Email
               </label>
@@ -83,7 +83,7 @@ export const TailwindLoginPage: React.FC<TailwindLoginPageProps> = ({
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-3 focus:ring-project-green-800/10 focus:border-project-green-800 focus:bg-white hover:border-gray-300 hover:bg-white"
-                placeholder="Enter your email"
+                placeholder="Enter your email (required)"
               />
             </div>
 
@@ -91,7 +91,7 @@ export const TailwindLoginPage: React.FC<TailwindLoginPageProps> = ({
             <div className="relative">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-2 before:content-none after:content-none"
               >
                 Password
               </label>
@@ -103,7 +103,7 @@ export const TailwindLoginPage: React.FC<TailwindLoginPageProps> = ({
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full px-4 py-4 pr-12 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:ring-3 focus:ring-project-green-800/10 focus:border-project-green-800 focus:bg-white hover:border-gray-300 hover:bg-white"
-                  placeholder="Enter your password"
+                  placeholder="Enter your password (required)"
                 />
                 <button
                   type="button"
