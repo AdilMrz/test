@@ -14,6 +14,22 @@ interface DashboardExportData {
     price: number;
     purchase_date: string;
   }>;
+  translations: {
+    title: string;
+    generatedOn: string;
+    dateRange: string;
+    start: string;
+    end: string;
+    purchaseDistribution: string;
+    productRevenue: string;
+    recentPurchases: string;
+    product: string;
+    numberOfPurchases: string;
+    revenue: string;
+    date: string;
+    customer: string;
+    price: string;
+  };
 }
 
 interface JsPDFWithAutoTable extends jsPDF {
@@ -27,21 +43,22 @@ export const exportDashboardToPDF = ({
   productPurchases,
   productRevenue,
   recentPurchases,
+  translations,
 }: DashboardExportData) => {
   const doc = new jsPDF() as JsPDFWithAutoTable;
   const currentDate = format(new Date(), "yyyy-MM-dd HH:mm");
 
   // Title
   doc.setFontSize(20);
-  doc.text("Dashboard Report", 14, 20);
+  doc.text(translations.title, 14, 20);
   doc.setFontSize(10);
-  doc.text(`Generated on: ${currentDate}`, 14, 30);
+  doc.text(`${translations.generatedOn}: ${currentDate}`, 14, 30);
 
   // Date Range
   if (startDate || endDate) {
     doc.text(
-      `Date Range: ${startDate ? format(startDate, "yyyy-MM-dd") : "Start"} to ${
-        endDate ? format(endDate, "yyyy-MM-dd") : "End"
+      `${translations.dateRange}: ${startDate ? format(startDate, "yyyy-MM-dd") : translations.start} to ${
+        endDate ? format(endDate, "yyyy-MM-dd") : translations.end
       }`,
       14,
       40,
@@ -50,8 +67,11 @@ export const exportDashboardToPDF = ({
 
   // Purchase Distribution
   doc.setFontSize(16);
-  doc.text("Purchase Distribution", 14, 55);
-  const purchaseColumns = ["Product", "Number of Purchases"];
+  doc.text(translations.purchaseDistribution, 14, 55);
+  const purchaseColumns = [
+    translations.product,
+    translations.numberOfPurchases,
+  ];
   const purchaseRows = productPurchases.map((item) => [item.name, item.value]);
 
   doc.autoTable({
@@ -64,8 +84,8 @@ export const exportDashboardToPDF = ({
 
   // Product Revenue
   const currentY = doc.lastAutoTable.finalY + 20;
-  doc.text("Product Revenue", 14, currentY);
-  const revenueColumns = ["Product", "Revenue"];
+  doc.text(translations.productRevenue, 14, currentY);
+  const revenueColumns = [translations.product, translations.revenue];
   const revenueRows = productRevenue.map((item) => [
     item.name,
     `$${item.revenue.toFixed(2)}`,
@@ -81,8 +101,13 @@ export const exportDashboardToPDF = ({
 
   // Recent Purchases
   const finalY = doc.lastAutoTable.finalY + 20;
-  doc.text("Recent Purchases", 14, finalY);
-  const purchasesColumns = ["Date", "Customer", "Product", "Price"];
+  doc.text(translations.recentPurchases, 14, finalY);
+  const purchasesColumns = [
+    translations.date,
+    translations.customer,
+    translations.product,
+    translations.price,
+  ];
   const purchasesRows = recentPurchases.map((purchase) => [
     format(new Date(purchase.purchase_date), "yyyy-MM-dd"),
     purchase.customer_name,

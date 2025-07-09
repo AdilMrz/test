@@ -237,6 +237,15 @@ const customFrenchMessages = {
       price: "Prix",
       no_purchases: "Aucun achat récent trouvé",
     },
+    pdf: {
+      title: "Rapport du tableau de bord",
+      generatedOn: "Généré le",
+      dateRange: "Période",
+      start: "Début",
+      end: "Fin",
+      numberOfPurchases: "Nombre d'achats",
+      revenue: "Revenus",
+    },
     cards: {
       purchaseDistribution: "Distribution des achats",
       productRevenue: "Revenus par produit",

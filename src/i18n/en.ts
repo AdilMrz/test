@@ -151,6 +151,15 @@ const customEnglishMessages = {
       price: "Price",
       no_purchases: "No recent purchases found",
     },
+    pdf: {
+      title: "Dashboard Report",
+      generatedOn: "Generated on",
+      dateRange: "Date Range",
+      start: "Start",
+      end: "End",
+      numberOfPurchases: "Number of Purchases",
+      revenue: "Revenue",
+    },
   },
   common: {
     actions: "Actions",

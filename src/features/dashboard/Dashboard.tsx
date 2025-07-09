@@ -152,6 +152,22 @@ export const Dashboard = () => {
       productPurchases,
       productRevenue,
       recentPurchases,
+      translations: {
+        title: translate("dashboard.pdf.title"),
+        generatedOn: translate("dashboard.pdf.generatedOn"),
+        dateRange: translate("dashboard.pdf.dateRange"),
+        start: translate("dashboard.pdf.start"),
+        end: translate("dashboard.pdf.end"),
+        purchaseDistribution: translate("dashboard.purchaseDistribution"),
+        productRevenue: translate("dashboard.productRevenue"),
+        recentPurchases: translate("dashboard.recentPurchases"),
+        product: translate("dashboard.table.product"),
+        numberOfPurchases: translate("dashboard.pdf.numberOfPurchases"),
+        revenue: translate("dashboard.pdf.revenue"),
+        date: translate("dashboard.table.date"),
+        customer: translate("dashboard.table.customer"),
+        price: translate("dashboard.table.price"),
+      },
     });
   };
 
