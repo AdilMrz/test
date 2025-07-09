@@ -65,6 +65,27 @@ const customFrenchMessages = {
       unsaved_changes:
         "Certaines de vos modifications n'ont pas été sauvegardées. Êtes-vous sûr de vouloir les ignorer ?",
     },
+    input: {
+      ...frenchMessages.ra.input,
+      file: {
+        upload_several:
+          "Déposez des fichiers à télécharger, ou cliquez pour sélectionner.",
+        upload_single:
+          "Déposez un fichier à télécharger, ou cliquez pour sélectionner.",
+      },
+      image: {
+        upload_several:
+          "Déposez des images à télécharger, ou cliquez pour sélectionner.",
+        upload_single:
+          "Déposez une image à télécharger, ou cliquez pour sélectionner.",
+      },
+      references: {
+        all_missing: "Impossible de trouver des données de références.",
+        many_missing:
+          "Au moins une des références associées n'est plus disponible.",
+        single_missing: "La référence associée n'est plus disponible.",
+      },
+    },
   },
   resources: {
     customers: {
@@ -195,6 +216,18 @@ const customFrenchMessages = {
     date: {
       invalid: "Date invalide",
       future: "La date ne peut pas être dans le futur",
+    },
+    file: {
+      size: "La taille du fichier doit être inférieure à 5 Mo",
+      type: "Le fichier doit être une image",
+    },
+    image: {
+      dimensions:
+        "Les dimensions de l'image doivent être de 1920x1080 pixels ou moins",
+      error: "Erreur lors du chargement de l'image",
+    },
+    required: {
+      fields: "Le nom et la description sont requis",
     },
   },
   notifications: {

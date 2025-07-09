@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useCreate, useNotify, useRefresh } from "react-admin";
+import { useCreate, useNotify, useRefresh, useTranslate } from "react-admin";
 import {
   Dialog,
   DialogTitle,
@@ -20,6 +20,7 @@ export const CreateProductDialog = ({
   const [create] = useCreate();
   const notify = useNotify();
   const refresh = useRefresh();
+  const translate = useTranslate();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -37,13 +38,13 @@ export const CreateProductDialog = ({
 
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
-      notify("File size must be less than 5MB", { type: "error" });
+      notify(translate("validation.file.size"), { type: "error" });
       return;
     }
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      notify("File must be an image", { type: "error" });
+      notify(translate("validation.file.type"), { type: "error" });
       return;
     }
 
@@ -54,7 +55,7 @@ export const CreateProductDialog = ({
     img.onload = () => {
       URL.revokeObjectURL(objectUrl);
       if (img.width > 1920 || img.height > 1080) {
-        notify("Image dimensions must be 1920x1080 pixels or smaller", {
+        notify(translate("validation.image.dimensions"), {
           type: "error",
         });
         return;
@@ -64,7 +65,7 @@ export const CreateProductDialog = ({
 
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      notify("Error loading image", { type: "error" });
+      notify(translate("validation.image.error"), { type: "error" });
     };
 
     img.src = objectUrl;
@@ -72,7 +73,7 @@ export const CreateProductDialog = ({
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.description) {
-      notify("Name and description are required", { type: "error" });
+      notify(translate("validation.required.fields"), { type: "error" });
       return;
     }
 
@@ -99,17 +100,17 @@ export const CreateProductDialog = ({
         },
         {
           onSuccess: () => {
-            notify("Product created successfully");
+            notify(translate("notifications.success.create"));
             refresh();
             onClose();
           },
           onError: () => {
-            notify("Error creating product", { type: "error" });
+            notify(translate("notifications.error.create"), { type: "error" });
           },
         },
       );
     } catch (error) {
-      notify("Error creating product", { type: "error" });
+      notify(translate("notifications.error.create"), { type: "error" });
     } finally {
       setUploading(false);
     }
@@ -134,20 +135,20 @@ export const CreateProductDialog = ({
           fontSize: "1.2rem",
         }}
       >
-        Create New Product
+        {translate("dialogs.create.product")}
       </DialogTitle>
       <DialogContent sx={{ padding: "24px" }}>
         <div className="flex flex-col gap-4 min-w-[400px] mt-2">
           <input
             type="text"
-            placeholder="Name"
+            placeholder={translate("resources.products.fields.name")}
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
           />
           <input
             type="text"
-            placeholder="Description"
+            placeholder={translate("resources.products.fields.description")}
             value={formData.description}
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
@@ -177,7 +178,9 @@ export const CreateProductDialog = ({
                 },
               }}
             >
-              {selectedFile ? "Change Photo" : "Upload Photo"}
+              {selectedFile
+                ? translate("buttons.change_photo")
+                : translate("buttons.upload_photo")}
             </MuiButton>
             {selectedFile && (
               <Box sx={{ mt: 2 }}>
@@ -209,7 +212,7 @@ export const CreateProductDialog = ({
             "&:hover": { backgroundColor: "#f5f5f5" },
           }}
         >
-          Cancel
+          {translate("ra.action.cancel")}
         </MuiButton>
         <MuiButton
           onClick={handleSubmit}
@@ -220,7 +223,7 @@ export const CreateProductDialog = ({
             "&:hover": { backgroundColor: THEME_COLORS.primaryDark },
           }}
         >
-          Create Product
+          {translate("resources.products.create")}
         </MuiButton>
       </DialogActions>
     </Dialog>

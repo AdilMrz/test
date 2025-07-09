@@ -1,4 +1,3 @@
-import React from "react";
 import { Menu, useResourceDefinitions } from "react-admin";
 
 export const TailwindCustomMenu = () => {

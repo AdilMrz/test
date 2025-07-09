@@ -74,7 +74,7 @@ export const TailwindLoginPage: React.FC<TailwindLoginPageProps> = ({
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Email*
+                Email
               </label>
               <input
                 id="email"
@@ -93,7 +93,7 @@ export const TailwindLoginPage: React.FC<TailwindLoginPageProps> = ({
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Password*
+                Password
               </label>
               <div className="relative">
                 <input
