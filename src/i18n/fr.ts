@@ -306,7 +306,10 @@ const customFrenchMessages = {
     },
   },
   validation: {
-    required: "Obligatoire",
+    required: {
+      default: "Obligatoire",
+      fields: "Le nom et la description sont requis",
+    },
     email: "Adresse email invalide",
     price: {
       positive: "Le prix doit être positif",
@@ -324,9 +327,6 @@ const customFrenchMessages = {
       dimensions:
         "Les dimensions de l'image doivent être de 1920x1080 pixels ou moins",
       error: "Erreur lors du chargement de l'image",
-    },
-    required: {
-      fields: "Le nom et la description sont requis",
     },
   },
   notifications: {
