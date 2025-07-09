@@ -146,28 +146,40 @@ export const Dashboard = () => {
   }));
 
   const handleExport = () => {
+    const translations = {
+      title: translate("dashboard.pdf.title", { _: "Dashboard Report" }),
+      generatedOn: translate("dashboard.pdf.generatedOn", {
+        _: "Generated on",
+      }),
+      dateRange: translate("dashboard.pdf.dateRange", { _: "Date Range" }),
+      start: translate("dashboard.pdf.start", { _: "Start" }),
+      end: translate("dashboard.pdf.end", { _: "End" }),
+      purchaseDistribution: translate("dashboard.purchaseDistribution", {
+        _: "Purchase Distribution",
+      }),
+      productRevenue: translate("dashboard.productRevenue", {
+        _: "Product Revenue",
+      }),
+      recentPurchases: translate("dashboard.recentPurchases", {
+        _: "Recent Purchases",
+      }),
+      product: translate("dashboard.table.product", { _: "Product" }),
+      numberOfPurchases: translate("dashboard.pdf.numberOfPurchases", {
+        _: "Number of Purchases",
+      }),
+      revenue: translate("dashboard.pdf.revenue", { _: "Revenue" }),
+      date: translate("dashboard.table.date", { _: "Date" }),
+      customer: translate("dashboard.table.customer", { _: "Customer" }),
+      price: translate("dashboard.table.price", { _: "Price" }),
+    };
+
     exportDashboardToPDF({
       startDate,
       endDate,
       productPurchases,
       productRevenue,
       recentPurchases,
-      translations: {
-        title: translate("dashboard.pdf.title"),
-        generatedOn: translate("dashboard.pdf.generatedOn"),
-        dateRange: translate("dashboard.pdf.dateRange"),
-        start: translate("dashboard.pdf.start"),
-        end: translate("dashboard.pdf.end"),
-        purchaseDistribution: translate("dashboard.purchaseDistribution"),
-        productRevenue: translate("dashboard.productRevenue"),
-        recentPurchases: translate("dashboard.recentPurchases"),
-        product: translate("dashboard.table.product"),
-        numberOfPurchases: translate("dashboard.pdf.numberOfPurchases"),
-        revenue: translate("dashboard.pdf.revenue"),
-        date: translate("dashboard.table.date"),
-        customer: translate("dashboard.table.customer"),
-        price: translate("dashboard.table.price"),
-      },
+      translations,
     });
   };
 
