@@ -494,10 +494,6 @@ const { role } = useRBAC()
 - Add appropriate RBAC protections
 - Update documentation for new features
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## 🆘 Support
 
 For support and questions:
@@ -527,6 +523,16 @@ For support and questions:
 - ✅ **Enhanced Forms**: Custom create dialogs with improved UX
 - ✅ **Navigation Improvements**: Streamlined menu and better user flow
 - ✅ **Code Quality**: TypeScript improvements and better error handling
+
+## 📄 License
+
+This project is proprietary software. All rights reserved.
+
+**Copyright (c) 2025 [Your Name/Company]**
+
+This software and its source code are confidential and proprietary. Unauthorized copying, distribution, or use is strictly prohibited.
+
+For licensing inquiries, contact: [your-email@example.com]
 
 ---
 
