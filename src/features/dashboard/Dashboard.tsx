@@ -1,6 +1,5 @@
 import { Title, Loading, useTranslate } from "react-admin";
 import { useTheme, alpha, Box, Button } from "@mui/material";
-import { useGetList } from "react-admin";
 import { Download as DownloadIcon } from "@mui/icons-material";
 import {
   PurchaseDistributionCard,
@@ -11,44 +10,11 @@ import { DateRangeFilter } from "./DateRangefilter";
 import { exportDashboardToPDF } from "../../utils/dashboardExport";
 import { useState } from "react";
 import { Protected } from "../../components/Protected";
+import { useDashboardData } from "../../hooks/useDashboardData";
+import { useRealtimeData } from "../../hooks/useRealtimeData";
 
-interface Product {
-  id: number;
-  name: string;
-  description?: string;
-}
-
-interface Purchase {
-  id: number;
-  product_id: number;
-  customer_id: number;
-  price: number;
-  purchase_date: string;
-}
-
-interface ProductPurchase {
-  id: number;
-  name: string;
-  value: number;
-}
-
-interface ProductRevenue {
-  name: string;
-  revenue: number;
-}
-
-interface Customer {
-  id: number;
-  fullname: string;
-}
-
-export interface RecentPurchaseData {
-  id: number;
-  customer_name: string;
-  product_name: string;
-  price: number;
-  purchase_date: string;
-}
+// Import types from DashboardCards to ensure compatibility
+import type { ProductPurchase, ProductRevenue } from "./DashboardCards";
 
 export const Dashboard = () => {
   const translate = useTranslate();
@@ -70,61 +36,51 @@ export const Dashboard = () => {
     backgroundClip: "padding-box",
   };
 
-  const { data: products, isLoading: isLoadingProducts } = useGetList<Product>(
-    "products",
-    {
-      pagination: { page: 1, perPage: 50 },
-      sort: { field: "id", order: "ASC" },
-    },
-  );
-
-  const { data: purchases, isLoading: isLoadingPurchases } =
-    useGetList<Purchase>(
-      "purchases",
-      {
-        pagination: { page: 1, perPage: 1000 },
-        sort: { field: "purchase_date", order: "DESC" },
-      },
-      {
-        refetchInterval: 60000,
-        refetchOnWindowFocus: true,
-        refetchOnMount: true,
-      },
-    );
-
-  const { data: customers, isLoading: isLoadingCustomers } =
-    useGetList<Customer>("customers", {
-      pagination: { page: 1, perPage: 1000 },
-      sort: { field: "id", order: "ASC" },
+  // Use our new React Query hooks for better performance and real-time updates
+  const { products, purchases, customers, isLoading, hasError, errors } =
+    useDashboardData({
+      startDate,
+      endDate,
     });
 
-  if (isLoadingProducts || isLoadingPurchases || isLoadingCustomers)
-    return <Loading />;
-  if (!products || !purchases || !customers) return null;
+  // Enable real-time data synchronization
+  useRealtimeData({ enabled: true });
 
-  const filteredPurchases = purchases.filter((purchase) => {
-    if (!startDate && !endDate) return true;
-    const purchaseDate = new Date(purchase.purchase_date);
-    if (startDate && purchaseDate < startDate) return false;
-    if (endDate && purchaseDate > endDate) return false;
-    return true;
-  });
+  if (isLoading) return <Loading />;
 
-  const productPurchases = products.reduce((acc, product) => {
-    const count = filteredPurchases.filter(
-      (p) => p.product_id === product.id,
-    ).length;
-    if (count > 0) {
-      acc.push({
-        id: product.id,
-        name: product.name,
-        value: count,
-      });
-    }
-    return acc;
-  }, [] as ProductPurchase[]);
+  if (hasError) {
+    console.error("Dashboard data errors:", errors);
+    return (
+      <Box p={2}>
+        <Title title="Dashboard" />
+        <div>Error loading dashboard data. Please try refreshing the page.</div>
+      </Box>
+    );
+  }
 
-  const productRevenue = products
+  if (!products.data || !purchases.data || !customers.data) return null;
+
+  // The data is already filtered by date range in the hook, so we can use it directly
+  const filteredPurchases = purchases.data || [];
+
+  const productPurchases = (products.data || []).reduce(
+    (acc, product, index) => {
+      const count = filteredPurchases.filter(
+        (p) => p.product_id === product.id,
+      ).length;
+      if (count > 0) {
+        acc.push({
+          id: parseInt(product.id) || index + 1, // Use index + 1 as fallback for unique IDs
+          name: product.name,
+          value: count,
+        });
+      }
+      return acc;
+    },
+    [] as ProductPurchase[],
+  );
+
+  const productRevenue = (products.data || [])
     .map((product) => ({
       name: product.name,
       revenue: filteredPurchases
@@ -133,17 +89,16 @@ export const Dashboard = () => {
     }))
     .filter((item) => item.revenue > 0) as ProductRevenue[];
 
-  const recentPurchases = filteredPurchases.slice(0, 10).map((purchase) => ({
-    id: purchase.id,
-    customer_name:
-      customers?.find((c) => c.id === purchase.customer_id)?.fullname ||
-      translate("dashboard.unknown"),
-    product_name:
-      products?.find((p) => p.id === purchase.product_id)?.name ||
-      translate("dashboard.unknown"),
-    price: purchase.price,
-    purchase_date: purchase.purchase_date,
-  }));
+  const recentPurchases = filteredPurchases
+    .slice(0, 10)
+    .map((purchase, index) => ({
+      id: parseInt(purchase.id) || index + 1, // Use index + 1 as fallback to ensure uniqueness
+      customer_name:
+        purchase.customers?.fullname || translate("dashboard.unknown"),
+      product_name: purchase.products?.name || translate("dashboard.unknown"),
+      price: purchase.price,
+      purchase_date: purchase.purchase_date,
+    }));
 
   const handleExport = () => {
     const translations = {

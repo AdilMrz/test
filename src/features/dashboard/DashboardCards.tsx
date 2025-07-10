@@ -15,18 +15,18 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface ProductPurchase {
+export interface ProductPurchase {
   id: number;
   name: string;
   value: number;
 }
 
-interface ProductRevenue {
+export interface ProductRevenue {
   name: string;
   revenue: number;
 }
 
-interface RecentPurchase {
+export interface RecentPurchase {
   id: number;
   customer_name: string;
   product_name: string;
@@ -219,7 +219,7 @@ export const RecentPurchasesCard = ({
           <tbody>
             {data.map((purchase, index) => (
               <tr
-                key={purchase.id}
+                key={`purchase-${purchase.id}-${index}`}
                 className={
                   index !== data.length - 1 ? "border-b border-solid" : ""
                 }

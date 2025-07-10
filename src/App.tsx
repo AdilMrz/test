@@ -22,6 +22,7 @@ import { useRBAC } from "./contexts/RBACContext";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { useErrorHandler } from "./hooks/useErrorHandler";
 import { initSentry } from "./utils/sentry";
+import { useRealtimeData } from "./hooks/useRealtimeData";
 
 // queryClient is now imported from auth.ts
 const authProvider = baseAuthProvider;
@@ -38,6 +39,9 @@ const i18nProvider = polyglotI18nProvider(
 const AdminApp = ({ role = null }: { role?: Role | null }) => {
   const { checkPermission } = useRBAC();
   const resources = useResources();
+
+  // Enable real-time data synchronization
+  useRealtimeData({ enabled: true });
 
   const trackingDataProvider = useMemo(
     () => createTrackingSupabaseProvider(supabaseClient, checkPermission),

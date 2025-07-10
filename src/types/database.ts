@@ -23,3 +23,10 @@ export interface Purchase {
   customers?: Customer;
   products?: Product;
 }
+
+export interface UserRole {
+  user_id: string;
+  role: "admin" | "manager" | "user";
+  fullname?: string;
+  created_at?: string;
+}
