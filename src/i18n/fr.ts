@@ -293,6 +293,24 @@ const customFrenchMessages = {
         content:
           "Êtes-vous sûr de vouloir supprimer ces clients ? Cette action échouera pour tout client ayant des achats associés.",
       },
+      product: {
+        title: "Supprimer le produit",
+        content:
+          'Êtes-vous sûr de vouloir supprimer le produit "%{name}" ? Cette action échouera si le produit a des achats associés.',
+      },
+      products: {
+        title: "Supprimer les produits",
+        content:
+          "Êtes-vous sûr de vouloir supprimer ces produits ? Cette action échouera pour tout produit ayant des achats associés.",
+      },
+      purchase: {
+        title: "Supprimer l'achat",
+        content: "Êtes-vous sûr de vouloir supprimer cet achat ?",
+      },
+      purchases: {
+        title: "Supprimer les achats",
+        content: "Êtes-vous sûr de vouloir supprimer ces achats ?",
+      },
     },
     create: {
       customer: "Créer un nouveau client",

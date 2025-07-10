@@ -19,6 +19,7 @@ import { Protected } from "../../components/Protected";
 
 const ActionButtons = () => {
   const record = useRecordContext();
+  const translate = useTranslate();
 
   if (!record) return null;
 
@@ -37,8 +38,8 @@ const ActionButtons = () => {
         recordUserId={record.created_by}
       >
         <DeleteButton
-          confirmTitle="Delete Purchase"
-          confirmContent="Are you sure you want to delete this purchase?"
+          confirmTitle={translate("dialogs.delete.purchase.title")}
+          confirmContent={translate("dialogs.delete.purchase.content")}
           mutationMode="pessimistic"
         />
       </Protected>
@@ -87,8 +88,8 @@ export const PurchaseList = () => {
           bulkActionButtons={
             <Protected action="delete" resource="purchases">
               <BulkDeleteButton
-                confirmTitle="Delete Purchases"
-                confirmContent="Are you sure you want to delete these purchases?"
+                confirmTitle={translate("dialogs.delete.purchases.title")}
+                confirmContent={translate("dialogs.delete.purchases.content")}
                 mutationMode="pessimistic"
               />
             </Protected>

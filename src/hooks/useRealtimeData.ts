@@ -15,8 +15,6 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
   useEffect(() => {
     if (!enabled) return;
 
-    console.log("🔄 Setting up real-time subscriptions...");
-
     // Products real-time subscription
     const productsSubscription = supabaseClient
       .channel("products-changes")
@@ -24,15 +22,6 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
         "postgres_changes",
         { event: "*", schema: "public", table: "products" },
         (payload: RealtimePostgresChangesPayload<Product>) => {
-          // Type guard to ensure we have a valid Product object
-          const newProduct = payload.new as Product | null;
-          const oldProduct = payload.old as Product | null;
-
-          const productName = newProduct?.name || oldProduct?.name;
-          const productId = newProduct?.id || oldProduct?.id;
-
-          console.log("📦 Products changed:", payload.eventType, productName);
-
           // Invalidate all product-related queries
           queryClient.invalidateQueries({
             queryKey: ["dashboard", "products"],
@@ -40,6 +29,9 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
           queryClient.invalidateQueries({ queryKey: ["products"] });
 
           // If it's a specific product update, invalidate that specific query too
+          const productId =
+            (payload.new as Product | null)?.id ||
+            (payload.old as Product | null)?.id;
           if (productId) {
             queryClient.invalidateQueries({
               queryKey: ["products", productId],
@@ -56,14 +48,6 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
         "postgres_changes",
         { event: "*", schema: "public", table: "purchases" },
         (payload: RealtimePostgresChangesPayload<Purchase>) => {
-          // Type guard to ensure we have a valid Purchase object
-          const newPurchase = payload.new as Purchase | null;
-          const oldPurchase = payload.old as Purchase | null;
-
-          const purchaseId = newPurchase?.id || oldPurchase?.id;
-
-          console.log("🛒 Purchases changed:", payload.eventType, purchaseId);
-
           // Invalidate all purchase-related queries
           queryClient.invalidateQueries({
             queryKey: ["dashboard", "purchases"],
@@ -71,6 +55,9 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
           queryClient.invalidateQueries({ queryKey: ["purchases"] });
 
           // If it's a specific purchase update, invalidate that specific query too
+          const purchaseId =
+            (payload.new as Purchase | null)?.id ||
+            (payload.old as Purchase | null)?.id;
           if (purchaseId) {
             queryClient.invalidateQueries({
               queryKey: ["purchases", purchaseId],
@@ -87,15 +74,6 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
         "postgres_changes",
         { event: "*", schema: "public", table: "customers" },
         (payload: RealtimePostgresChangesPayload<Customer>) => {
-          // Type guard to ensure we have a valid Customer object
-          const newCustomer = payload.new as Customer | null;
-          const oldCustomer = payload.old as Customer | null;
-
-          const customerName = newCustomer?.fullname || oldCustomer?.fullname;
-          const customerId = newCustomer?.id || oldCustomer?.id;
-
-          console.log("👥 Customers changed:", payload.eventType, customerName);
-
           // Invalidate all customer-related queries
           queryClient.invalidateQueries({
             queryKey: ["dashboard", "customers"],
@@ -103,6 +81,9 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
           queryClient.invalidateQueries({ queryKey: ["customers"] });
 
           // If it's a specific customer update, invalidate that specific query too
+          const customerId =
+            (payload.new as Customer | null)?.id ||
+            (payload.old as Customer | null)?.id;
           if (customerId) {
             queryClient.invalidateQueries({
               queryKey: ["customers", customerId],
@@ -119,13 +100,9 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
         "postgres_changes",
         { event: "*", schema: "public", table: "user_role" },
         (payload: RealtimePostgresChangesPayload<UserRole>) => {
-          // Type guard to ensure we have a valid UserRole object
-          const newUserRole = payload.new as UserRole | null;
-          const oldUserRole = payload.old as UserRole | null;
-
-          const userId = newUserRole?.user_id || oldUserRole?.user_id;
-
-          console.log("👤 User roles changed:", payload.eventType, userId);
+          const userId =
+            (payload.new as UserRole | null)?.user_id ||
+            (payload.old as UserRole | null)?.user_id;
 
           // Invalidate user profile queries
           queryClient.invalidateQueries({ queryKey: ["user", "profile"] });
@@ -142,7 +119,6 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
 
     // Cleanup function
     return () => {
-      console.log("🔌 Cleaning up real-time subscriptions...");
       productsSubscription.unsubscribe();
       purchasesSubscription.unsubscribe();
       customersSubscription.unsubscribe();
@@ -153,7 +129,6 @@ export const useRealtimeData = (options: UseRealtimeDataOptions = {}) => {
   return {
     // Utility function to manually trigger data refresh
     refreshAllData: () => {
-      console.log("🔄 Manually refreshing all data...");
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["purchases"] });

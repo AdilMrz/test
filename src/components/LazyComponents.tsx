@@ -1,8 +1,10 @@
 import { lazy } from "react";
 
 // Lazy load heavy components to improve initial bundle size and LCP
-export const LazyDashboard = lazy(
-  () => import("../features/dashboard/Dashboard"),
+export const LazyDashboard = lazy(() =>
+  import("../features/dashboard/Dashboard").then((module) => ({
+    default: module.Dashboard,
+  })),
 );
 
 export const LazyCustomerList = lazy(() =>

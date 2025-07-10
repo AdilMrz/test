@@ -43,6 +43,7 @@ const ProductImage = () => {
 
 const ActionButtons = () => {
   const record = useRecordContext();
+  const translate = useTranslate();
 
   if (!record) return null;
 
@@ -61,8 +62,10 @@ const ActionButtons = () => {
         recordUserId={record.created_by}
       >
         <DeleteButton
-          confirmTitle="Delete Product"
-          confirmContent={`Are you sure you want to delete the product "${record.name}"?`}
+          confirmTitle={translate("dialogs.delete.product.title")}
+          confirmContent={translate("dialogs.delete.product.content", {
+            name: record.name,
+          })}
           mutationMode="pessimistic"
         />
       </Protected>
@@ -97,8 +100,8 @@ export const ProductList = () => {
           bulkActionButtons={
             <Protected action="delete" resource="products">
               <BulkDeleteButton
-                confirmTitle="Delete Products"
-                confirmContent="Are you sure you want to delete these products?"
+                confirmTitle={translate("dialogs.delete.products.title")}
+                confirmContent={translate("dialogs.delete.products.content")}
                 mutationMode="pessimistic"
               />
             </Protected>

@@ -24,7 +24,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { useErrorHandler } from "./hooks/useErrorHandler";
 import { initSentry } from "./utils/sentry";
 import { useRealtimeData } from "./hooks/useRealtimeData";
-import { PerformanceMonitor } from "./components/PerformanceMonitor";
 
 // queryClient is now imported from auth.ts
 const authProvider = baseAuthProvider;
@@ -128,7 +127,6 @@ export const App = () => {
       enableRetry={true}
       showDetails={true}
     >
-      <PerformanceMonitor />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter
           future={{

@@ -193,6 +193,34 @@ const customEnglishMessages = {
     delete: {
       title: "Delete Confirmation",
       content: "Are you sure you want to delete this item?",
+      customer: {
+        title: "Delete Customer",
+        content:
+          'Are you sure you want to delete the customer "%{name}"? This action will fail if the customer has any associated purchases.',
+      },
+      customers: {
+        title: "Delete Customers",
+        content:
+          "Are you sure you want to delete these customers? This action will fail for any customer with associated purchases.",
+      },
+      product: {
+        title: "Delete Product",
+        content:
+          'Are you sure you want to delete the product "%{name}"? This action will fail if the product has any associated purchases.',
+      },
+      products: {
+        title: "Delete Products",
+        content:
+          "Are you sure you want to delete these products? This action will fail for any product with associated purchases.",
+      },
+      purchase: {
+        title: "Delete Purchase",
+        content: "Are you sure you want to delete this purchase?",
+      },
+      purchases: {
+        title: "Delete Purchases",
+        content: "Are you sure you want to delete these purchases?",
+      },
     },
     create: {
       customer: "Create New Customer",

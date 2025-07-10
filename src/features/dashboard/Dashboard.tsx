@@ -37,7 +37,7 @@ export const Dashboard = () => {
   };
 
   // Use our new React Query hooks for better performance and real-time updates
-  const { products, purchases, customers, isLoading, hasError, errors } =
+  const { products, purchases, customers, isLoading, hasError } =
     useDashboardData({
       startDate,
       endDate,
@@ -49,7 +49,6 @@ export const Dashboard = () => {
   if (isLoading) return <Loading />;
 
   if (hasError) {
-    console.error("Dashboard data errors:", errors);
     return (
       <Box p={2}>
         <Title title="Dashboard" />
@@ -69,8 +68,12 @@ export const Dashboard = () => {
         (p) => p.product_id === product.id,
       ).length;
       if (count > 0) {
+        // Convert string ID to number, fallback to index + 1 if conversion fails
+        const numericId = isNaN(parseInt(product.id))
+          ? index + 1
+          : parseInt(product.id);
         acc.push({
-          id: parseInt(product.id) || index + 1, // Use index + 1 as fallback for unique IDs
+          id: numericId,
           name: product.name,
           value: count,
         });
@@ -85,18 +88,27 @@ export const Dashboard = () => {
       name: product.name,
       revenue: filteredPurchases
         .filter((p) => p.product_id === product.id)
-        .reduce((sum, p) => sum + p.price, 0),
+        .reduce(
+          (sum, p) =>
+            sum +
+            (typeof p.price === "number" ? p.price : parseFloat(p.price) || 0),
+          0,
+        ),
     }))
     .filter((item) => item.revenue > 0) as ProductRevenue[];
 
   const recentPurchases = filteredPurchases
     .slice(0, 10)
     .map((purchase, index) => ({
-      id: parseInt(purchase.id) || index + 1, // Use index + 1 as fallback to ensure uniqueness
+      // Convert string ID to number, fallback to index + 1 if conversion fails
+      id: isNaN(parseInt(purchase.id)) ? index + 1 : parseInt(purchase.id),
       customer_name:
         purchase.customers?.fullname || translate("dashboard.unknown"),
       product_name: purchase.products?.name || translate("dashboard.unknown"),
-      price: purchase.price,
+      price:
+        typeof purchase.price === "number"
+          ? purchase.price
+          : parseFloat(purchase.price) || 0,
       purchase_date: purchase.purchase_date,
     }));
 
