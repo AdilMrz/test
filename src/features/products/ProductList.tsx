@@ -4,16 +4,15 @@ import {
   DatagridConfigurable,
   TextField,
   WrapperField,
-  EditButton,
-  DeleteButton,
   BulkDeleteButton,
-  useRecordContext,
   useTranslate,
+  useRecordContext,
 } from "react-admin";
 import { Card, Box } from "@mui/material";
 import { ListActions } from "./components/ListActions";
 import { DATAGRID_STYLES } from "./constants";
 import { Protected } from "../../components/Protected";
+import { createActionButtons } from "../../components/OptimizedActionButtons";
 import { supabaseClient } from "../../supabase";
 
 const ProductImage = () => {
@@ -41,37 +40,8 @@ const ProductImage = () => {
   );
 };
 
-const ActionButtons = () => {
-  const record = useRecordContext();
-  const translate = useTranslate();
-
-  if (!record) return null;
-
-  return (
-    <WrapperField>
-      <Protected
-        action="update"
-        resource="products"
-        recordUserId={record.created_by}
-      >
-        <EditButton />
-      </Protected>
-      <Protected
-        action="delete"
-        resource="products"
-        recordUserId={record.created_by}
-      >
-        <DeleteButton
-          confirmTitle={translate("dialogs.delete.product.title")}
-          confirmContent={translate("dialogs.delete.product.content", {
-            name: record.name,
-          })}
-          mutationMode="pessimistic"
-        />
-      </Protected>
-    </WrapperField>
-  );
-};
+// Create optimized action buttons for products
+const ActionButtons = createActionButtons("products");
 
 export const ProductList = () => {
   const translate = useTranslate();

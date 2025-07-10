@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import { useRBAC } from "../contexts/RBACContext";
 import type { Permission } from "../types/rbac";
 
@@ -10,7 +10,7 @@ interface ProtectedProps {
   recordUserId?: string;
 }
 
-export const Protected = ({
+const ProtectedComponent = ({
   children,
   action,
   resource,
@@ -20,7 +20,15 @@ export const Protected = ({
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // Memoize the permission key to avoid unnecessary re-checks
+  const permissionKey = useMemo(
+    () => `${action}:${resource}:${recordUserId || "none"}`,
+    [action, resource, recordUserId],
+  );
+
   useEffect(() => {
+    let isCancelled = false;
+
     const checkAccess = async () => {
       try {
         const permission = await checkPermission(
@@ -28,17 +36,25 @@ export const Protected = ({
           resource,
           recordUserId,
         );
-        setHasPermission(permission);
+
+        if (!isCancelled) {
+          setHasPermission(permission);
+          setIsLoading(false);
+        }
       } catch (error) {
-        console.error("Error checking permission:", error);
-        setHasPermission(false);
-      } finally {
-        setIsLoading(false);
+        if (!isCancelled) {
+          setHasPermission(false);
+          setIsLoading(false);
+        }
       }
     };
 
     checkAccess();
-  }, [checkPermission, action, resource, recordUserId]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [checkPermission, permissionKey]);
 
   if (isLoading) {
     return null; // or a loading spinner
@@ -50,3 +66,6 @@ export const Protected = ({
 
   return <>{children}</>;
 };
+
+// Memoize the component to prevent unnecessary re-renders
+export const Protected = memo(ProtectedComponent);

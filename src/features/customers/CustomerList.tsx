@@ -5,48 +5,17 @@ import {
   SearchInput,
   TextField,
   WrapperField,
-  EditButton,
-  DeleteButton,
   BulkDeleteButton,
-  useRecordContext,
   useTranslate,
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
 import { DATAGRID_STYLES } from "./constants";
 import { Protected } from "../../components/Protected";
+import { createActionButtons } from "../../components/OptimizedActionButtons";
 
-const ActionButtons = () => {
-  const record = useRecordContext();
-  const translate = useTranslate();
-
-  if (!record) return null;
-
-  return (
-    <WrapperField>
-      <Protected
-        action="update"
-        resource="customers"
-        recordUserId={record.created_by}
-      >
-        <EditButton />
-      </Protected>
-      <Protected
-        action="delete"
-        resource="customers"
-        recordUserId={record.created_by}
-      >
-        <DeleteButton
-          confirmTitle={translate("dialogs.delete.customer.title")}
-          confirmContent={translate("dialogs.delete.customer.content", {
-            name: record.fullname,
-          })}
-          mutationMode="pessimistic"
-        />
-      </Protected>
-    </WrapperField>
-  );
-};
+// Create optimized action buttons for customers
+const ActionButtons = createActionButtons("customers");
 
 export const CustomerList = () => {
   const translate = useTranslate();

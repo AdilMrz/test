@@ -7,45 +7,16 @@ import {
   NumberField,
   DateField,
   WrapperField,
-  EditButton,
-  DeleteButton,
   BulkDeleteButton,
-  useRecordContext,
   useTranslate,
 } from "react-admin";
 import { Card } from "@mui/material";
 import { ListActions } from "./components/ListActions";
 import { Protected } from "../../components/Protected";
+import { createActionButtons } from "../../components/OptimizedActionButtons";
 
-const ActionButtons = () => {
-  const record = useRecordContext();
-  const translate = useTranslate();
-
-  if (!record) return null;
-
-  return (
-    <WrapperField label="Actions">
-      <Protected
-        action="update"
-        resource="purchases"
-        recordUserId={record.created_by}
-      >
-        <EditButton />
-      </Protected>
-      <Protected
-        action="delete"
-        resource="purchases"
-        recordUserId={record.created_by}
-      >
-        <DeleteButton
-          confirmTitle={translate("dialogs.delete.purchase.title")}
-          confirmContent={translate("dialogs.delete.purchase.content")}
-          mutationMode="pessimistic"
-        />
-      </Protected>
-    </WrapperField>
-  );
-};
+// Create optimized action buttons for purchases
+const ActionButtons = createActionButtons("purchases");
 
 export const PurchaseList = () => {
   const translate = useTranslate();
