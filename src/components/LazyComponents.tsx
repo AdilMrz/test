@@ -1,90 +1,92 @@
 import { lazy } from "react";
 
 // Lazy load heavy components to improve initial bundle size and LCP
-export const LazyDashboard = lazy(() => import("../features/dashboard/Dashboard"));
-
-export const LazyCustomerList = lazy(() => 
-  import("../features/customers/CustomerList").then(module => ({ 
-    default: module.CustomerList 
-  }))
+export const LazyDashboard = lazy(
+  () => import("../features/dashboard/Dashboard"),
 );
 
-export const LazyCustomerCreate = lazy(() => 
-  import("../features/customers/CustomerCreate").then(module => ({ 
-    default: module.CustomerCreate 
-  }))
+export const LazyCustomerList = lazy(() =>
+  import("../features/customers/CustomerList").then((module) => ({
+    default: module.CustomerList,
+  })),
 );
 
-export const LazyCustomerEdit = lazy(() => 
-  import("../features/customers/CustomerEdit").then(module => ({ 
-    default: module.CustomerEdit 
-  }))
+export const LazyCustomerCreate = lazy(() =>
+  import("../features/customers/CustomerCreate").then((module) => ({
+    default: module.CustomerCreate,
+  })),
 );
 
-export const LazyCustomerShow = lazy(() => 
-  import("../features/customers/CustomerShow").then(module => ({ 
-    default: module.CustomerShow 
-  }))
+export const LazyCustomerEdit = lazy(() =>
+  import("../features/customers/CustomerEdit").then((module) => ({
+    default: module.CustomerEdit,
+  })),
 );
 
-export const LazyProductList = lazy(() => 
-  import("../features/products/ProductList").then(module => ({ 
-    default: module.ProductList 
-  }))
+export const LazyCustomerShow = lazy(() =>
+  import("../features/customers/CustomerShow").then((module) => ({
+    default: module.CustomerShow,
+  })),
 );
 
-export const LazyProductCreate = lazy(() => 
-  import("../features/products/ProductCreate").then(module => ({ 
-    default: module.ProductCreate 
-  }))
+export const LazyProductList = lazy(() =>
+  import("../features/products/ProductList").then((module) => ({
+    default: module.ProductList,
+  })),
 );
 
-export const LazyProductEdit = lazy(() => 
-  import("../features/products/ProductEdit").then(module => ({ 
-    default: module.ProductEdit 
-  }))
+export const LazyProductCreate = lazy(() =>
+  import("../features/products/ProductCreate").then((module) => ({
+    default: module.ProductCreate,
+  })),
 );
 
-export const LazyProductShow = lazy(() => 
-  import("../features/products/ProductShow").then(module => ({ 
-    default: module.ProductShow 
-  }))
+export const LazyProductEdit = lazy(() =>
+  import("../features/products/ProductEdit").then((module) => ({
+    default: module.ProductEdit,
+  })),
 );
 
-export const LazyPurchaseList = lazy(() => 
-  import("../features/purchases/PurchaseList").then(module => ({ 
-    default: module.PurchaseList 
-  }))
+export const LazyProductShow = lazy(() =>
+  import("../features/products/ProductShow").then((module) => ({
+    default: module.ProductShow,
+  })),
 );
 
-export const LazyPurchaseCreate = lazy(() => 
-  import("../features/purchases/PurchaseCreate").then(module => ({ 
-    default: module.PurchaseCreate 
-  }))
+export const LazyPurchaseList = lazy(() =>
+  import("../features/purchases/PurchaseList").then((module) => ({
+    default: module.PurchaseList,
+  })),
 );
 
-export const LazyPurchaseEdit = lazy(() => 
-  import("../features/purchases/PurchaseEdit").then(module => ({ 
-    default: module.PurchaseEdit 
-  }))
+export const LazyPurchaseCreate = lazy(() =>
+  import("../features/purchases/PurchaseCreate").then((module) => ({
+    default: module.PurchaseCreate,
+  })),
 );
 
-export const LazyPurchaseShow = lazy(() => 
-  import("../features/purchases/PurchaseShow").then(module => ({ 
-    default: module.PurchaseShow 
-  }))
+export const LazyPurchaseEdit = lazy(() =>
+  import("../features/purchases/PurchaseEdit").then((module) => ({
+    default: module.PurchaseEdit,
+  })),
 );
 
-export const LazyActivityLogList = lazy(() => 
-  import("../features/audit-logs/ActivityLogList").then(module => ({ 
-    default: module.ActivityLogList 
-  }))
+export const LazyPurchaseShow = lazy(() =>
+  import("../features/purchases/PurchaseShow").then((module) => ({
+    default: module.PurchaseShow,
+  })),
 );
 
-export const LazyMaintenancePanel = lazy(() => 
-  import("../features/maintenance/MaintenancePanel").then(module => ({ 
-    default: module.MaintenancePanel 
-  }))
+export const LazyActivityLogList = lazy(() =>
+  import("../features/audit-logs/AuditLogList").then((module) => ({
+    default: module.ActivityLogList,
+  })),
+);
+
+export const LazyMaintenancePanel = lazy(() =>
+  import("../features/maintenance/MaintenancePanel").then((module) => ({
+    default: module.MaintenancePanel,
+  })),
 );
 
 // Loading fallback component
