@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import {
   People as PeopleIcon,
   ShoppingCart as ShoppingCartIcon,
@@ -7,42 +8,47 @@ import {
   Dashboard as DashboardIcon,
 } from "@mui/icons-material";
 import {
-  CustomerList,
-  CustomerCreate,
-  CustomerShow,
-  CustomerEdit,
-} from "./customers";
-import {
-  ProductList,
-  ProductCreate,
-  ProductShow,
-  ProductEdit,
-} from "./products";
-import {
-  PurchaseList,
-  PurchaseCreate,
-  PurchaseShow,
-  PurchaseEdit,
-} from "./purchases";
-import { ActivityLogList } from "./features/audit-logs";
+  LazyDashboard,
+  LazyCustomerList,
+  LazyCustomerCreate,
+  LazyCustomerShow,
+  LazyCustomerEdit,
+  LazyProductList,
+  LazyProductCreate,
+  LazyProductShow,
+  LazyProductEdit,
+  LazyPurchaseList,
+  LazyPurchaseCreate,
+  LazyPurchaseShow,
+  LazyPurchaseEdit,
+  LazyActivityLogList,
+  LazyMaintenancePanel,
+  ComponentLoader,
+} from "./components/LazyComponents";
 import { Protected } from "./components/Protected";
 import { useRBAC } from "./contexts/RBACContext";
 import { useState, useEffect } from "react";
-import { MaintenancePanel } from "./features/maintenance/MaintenancePanel";
-import { Dashboard } from "./features/dashboard/Dashboard";
 
 const EmptyComponent = () => <></>;
 
 const AuditLogList = () => (
   <Protected action="read" resource="audit_logs">
-    <ActivityLogList />
+    <SuspenseWrapper>
+      <LazyActivityLogList />
+    </SuspenseWrapper>
   </Protected>
 );
 
-const DashboardWrapper = () => {
-  const dash = Dashboard();
-  return dash || <div />;
-};
+// Wrapper components with Suspense for lazy loading
+const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<ComponentLoader />}>{children}</Suspense>
+);
+
+const DashboardWrapper = () => (
+  <SuspenseWrapper>
+    <LazyDashboard />
+  </SuspenseWrapper>
+);
 
 export const useResources = () => {
   const { checkPermission } = useRBAC();
@@ -72,26 +78,74 @@ export const useResources = () => {
   const baseResources = [
     {
       name: "customers",
-      list: CustomerList,
-      create: CustomerCreate,
-      edit: CustomerEdit,
-      show: CustomerShow,
+      list: () => (
+        <SuspenseWrapper>
+          <LazyCustomerList />
+        </SuspenseWrapper>
+      ),
+      create: () => (
+        <SuspenseWrapper>
+          <LazyCustomerCreate />
+        </SuspenseWrapper>
+      ),
+      edit: () => (
+        <SuspenseWrapper>
+          <LazyCustomerEdit />
+        </SuspenseWrapper>
+      ),
+      show: () => (
+        <SuspenseWrapper>
+          <LazyCustomerShow />
+        </SuspenseWrapper>
+      ),
       icon: PeopleIcon,
     },
     {
       name: "products",
-      list: ProductList,
-      create: ProductCreate,
-      edit: ProductEdit,
-      show: ProductShow,
+      list: () => (
+        <SuspenseWrapper>
+          <LazyProductList />
+        </SuspenseWrapper>
+      ),
+      create: () => (
+        <SuspenseWrapper>
+          <LazyProductCreate />
+        </SuspenseWrapper>
+      ),
+      edit: () => (
+        <SuspenseWrapper>
+          <LazyProductEdit />
+        </SuspenseWrapper>
+      ),
+      show: () => (
+        <SuspenseWrapper>
+          <LazyProductShow />
+        </SuspenseWrapper>
+      ),
       icon: InventoryIcon,
     },
     {
       name: "purchases",
-      list: PurchaseList,
-      create: PurchaseCreate,
-      edit: PurchaseEdit,
-      show: PurchaseShow,
+      list: () => (
+        <SuspenseWrapper>
+          <LazyPurchaseList />
+        </SuspenseWrapper>
+      ),
+      create: () => (
+        <SuspenseWrapper>
+          <LazyPurchaseCreate />
+        </SuspenseWrapper>
+      ),
+      edit: () => (
+        <SuspenseWrapper>
+          <LazyPurchaseEdit />
+        </SuspenseWrapper>
+      ),
+      show: () => (
+        <SuspenseWrapper>
+          <LazyPurchaseShow />
+        </SuspenseWrapper>
+      ),
       icon: ShoppingCartIcon,
     },
   ];
@@ -99,7 +153,11 @@ export const useResources = () => {
   if (showMaintenance) {
     baseResources.push({
       name: "maintenance",
-      list: MaintenancePanel,
+      list: () => (
+        <SuspenseWrapper>
+          <LazyMaintenancePanel />
+        </SuspenseWrapper>
+      ),
       create: EmptyComponent,
       edit: EmptyComponent,
       show: EmptyComponent,

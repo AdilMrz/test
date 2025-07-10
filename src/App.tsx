@@ -13,7 +13,8 @@ import themes from "./themes";
 import { useResources } from "./AppResources";
 import { queryClient } from "./auth";
 import { authProvider as baseAuthProvider, supabaseClient } from "./supabase";
-import { createTrackingSupabaseProvider } from "./providers/trackingSupabaseProvider";
+
+import { createHybridDataProvider } from "./providers/hybridDataProvider";
 import { TailwindCustomLayout } from "./components/TailwindCustomLayout";
 
 import { RBACProvider } from "./contexts/RBACContext";
@@ -23,11 +24,12 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { useErrorHandler } from "./hooks/useErrorHandler";
 import { initSentry } from "./utils/sentry";
 import { useRealtimeData } from "./hooks/useRealtimeData";
+import { PerformanceMonitor } from "./components/PerformanceMonitor";
 
 // queryClient is now imported from auth.ts
 const authProvider = baseAuthProvider;
 const i18nProvider = polyglotI18nProvider(
-  (locale) => {
+  (locale: string) => {
     if (locale === "fr") {
       return frenchMessages;
     }
@@ -43,15 +45,19 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
   // Enable real-time data synchronization
   useRealtimeData({ enabled: true });
 
-  const trackingDataProvider = useMemo(
-    () => createTrackingSupabaseProvider(supabaseClient, checkPermission),
+  const hybridDataProvider = useMemo(
+    () =>
+      createHybridDataProvider({
+        queryClient,
+        checkPermission,
+      }),
     [checkPermission],
   );
 
   return (
     <Admin
       key={role || "no-role"}
-      dataProvider={trackingDataProvider}
+      dataProvider={hybridDataProvider}
       authProvider={authProvider}
       i18nProvider={i18nProvider}
       loginPage={TailwindLoginPage}
@@ -62,6 +68,7 @@ const AdminApp = ({ role = null }: { role?: Role | null }) => {
       {resources.resources.map((resource: ResourceProps) => (
         <Resource key={resource.name} {...resource} />
       ))}
+
       <CustomRoutes noLayout>
         <Route path={SetPasswordPage.path} element={<SetPasswordPage />} />
         <Route
@@ -121,6 +128,7 @@ export const App = () => {
       enableRetry={true}
       showDetails={true}
     >
+      <PerformanceMonitor />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter
           future={{

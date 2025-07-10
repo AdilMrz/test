@@ -1,0 +1,231 @@
+/* Critical CSS for above-the-fold content - loaded inline for better LCP */
+
+/* Reset and base styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f8fafc;
+  color: #1f2937;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Critical loading states */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  flex-direction: column;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Critical layout styles for React Admin */
+.RaLayout-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.RaLayout-appFrame {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.RaLayout-contentWithSidebar {
+  display: flex;
+  flex-grow: 1;
+}
+
+.RaLayout-content {
+  flex: 1;
+  padding: 16px;
+  background-color: #f8fafc;
+}
+
+/* Critical AppBar styles */
+.RaAppBar-root {
+  background-color: #1976d2 !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+/* Critical Menu styles */
+.RaMenu-root {
+  width: 240px;
+  background-color: white;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* Critical button styles */
+.MuiButton-root {
+  text-transform: none;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.MuiButton-contained {
+  background-color: #3b82f6;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.MuiButton-contained:hover {
+  background-color: #2563eb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Critical form styles */
+.MuiTextField-root {
+  margin-bottom: 16px;
+}
+
+.MuiOutlinedInput-root {
+  border-radius: 6px;
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #3b82f6;
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #3b82f6;
+  border-width: 2px;
+}
+
+/* Critical card styles */
+.MuiCard-root {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  background-color: white;
+}
+
+/* Critical table styles */
+.MuiTableContainer-root {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.MuiTableHead-root {
+  background-color: #f8fafc;
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.MuiTableBody-root .MuiTableRow-root:hover {
+  background-color: #f9fafb;
+}
+
+/* Critical responsive styles */
+@media (max-width: 768px) {
+  .RaLayout-contentWithSidebar {
+    flex-direction: column;
+  }
+  
+  .RaMenu-root {
+    width: 100%;
+    order: 2;
+  }
+  
+  .RaLayout-content {
+    order: 1;
+    padding: 8px;
+  }
+}
+
+/* Critical utility classes */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.text-gray-600 {
+  color: #6b7280;
+}
+
+.text-blue-600 {
+  color: #2563eb;
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.shadow {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Hide non-critical content initially */
+.non-critical {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.non-critical.loaded {
+  opacity: 1;
+}
