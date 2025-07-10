@@ -21,22 +21,44 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Manual chunk splitting for better caching
-        manualChunks: {
+        manualChunks: (id) => {
           // React and core libraries
-          react: ["react", "react-dom"],
-          // React Admin core
-          "react-admin": ["react-admin"],
+          if (id.includes("react") || id.includes("react-dom")) {
+            return "react";
+          }
+          // React Admin core - be more specific to avoid circular deps
+          if (id.includes("react-admin") && !id.includes("node_modules")) {
+            return "react-admin";
+          }
           // Material-UI
-          mui: ["@mui/material", "@mui/icons-material"],
+          if (id.includes("@mui/")) {
+            return "mui";
+          }
           // React Query
-          "react-query": ["@tanstack/react-query"],
+          if (id.includes("@tanstack/react-query")) {
+            return "react-query";
+          }
           // Charts and heavy libraries
-          charts: ["recharts"],
+          if (id.includes("recharts")) {
+            return "charts";
+          }
           // PDF generation
-          pdf: ["jspdf", "jspdf-autotable"],
+          if (id.includes("jspdf")) {
+            return "pdf";
+          }
           // Supabase
-          supabase: ["ra-supabase"],
+          if (id.includes("ra-supabase") || id.includes("@supabase/")) {
+            return "supabase";
+          }
+          // Vendor chunk for other node_modules
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
         },
+        // Ensure proper file extensions
+        entryFileNames: "assets/[name]-[hash].js",
+        chunkFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash].[ext]",
       },
     },
     // Increase chunk size warning limit
