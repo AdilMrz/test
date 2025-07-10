@@ -8,6 +8,10 @@ export default defineConfig({
     host: true,
   },
   base: "/",
+  esbuild: {
+    target: "esnext",
+    format: "esm",
+  },
   build: {
     // Optimize for LCP and performance
     target: "esnext",
@@ -20,45 +24,26 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        // Manual chunk splitting for better caching
-        manualChunks: (id) => {
-          // React and core libraries
-          if (id.includes("react") || id.includes("react-dom")) {
-            return "react";
-          }
-          // React Admin core - be more specific to avoid circular deps
-          if (id.includes("react-admin") && !id.includes("node_modules")) {
-            return "react-admin";
-          }
-          // Material-UI
-          if (id.includes("@mui/")) {
-            return "mui";
-          }
+        // Simplified chunk splitting to avoid circular dependencies
+        manualChunks: {
+          // Core React libraries
+          react: ["react", "react-dom"],
+          // Material-UI components
+          mui: ["@mui/material", "@mui/icons-material", "@mui/system"],
           // React Query
-          if (id.includes("@tanstack/react-query")) {
-            return "react-query";
-          }
-          // Charts and heavy libraries
-          if (id.includes("recharts")) {
-            return "charts";
-          }
+          "react-query": ["@tanstack/react-query"],
+          // Charts library
+          charts: ["recharts"],
           // PDF generation
-          if (id.includes("jspdf")) {
-            return "pdf";
-          }
-          // Supabase
-          if (id.includes("ra-supabase") || id.includes("@supabase/")) {
-            return "supabase";
-          }
-          // Vendor chunk for other node_modules
-          if (id.includes("node_modules")) {
-            return "vendor";
-          }
+          pdf: ["jspdf", "jspdf-autotable"],
+          // Supabase and React Admin
+          admin: ["react-admin", "ra-supabase", "ra-core"],
         },
-        // Ensure proper file extensions
+        // Ensure proper file extensions and format
         entryFileNames: "assets/[name]-[hash].js",
         chunkFileNames: "assets/[name]-[hash].js",
         assetFileNames: "assets/[name]-[hash].[ext]",
+        format: "es",
       },
     },
     // Increase chunk size warning limit

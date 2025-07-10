@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "app/api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "rewrites": [
     {
       "source": "/((?!api/.*).*)",
@@ -7,11 +12,11 @@
   ],
   "headers": [
     {
-      "source": "/assets/(.*)\\.js",
+      "source": "/assets/(.*)\\.js$",
       "headers": [
         {
           "key": "Content-Type",
-          "value": "application/javascript; charset=utf-8"
+          "value": "text/javascript; charset=utf-8"
         },
         {
           "key": "Cache-Control",
@@ -20,7 +25,20 @@
       ]
     },
     {
-      "source": "/assets/(.*)\\.css",
+      "source": "/assets/(.*)\\.mjs$",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/javascript; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)\\.css$",
       "headers": [
         {
           "key": "Content-Type",
@@ -33,11 +51,11 @@
       ]
     },
     {
-      "source": "/manifest.json",
+      "source": "/manifest\\.json$",
       "headers": [
         {
           "key": "Content-Type",
-          "value": "application/json; charset=utf-8"
+          "value": "application/manifest+json; charset=utf-8"
         },
         {
           "key": "Cache-Control",
@@ -46,11 +64,28 @@
       ]
     },
     {
+      "source": "/(.*\\.js)$",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/javascript; charset=utf-8"
+        }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
         }
       ]
     }
